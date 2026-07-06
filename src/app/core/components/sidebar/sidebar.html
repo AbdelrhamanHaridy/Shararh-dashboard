@@ -1,0 +1,98 @@
+<aside dir="ltr" class="flex h-screen w-72 flex-col border-l border-gray-100 bg-white py-6">
+    <!-- Logo -->
+    <div class="mb-8 flex items-center justify-center gap-2 px-6">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 1L30 8.5V25.5L17 33L4 25.5V8.5L17 1Z" fill="#111827" />
+            <path d="M17 1L30 8.5L17 16L4 8.5L17 1Z" fill="#10B981" />
+            <path d="M17 16L30 8.5V25.5L17 33V16Z" fill="#059669" />
+        </svg>
+        <div class="text-right leading-tight">
+            <p class="text-lg font-bold text-gray-900">Sharara</p>
+            <p class="text-[9px] font-semibold tracking-wide text-gray-400">
+                FINANCIAL TRANSFERS<br />MANAGEMENT
+            </p>
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex flex-1 flex-col gap-1 px-5">
+        <ng-container *ngFor="let item of navItems">
+
+            <!-- Active item -->
+            <a *ngIf="item.active" [routerLink]="item.route"
+                class="relative flex items-center justify-between rounded-2xl bg-green-50 py-2 pl-3 pr-1  active-item">
+                <span class="pr-3 text-[15px] font-semibold text-green-600">{{ item.label }}</span>
+
+                <span
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-green-500 bg-white">
+                    <svg *ngIf="item.icon === 'users'" class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </span>
+            </a>
+
+            <!-- Regular item -->
+            <a *ngIf="!item.active" [routerLink]="item.route"
+                class="group flex items-center justify-between rounded-xl px-3 py-2 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900">
+                <span class="text-[15px] font-medium">{{ item.label }}</span>
+
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center">
+                    <svg *ngIf="item.icon === 'home'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9.5 12 3l9 6.5" />
+                        <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'card'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <path d="M2 10h20" />
+                        <path d="M6 15h4" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'user-plus'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M19 8v6" />
+                        <path d="M22 11h-6" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'phone'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.99.36 1.97.67 2.91a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.17-1.17a2 2 0 0 1 2.11-.45c.94.31 1.92.54 2.91.67A2 2 0 0 1 22 16.92z" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'zap'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'shield'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'bell'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+
+                    <svg *ngIf="item.icon === 'chat'" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                </span>
+            </a>
+
+            <div *ngIf="!item.active" class="mx-3 my-1 border-t border-gray-100"></div>
+        </ng-container>
+    </nav>
+</aside>
