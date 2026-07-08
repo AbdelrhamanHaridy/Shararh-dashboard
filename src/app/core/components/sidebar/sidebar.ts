@@ -1,34 +1,39 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 interface NavItem {
   label: string;
-  icon: string; // svg path key
+  icon: string; // icon asset file name
   route?: string;
   active?: boolean;
 }
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.scss',
+  styleUrls: ['./sidebar.scss'],
 })
 export class Sidebar {
   private readonly router = inject(Router);
 
   navItems: NavItem[] = [
-    { label: 'لوحة التحكم', icon: 'home', route: '/home' },
-    { label: 'قاعدة بيانات المستخدمين', icon: 'users', route: '/user-database' },
-    { label: 'إدارة الاشتراكات', icon: 'card', route: '/subscription-management' },
-    { label: 'مركز العملاء المحتملين', icon: 'user-plus', route: '' },
-    { label: 'سجل الاتصال', icon: 'phone', route: '' },
-    { label: 'لوحة التقدم', icon: 'zap', route: '' },
-    { label: 'إدارة النسخ والتحديثات', icon: 'shield', route: '' },
-    { label: 'الاشعارات', icon: 'bell', route: '' },
-    { label: 'الشكاوي والاقتراحات', icon: 'chat', route: '' },
+    { label: 'لوحة التحكم', icon: 'icon.svg', route: '/home' },
+    { label: 'قاعدة بيانات المستخدمين', icon: 'icon-1.svg', route: '/user-database' },
+    { label: 'إدارة الاشتراكات', icon: 'icon-2.svg', route: '/subscription-management' },
+    { label: 'مركز العملاء المحتملين', icon: 'icon-3.svg', route: '/lead-center' },
+    { label: 'سجل الاتصال', icon: 'icon-4.svg', route: '/contact-logs' },
+    { label: 'لوحة التقدم', icon: 'icon-5.svg', route: '/progress-dashboard' },
+    { label: 'إدارة النسخ والتحديثات', icon: 'icon-6.svg', route: '/version-control' },
+    { label: 'الاشعارات', icon: 'icon-7.svg', route: '/notifications' },
+    { label: 'الشكاوي والاقتراحات', icon: 'icon-8.svg', route: '/feedback' },
+    { label: 'الاسئله الشائعه', icon: 'icon-9.svg', route: '/faq' },
+    { label: 'الجلسات', icon: 'icon-10.svg', route: '/sessions' },
+    { label: 'الارشيف', icon: 'icon-11.svg', route: '/archive' },
+    { label: 'المزيد', icon: 'icon-12.svg', route: '/more' },
+    { label: 'إعدادات', icon: 'icon-13.svg', route: '/settings' },
   ];
 
   constructor() {

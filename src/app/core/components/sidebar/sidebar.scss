@@ -1,12 +1,27 @@
 /* Sidebar active item styles */
-.active-item {
-  box-sizing: border-box;
-  border-right: 4px solid #10b981;
-  border-radius: 10px;
-  padding-right: calc(0.75rem + 4px);
-}
+// .active-item {
+//   box-sizing: border-box;
+//   border-right: 4px solid #10b981;
+//   border-radius: 10px;
+//   padding-right: calc(0.75rem + 4px);
+// }
 
-.active-item > span {
-  color: #16a34a;
-  font-weight: 600;
+// .active-item > span {
+//   color: #16a34a;
+//   font-weight: 600;
+// }
+.active-svg {
+  filter: brightness(0) saturate(100%) invert(33%) sepia(97%) saturate(468%) hue-rotate(77deg)
+    brightness(93%) contrast(101%);
 }
+:host ::ng-deep {
+  .is-active {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-op-8);
+  }
+}
+// .is-active:hover {
+//   transform: translate(-20px);
+// }
+// [class.border-primary]="rla.isActive"
+//                 [class.bg-primary-op-8]="rla.isActive"
