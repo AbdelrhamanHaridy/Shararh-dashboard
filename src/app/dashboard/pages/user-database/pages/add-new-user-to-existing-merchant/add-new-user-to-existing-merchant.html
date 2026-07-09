@@ -7,6 +7,7 @@
             [options]="emailOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-envelope"
             [isRequired]="true"></app-shared-select>
     </section>
+
     <section class="p-5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">المعلومات الأساسية</h2>
 
@@ -27,22 +28,39 @@
                 primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
         </div>
     </section>
-    <section class="py-5 px-2.5 bg-white rounded-3xl">
-        <h2 class="text-text-secondary text-base font-medium mb-7">الصلاحيات </h2>
-        <h3>المديونيات</h3>
-        <div class="px-4 py-2.5 bg-white rounded-2xl border border-[#DDE1E4] flex flex-row justify-between items-center">
-            <div class="flex flex-row items-center gap-4">
-                <div class="rounded-2xl p-3.5 bg-[#F0FDF4]">
-                    <img class="w-6 h-6" src="assets/icons/global/check.svg" alt="Notifications">
+
+    <!-- Permissions Section - Only show when role is selected -->
+    <section *ngIf="selectedRole && hasPermissions()" class="py-5 px-2.5 bg-white rounded-3xl">
+        <h2 class="text-text-secondary text-base font-medium mb-7">الصلاحيات</h2>
+
+        <!-- Loop through each permission category -->
+        <div *ngFor="let category of getPermissionCategories()" class="mb-6">
+            <h3 class="text-lg font-medium mb-4 text-text-primary">{{ category }}</h3>
+
+            <!-- Loop through each permission in the category -->
+            <div *ngFor="let permission of getPermissionsForCategory(category)"
+                class="px-4 py-2.5 bg-white rounded-2xl border border-[#DDE1E4] flex flex-row justify-between items-center mb-3">
+                <div class="flex flex-row items-center gap-4">
+                    <div class="rounded-2xl p-3.5 bg-[#F0FDF4]">
+                        <img class="w-6 h-6" src="assets/icons/global/check.svg" alt="Notifications">
+                    </div>
+                    <p class="text-[#334155] text-sm font-medium">{{ permission }}</p>
                 </div>
-                <p class="text-[#334155] text-sm font-medium">تسجيل تسليم أموال</p>
-            </div>
-            <div class="" dir="ltr">
-                <p-toggleswitch />
+                <div dir="ltr">
+                    <p-toggleswitch />
+                </div>
             </div>
         </div>
     </section>
 
-    <button type="submit" [disabled]="userForm.invalid"
-        class="mt-6 px-4 py-2 bg-primary text-white rounded w-fit">Save</button>
+    <!-- Message when no role is selected -->
+    <section *ngIf="!selectedRole" class="py-5 px-2.5 bg-white rounded-3xl text-center">
+        <p class="text-text-secondary text-sm">يرجى اختيار الدور الوظيفي لعرض الصلاحيات</p>
+    </section>
+
+    <div class="flex flex-row gap-8 justify-end">
+        <button type="button" class=" px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
+        <button type="submit" [disabled]="userForm.invalid"
+            class=" px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">إضافة</button>
+    </div>
 </form>

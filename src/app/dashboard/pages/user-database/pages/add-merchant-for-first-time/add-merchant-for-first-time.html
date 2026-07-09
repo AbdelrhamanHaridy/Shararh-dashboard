@@ -1,1 +1,81 @@
-<p>add-merchant-for-first-time works!</p>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+    <!-- Section 1: Basic Information -->
+    <section class="p-5 bg-white rounded-3xl">
+        <h2 class="text-text-secondary text-base font-medium mb-7">المعلومات الأساسية</h2>
+        <div class="grid grid-cols-2 gap-6">
+            <app-shared-text-input formControlName="firstName" label="الاسم الاول" placeholder="ادخل الاسم الاول"
+                inputId="firstName" primeNgIcon="pi pi-user" [isRequired]="true">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="lastName" label="الاسم الاخير" placeholder="ادخل الاسم الاخير"
+                inputId="lastName" primeNgIcon="pi pi-user" [isRequired]="true">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="businessName" label="اسم النشاط التجاري"
+                placeholder="ادخل اسم نشاطك التجاري" inputId="businessName" primeNgIcon="pi pi-briefcase"
+                [isRequired]="true">
+            </app-shared-text-input>
+        </div>
+    </section>
+
+    <!-- Section 2: Location and Address -->
+    <section class="p-5 bg-white rounded-3xl">
+        <h2 class="text-text-secondary text-base font-medium mb-7">الموقع والعنوان</h2>
+        <div class="grid grid-cols-2 gap-6">
+            <app-shared-select formControlName="governorate" label="المحافظه" placeholder="اختر المحافظه"
+                inputId="governorate" [options]="governorateOptions" optionLabel="label" optionValue="value"
+                primeNgIcon="pi pi-map-marker" [isRequired]="true">
+            </app-shared-select>
+            <app-shared-text-input formControlName="city" label="المدينه / المركز" placeholder="المدينه" inputId="city"
+                primeNgIcon="pi pi-building" [isRequired]="true">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="streetName" label="اسم الشارع" placeholder="ادخل اسم الشارع"
+                inputId="streetName" primeNgIcon="pi pi-map" [isRequired]="true">
+            </app-shared-text-input>
+        </div>
+    </section>
+
+    <!-- Section 3: Business Details -->
+    <section class="p-5 bg-white rounded-3xl">
+        <h2 class="text-text-secondary text-base font-medium mb-7">بيانات المنشأة</h2>
+        <div class="grid grid-cols-2 gap-6">
+            <app-shared-text-input formControlName="employeeCount" label="عدد المظفين في المنشأه"
+                placeholder="عدد المظفين في المنشأه" inputId="employeeCount" primeNgIcon="pi pi-users"
+                [isRequired]="true" [type]="'number'">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="phoneNumber" label="رقم الهاتف" placeholder="رقم الهاتف"
+                inputId="phoneNumber" primeNgIcon="pi pi-phone" [isRequired]="true">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="email" label="البريد الالكتروني"
+                placeholder="ادخل البريد الالكتروني" inputId="email" primeNgIcon="pi pi-envelope" [isRequired]="true">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="password" label="كلمة المرور" placeholder="ادخل كلمة المرور"
+                inputId="password" primeNgIcon="pi pi-lock" [isRequired]="true" [type]="'password'">
+            </app-shared-text-input>
+        </div>
+    </section>
+
+    <!-- Form Actions -->
+    <div class="flex flex-row gap-8 justify-end">
+        <button type="button"
+            class="px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit hover:bg-[#B8C4D4] transition-colors">
+            إلغاء
+        </button>
+        <button type="submit" [disabled]="userForm.invalid"
+            class="px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            إضافة
+        </button>
+    </div>
+
+    <!-- Optional: Display validation errors -->
+    <div *ngIf="userForm.invalid && userForm.touched" class="text-red-500 text-sm">
+        <p *ngIf="userForm.get('firstName')?.errors?.['required']">الاسم الاول مطلوب</p>
+        <p *ngIf="userForm.get('email')?.errors?.['email']">البريد الالكتروني غير صحيح</p>
+        <p *ngIf="userForm.get('password')?.errors?.['minlength']">كلمة المرور يجب ان تكون 6 احرف على الاقل</p>
+        <p *ngIf="userForm.get('phoneNumber')?.errors?.['pattern']">رقم الهاتف غير صحيح</p>
+    </div>
+</form>
