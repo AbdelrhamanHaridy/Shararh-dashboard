@@ -1,0 +1,65 @@
+:host {
+  // --p-datatable-header-cell-background: var(--color-light-bg);
+  // --p-datatable-header-cell-color: var(--color-secondary-text);
+  // --p-datatable-header-cell-font-size: 16px;
+  // --p-datatable-header-cell-border-color: var(--color-surface);
+  // --p-datatable-body-cell-border-color: var(--color-surface);
+  // --p-datatable-row-hover-background: var(--color-blue-muted);
+  // --p-datatable-column-title-font-weight: 500;
+  // --p-datatable-header-cell-padding: 1.269rem 1rem;
+  // --p-paginator-background: var(--color-light-bg);
+  // --p-paginator-border-radius: 0 0 32px 32px;
+  // --p-paginator-padding: 1.188rem 2rem;
+  // --p-datatable-body-cell-border-color: #fff;
+  --p-datatable-header-cell-background: #E6F7F4; // #F8FAFC80
+  --p-datatable-header-cell-color: #2E3139;
+  --p-datatable-header-cell-font-size: 16px;
+  --p-datatable-header-cell-padding: 1.25rem 0.75rem;
+    --p-datatable-body-cell-padding: 1.4rem 0.75rem;
+
+  //   Paginator
+  --p-paginator-nav-button-color: #000;
+  --p-paginator-nav-button-background: #fff;
+  --p-paginator-nav-button-hover-color: #6e6e6e;
+  --p-paginator-nav-button-hover-background: #03002f3b;
+  --p-paginator-nav-button-selected-color: var(--color-accent);
+  --p-paginator-nav-button-selected-background: var(--color-primary);
+
+  --p-icon-size: 18px;
+  ::ng-deep .p-datatable-sortable-column {
+      --p-icon-size: 14px;
+  }
+  ::ng-deep .p-datatable {
+    border-radius: 32px;
+    overflow: hidden;
+    font-family: "Lexend", sans-serif;
+    .p-datatable-thead > tr > th {
+      font-size: 16px;
+      text-align: center;
+    }
+    .p-datatable-tbody > tr > td {
+      text-align: center;
+    }
+  }
+  ::ng-deep .p-paginator-current {
+    margin-right: auto;
+    font-weight: bold;
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: "Lexend", sans-serif;
+  }
+  ::ng-deep .p-paginator-page {
+    font-family: "Lexend";
+  }
+
+  //   ::ng-deep .p-paginator-next,
+  //   ::ng-deep .p-paginator-last,
+  //   ::ng-deep .p-paginator-first,
+  //   ::ng-deep .p-paginator-prev {
+  //     border: 1px solid #ececee !important;
+  //   }
+}
+// .p-icon {
+//   width: var(--p-icon-size);
+//   height: var(--p-icon-size);
+// }

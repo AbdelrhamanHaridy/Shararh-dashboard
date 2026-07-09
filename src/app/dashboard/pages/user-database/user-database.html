@@ -1,6 +1,41 @@
-<main class="p-6 bg-amber-950 font-bold text-amber-100">
-    <h1 class="text-3xl">
-        Hello world!
-    </h1>
-    <p>user-database works!</p>
-</main>
+<section class="px-6">
+    <app-page-header title="قاعدة بيانات المستخدمين" [home]="home" [breadcrumbItems]="breadcrumbItems"
+        [showActionButton]="true" actionButtonLabel="إضافة مستخدم جديد"
+        (actionButtonClick)="onAddUser()"></app-page-header>
+</section>
+<section class="p-6 grid grid-cols-4 gap-2.5">
+    <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#137FEC" navigateLink="/user-database">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'المستخدمون النشطون'" [number]="165" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#10A922">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'المستخدمون غير النشطين'" [number]="15" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#D22F27">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'الأجهزة المسجلة'" [number]="280" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#FF9500">
+    </app-shared-kpi-card>
+</section>
+
+<!-- <app-search-filter-bar [filterTypes]="filterTypes" [(selectedType)]="selectedType">
+</app-search-filter-bar> -->
+
+<section class="p-6">
+    <div class="p-6 bg-white rounded-2xl shadow-md flex flex-row justify-between items-end">
+
+        <div class="flex flex-row gap-5">
+            <button type="button"
+                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors ">
+                <span>تطبيق الادمن</span>
+            </button>
+            <button type="button"
+                class="inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30">
+                <span>تطبيق الموظفين</span>
+            </button>
+        </div>
+    </div>
+</section>
+<section class="p-6">
+    <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"></app-shared-table>
+</section>

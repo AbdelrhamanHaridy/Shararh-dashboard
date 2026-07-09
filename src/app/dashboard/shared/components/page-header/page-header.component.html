@@ -1,0 +1,19 @@
+<div class="flex flex-row justify-between items-center rounded-2xl bg-white pl-8 pr-4 py-4">
+
+    <div class="flex flex-col">
+        <p-breadcrumb *ngIf="breadcrumbItems?.length" [model]="breadcrumbItems" [home]="home"></p-breadcrumb>
+        <h1 class="m-0 text-right text-[28px] font-medium text-black px-3.5 py-0">
+            {{ title }}
+        </h1>
+    </div>
+    <button *ngIf="showActionButton" type="button"
+        class="inline-flex items-center gap-2 rounded-xl bg-[#171717] cursor-pointer px-5 py-2.5 text-base font-bold text-white transition-colors hover:bg-neutral-700"
+        (click)="onActionClick()">
+        <img src="assets/icons/global/plus.svg" alt="Plus">
+        <span>{{ actionButtonLabel }}</span>
+    </button>
+
+
+
+
+</div>

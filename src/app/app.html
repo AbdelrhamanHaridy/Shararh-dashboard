@@ -1,9 +1,15 @@
 <!-- <router-outlet></router-outlet> -->
 
 <div class="flex min-h-screen">
-  <app-sidebar></app-sidebar>
-  <main class="flex-1 min-h-screen overflow-x-auto w-full min-w-0">
-    <app-header></app-header>
-    <router-outlet></router-outlet>
+  <main class="flex-1 min-h-screen overflow-x-auto w-full min-w-0 mr-71.75">
+    <div class="fixed top-0 right-71.75 left-0 z-30 bg-white shadow-lg">
+      <app-header></app-header>
+    </div>
+    <div class="pt-24">
+      <router-outlet></router-outlet>
+    </div>
   </main>
+  <div class="fixed right-0 top-0 h-screen w-71.75 z-40 shadow-lg">
+    <app-sidebar></app-sidebar>
+  </div>
 </div>
