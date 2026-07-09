@@ -18,11 +18,30 @@
         iconBgColor="#C3E1FF" numberColor="#000" navigateLink="/subscriptions">
     </app-shared-kpi-card>
 </section>
-<section class="p-6 grid grid-cols-10 gap-2.5">
+<section class="p-6 grid grid-cols-10 gap-5">
     <div class="col-span-6">
         <app-child-table [tableData]="sessions" [columns]="sessionColumns" [title]="'متابعة أداء الموظفين'"
             [showAllButton]="true" [showAllButtonLabel]="'View all captains'">
         </app-child-table>
     </div>
-    <div class="col-span-4"></div>
+    <div class="col-span-4 bg-white rounded-2xl p-5 shadow-md">
+        <div class="flex flex-row gap-2">
+            <img src="assets/icons/global/partition.svg" alt="Navigate">
+            <h2 class="text-text-secondary text-lg font-lexend font-bold">إحصائيات العملاء</h2>
+        </div>
+        <app-donut-chart [chartData]="[
+                    { value: 1048, name: 'Basket ball' },
+                    { value: 735, name: 'Tennis' },
+                    { value: 580, name: 'Volley ball' },
+                    { value: 484, name: 'Football' },
+                ]" [padAngle]="0">
+        </app-donut-chart>
+        <app-donut-chart [chartData]="[
+                    { value: 1048, name: 'Basket ball' },
+                    { value: 735, name: 'Tennis' },
+                    { value: 580, name: 'Volley ball' },
+                    { value: 484, name: 'Football' },
+                ]" [padAngle]="0">
+        </app-donut-chart>
+    </div>
 </section>

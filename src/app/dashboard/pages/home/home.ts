@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { ChildTableComponent } from '../../shared/components/child-table/child-table.component';
 import { SliderModule } from 'primeng/slider';
+import { DonutChartComponent } from "../../shared/charts/donut-chart/donut-chart.component";
 
 
 @Component({
   selector: 'app-home',
-  imports: [SharedKpiCard, ChildTableComponent, SliderModule],
+  imports: [SharedKpiCard, ChildTableComponent, SliderModule, DonutChartComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
