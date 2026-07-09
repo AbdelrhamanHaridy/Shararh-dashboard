@@ -1,0 +1,54 @@
+<!-- Title and Show All Button -->
+<section class="rounded-2xl overflow-hidden shadow-md">
+    <div *ngIf="title" class="flex items-center justify-between px-6 pt-6 pb-1 bg-white">
+        <div>
+            <div class="flex flex-row gap-2">
+                <img src="assets/icons/global/people.svg" alt="Navigate">
+                <h2 class="text-text-secondary text-base font-lexend font-bold">{{ title }}</h2>
+            </div>
+            <p class="text-[12px] font-medium text-primary">5 موظف نشط</p>
+        </div>
+        <!-- <button *ngIf="showAllButton" class="btn-outlined" (click)="onShowAll()">
+            {{showAllButtonLabel}}
+        </button> -->
+        <span class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">آخر تحديث: الآن</span>
+    </div>
+
+
+    <!-- Table -->
+    <p-table [value]="tableData" [responsiveLayout]="'scroll'" class="w-full text-sm">
+        <ng-template pTemplate="header">
+            <tr class="text-[12px] font-medium leading-[120%] text-nowrap">
+                <th *ngFor="let col of columns" class="px-4 py-3 text-left">
+                    {{ col.header }}
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+            <tr class="hover:bg-light-hover cursor-pointer transition">
+                <td *ngFor="let col of columns" class="text-nowrap">
+                    @switch (col.field) {
+                    @case('number') {
+                    <div class="bg-[#EEF2FF] rounded-full w-8 h-8 flex items-center justify-center font-black">{{
+                        row[col.field] }}</div>
+                    }
+                    @case('actions') {
+                    <div class="flex flex-row items-center gap-3">
+                        <p-button icon="pi pi-eye" [rounded]="true" [text]="true"
+                            [style]="{'color': 'var(--color-primary)'}" (click)="onActionClick('view', row)" />
+                        <p-button icon="pi pi-ban" [rounded]="true" [text]="true" severity="help"
+                            (click)="onActionClick('ban', row)" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                            (click)="onActionClick('delete', row)" />
+                    </div>
+                    } @default {
+                    <p>{{ row[col.field] }}</p>
+                    } }
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</section>
+
+<!-- border: 1px solid #F2F2F2 -->

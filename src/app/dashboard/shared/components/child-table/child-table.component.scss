@@ -1,0 +1,25 @@
+:host {
+  --p-datatable-header-cell-background: #E6F7F4; // #F8FAFC80
+  --p-datatable-header-cell-color: #2E3139;
+  --p-datatable-header-cell-font-size: 16px;
+  // --p-datatable-header-cell-border-color: #2E3139;
+  // --p-datatable-body-cell-border-color: var(--color-surface);
+  // --p-datatable-row-hover-background: var(--color-blue-muted);
+  // --p-datatable-column-title-font-weight: 500;
+  --p-datatable-header-cell-padding: 1.269rem 1.269rem;
+    --p-datatable-body-cell-padding: 2rem 1.5rem;
+  // --p-datatable-body-cell-border-color: #fff;
+
+  --p-icon-size: 18px;
+  ::ng-deep .p-datatable-sortable-column {
+    --p-icon-size: 14px;
+  }
+  ::ng-deep .p-datatable {
+    // border-radius: 32px;
+    // overflow: hidden;
+    font-family: 'Lexend', sans-serif;
+    .p-datatable-thead > tr > th {
+      font-size: 16px;
+    }
+  }
+}
