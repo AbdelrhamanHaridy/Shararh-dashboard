@@ -1,0 +1,14 @@
+<div class="p-5 bg-white rounded-2xl border border-[#E2E8F0] flex flex-col items-end gap-6 relative">
+    @if (navigateLink()) {
+    <a [href]="navigateLink()" class="absolute top-3 left-3 cursor-pointer">
+        <img src="assets/icons/cards/link_navigate.svg" alt="Navigate">
+    </a>
+    }
+    <div [style.backgroundColor]="iconBgColor()" class="rounded-xl p-3">
+        <img [src]="iconPath()" [alt]="title()">
+    </div>
+    <div class="flex flex-col items-end gap-2 w-fit">
+        <p class="text-base font-medium text-text-secondary">{{ title() }}</p>
+        <span [style.color]="numberColor()" class="text-4xl font-medium">{{ number() }}</span>
+    </div>
+</div>

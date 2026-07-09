@@ -4,3 +4,21 @@
     </h1>
     <p>home works!</p>
 </main>
+<section class="p-6 grid grid-cols-4 gap-2.5">
+    <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="120" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#137FEC" navigateLink="/subscriptions">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'الاشتراكات المنتهيه'" [number]="5" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#D22F27">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="15" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#10A922">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="20" iconPath="assets/icons/cards/people.svg"
+        iconBgColor="#C3E1FF" numberColor="#000" navigateLink="/subscriptions">
+    </app-shared-kpi-card>
+</section>
+<section class="p-6 grid grid-cols-10 gap-2.5">
+    <div></div>
+    <div></div>
+</section>
