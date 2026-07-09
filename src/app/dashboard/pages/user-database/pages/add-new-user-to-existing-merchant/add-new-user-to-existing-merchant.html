@@ -1,0 +1,48 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+    <section class="p-5 bg-white rounded-3xl grid grid-cols-2 gap-6">
+        <app-shared-text-input formControlName="fullName" label="المؤسسه" placeholder="ادخل اسم او كود المؤسسه"
+            inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+        <app-shared-select formControlName="branch" label="الفرع" placeholder="اختر الفرع" inputId="branch"
+            [options]="emailOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-envelope"
+            [isRequired]="true"></app-shared-select>
+    </section>
+    <section class="p-5 bg-white rounded-3xl">
+        <h2 class="text-text-secondary text-base font-medium mb-7">المعلومات الأساسية</h2>
+
+        <div class="grid grid-cols-2 gap-6">
+            <app-shared-text-input formControlName="fullName" label="ادخل الاسم بالكامل"
+                placeholder="الاسم الاول بالكامل" inputId="fullName" primeNgIcon="pi pi-user"
+                [isRequired]="true"></app-shared-text-input>
+            <app-shared-text-input formControlName="fullName" label="البريد الالكتروني"
+                placeholder="ادخل البريد الالكتروني" inputId="fullName" primeNgIcon="pi pi-user"
+                [isRequired]="true"></app-shared-text-input>
+            <app-shared-text-input formControlName="fullName" label="رقم الهاتف" placeholder="ادخل رقم الهاتف"
+                inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+            <app-shared-text-input formControlName="fullName" label="كلمة المرور" placeholder="ادخل كلمة المرور"
+                inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-select formControlName="role" label="الدور الوظيفي" placeholder="اختر الدور الوظيفي"
+                inputId="role" [options]="roleOptions" optionLabel="label" optionValue="value"
+                primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
+        </div>
+    </section>
+    <section class="py-5 px-2.5 bg-white rounded-3xl">
+        <h2 class="text-text-secondary text-base font-medium mb-7">الصلاحيات </h2>
+        <h3>المديونيات</h3>
+        <div class="px-4 py-2.5 bg-white rounded-2xl border border-[#DDE1E4] flex flex-row justify-between items-center">
+            <div class="flex flex-row items-center gap-4">
+                <div class="rounded-2xl p-3.5 bg-[#F0FDF4]">
+                    <img class="w-6 h-6" src="assets/icons/global/check.svg" alt="Notifications">
+                </div>
+                <p class="text-[#334155] text-sm font-medium">تسجيل تسليم أموال</p>
+            </div>
+            <div class="" dir="ltr">
+                <p-toggleswitch />
+            </div>
+        </div>
+    </section>
+
+    <button type="submit" [disabled]="userForm.invalid"
+        class="mt-6 px-4 py-2 bg-primary text-white rounded w-fit">Save</button>
+</form>

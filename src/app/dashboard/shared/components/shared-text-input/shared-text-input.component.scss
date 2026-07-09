@@ -1,0 +1,42 @@
+:host {
+  --p-inputtext-padding-y: 0.532rem;
+  --p-inputtext-padding-x: 1rem;
+  --p-inputtext-border-radius: 10px;
+  --p-inputtext-border-color: #BDBDBD;
+}
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  // margin-bottom: 16px;
+
+  .input-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #44483F;
+  }
+
+  .text-danger {
+    color: #e24c4c;
+  }
+
+  input.p-inputtext {
+    width: 100%;
+  }
+
+  // PrimeNG doesn't auto-style inputs bound via [formControl] the way
+  // formControlName does in some versions, so the invalid state is
+  // reinforced explicitly here in addition to Angular's ng-invalid class.
+  input.p-inputtext.ng-invalid.ng-dirty,
+  input.p-inputtext.ng-invalid.ng-touched {
+    border-color: #e24c4c;
+  }
+
+  .p-error {
+    font-size: 12px;
+    color: #e24c4c;
+  }
+}

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { SharedTableComponent } from '../../shared/components/shared-table/shared-table.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -11,12 +12,14 @@ import { MenuItem } from 'primeng/api';
   styleUrl: './user-database.scss',
 })
 export class UserDatabase {
+  private router = inject(Router);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
 
   onAddUser(): void {
-    // open a dialog, navigate to a form route, etc.
+    this.router.navigate(['/user-database/add-new-user/add-merchant-for-first-time']);
   }
   columns = [
     { field: 'username', header: 'اسم المستخدم' },

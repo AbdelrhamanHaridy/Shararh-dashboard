@@ -1,0 +1,25 @@
+<div class="input-wrapper">
+  <label [for]="inputId" class="input-label">
+    <i *ngIf="primeNgIcon" [class]="primeNgIcon"></i>
+    {{ label }}<span *ngIf="isRequired" class="text-danger"> *</span>
+  </label>
+
+  <input pInputText [id]="inputId" [name]="inputId" [type]="type" [placeholder]="placeholder" [formControl]="control"
+    [class.ng-invalid]="isInvalid" class="w-full" />
+
+  @if (control.hasError('required') && (control.dirty || control.touched)) {
+  <small class="p-error">{{ label }} is required</small>
+  }
+  @if (control.hasError('email') && !control.hasError('required')) {
+  <small class="p-error">Invalid email format</small>
+  }
+  @if (control.hasError('minlength')) {
+  <small class="p-error">Minimum length is {{ control.getError('minlength').requiredLength }}</small>
+  }
+  @if (control.hasError('maxlength')) {
+  <small class="p-error">Maximum length is {{ control.getError('maxlength').requiredLength }}</small>
+  }
+  @if (control.hasError('pattern')) {
+  <small class="p-error">Invalid format</small>
+  }
+</div>

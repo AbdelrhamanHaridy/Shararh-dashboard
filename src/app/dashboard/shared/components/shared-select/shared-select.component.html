@@ -1,0 +1,24 @@
+<div class="input-wrapper">
+  <label [for]="inputId" class="input-label">
+    <i *ngIf="primeNgIcon" [class]="primeNgIcon"></i>
+    {{ label }}<span *ngIf="isRequired" class="text-danger"> *</span>
+  </label>
+
+  <p-select
+    [inputId]="inputId"
+    [options]="normalizedOptions"
+    optionLabel="label"
+    optionValue="value"
+    [ngModel]="value"
+    [disabled]="disabled"
+    [placeholder]="currentPlaceholder"
+    [class.ng-invalid]="isInvalid"
+    styleClass="w-full"
+    (onChange)="onSelectionChange($event.value)"
+    (onBlur)="onTouched()"
+  ></p-select>
+
+  @if (control?.hasError('required') && (control?.dirty || control?.touched)) {
+    <small class="p-error">{{ requiredErrorMessage }}</small>
+  }
+</div>

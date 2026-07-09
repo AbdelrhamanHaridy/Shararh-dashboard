@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { userDatabaseRoutes } from './pages/user-database/user-database.routing';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -8,7 +9,7 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: 'user-database',
-    loadComponent: () => import('./pages/user-database/user-database').then((m) => m.UserDatabase),
+    children: userDatabaseRoutes,
   },
   {
     path: 'subscription-management',
