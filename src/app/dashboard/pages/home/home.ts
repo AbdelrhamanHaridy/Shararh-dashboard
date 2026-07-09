@@ -2,12 +2,18 @@ import { Component } from '@angular/core';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { ChildTableComponent } from '../../shared/components/child-table/child-table.component';
 import { SliderModule } from 'primeng/slider';
-import { DonutChartComponent } from "../../shared/charts/donut-chart/donut-chart.component";
-
+import { DonutChartComponent } from '../../shared/charts/donut-chart/donut-chart.component';
+import { NotificationComponent } from '../../shared/components/notification/notification';
 
 @Component({
   selector: 'app-home',
-  imports: [SharedKpiCard, ChildTableComponent, SliderModule, DonutChartComponent],
+  imports: [
+    SharedKpiCard,
+    ChildTableComponent,
+    SliderModule,
+    DonutChartComponent,
+    NotificationComponent,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -49,6 +55,12 @@ export class Home {
       duration: '90 min',
       status: 'Completed',
     },
-
+    {
+      player: 'Layla Khaled',
+      sport: 'Football',
+      date: '18 Jan 2026',
+      duration: '90 min',
+      status: 'Completed',
+    },
   ];
 }
