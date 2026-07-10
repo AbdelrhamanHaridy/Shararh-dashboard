@@ -1,18 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SharedTextInputComponent } from '../../shared/components/shared-text-input/shared-text-input.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { MenuItem } from 'primeng/api';
+import { SubscriptionCard } from './components/subscription-card/subscription-card';
 
 @Component({
   selector: 'app-subscription-management',
-  imports: [SharedTextInputComponent, ReactiveFormsModule, SharedKpiCard, PageHeaderComponent],
+  imports: [SharedKpiCard, PageHeaderComponent, SubscriptionCard],
   templateUrl: './subscription-management.html',
   styleUrl: './subscription-management.scss',
 })
 export class SubscriptionManagement implements OnInit {
-  userForm!: FormGroup;
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems = [{ label: 'إدارة الاشتراكات' }];
 
@@ -90,21 +88,8 @@ export class SubscriptionManagement implements OnInit {
       actionDate: '30-12-2024',
     },
   ];
-  constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.userForm = this.fb.group({
-      fullName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-    });
-  }
-
-  onSubmit() {
-    if (this.userForm.valid) {
-      console.log(this.userForm.value);
-    }
-  }
+  ngOnInit() {}
 
   copyToClipboard(phone: string) {
     navigator.clipboard.writeText(phone).then(() => {
@@ -113,5 +98,10 @@ export class SubscriptionManagement implements OnInit {
     // .catch(err => {
     //   console.error('فشل نسخ رقم الهاتف:', err);
     // });
+  }
+
+  onViewDetails(subscriptionId: number) {
+    console.log('View details for subscription:', subscriptionId);
+    // Add navigation logic here
   }
 }
