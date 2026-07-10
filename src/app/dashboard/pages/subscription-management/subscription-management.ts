@@ -18,12 +18,34 @@ export class SubscriptionManagement implements OnInit {
 
   subscriptions = [
     {
+      id: 5,
+      status: 'نشطة',
+      statusColor: '#10A922',
+      statusBgColor: '#E8F5E9',
+      merchantName: 'محل الحرمين',
+      ownerName: 'أحمد محمد',
+      isTrial: true,
+      planName: '',
+      subscriptionType: 'فتره تجريبيه',
+      officesCount: 0,
+      phone: '+20 122 345 6789',
+      location: 'غير محدد',
+      paymentGateway: 'غير محدد',
+      merchantType: '20 جهاز',
+      displayDate: '30-12-2024',
+      actionDate: '30-12-2024',
+    },
+    {
       id: 1,
       status: 'نشطة',
       statusColor: '#10A922',
       statusBgColor: '#E8F5E9',
       merchantName: 'صيدلية الشفاء',
-      subscriptionType: '6 أشهر الى سنوية',
+      ownerName: 'أريج مصطفى',
+      isTrial: false,
+      planName: 'باقة النمو',
+      subscriptionType: 'اشتراك سنوي',
+      officesCount: 3,
       phone: '+20 123 456 789',
       location: 'المحلة الشرقي',
       paymentGateway: 'غير محدد',
@@ -37,7 +59,11 @@ export class SubscriptionManagement implements OnInit {
       statusColor: '#FF9500',
       statusBgColor: '#FFF4E5',
       merchantName: 'محل المزارعين',
-      subscriptionType: '4 أشهر الى سنوية',
+      ownerName: 'أحمد محمد',
+      isTrial: false,
+      planName: 'باقة الأساسية',
+      subscriptionType: 'اشتراك شهري',
+      officesCount: 1,
       phone: '+20 123 345 6789',
       location: 'المحلة الشرقي',
       paymentGateway: 'غير محدد',
@@ -51,21 +77,11 @@ export class SubscriptionManagement implements OnInit {
       statusColor: '#10A922',
       statusBgColor: '#E8F5E9',
       merchantName: 'مطعم الأصالة',
-      subscriptionType: '6 أشهر الى سنوية',
-      phone: '+20 123 456 789',
-      location: 'المحلة الشرقي',
-      paymentGateway: 'غير محدد',
-      merchantType: 'شريك تجاري',
-      displayDate: '30-12-2024',
-      actionDate: '30-12-2024',
-    },
-    {
-      id: 4,
-      status: 'نشطة',
-      statusColor: '#10A922',
-      statusBgColor: '#E8F5E9',
-      merchantName: 'سوبر ماركت النور',
-      subscriptionType: '6 أشهر الى سنوية',
+      ownerName: 'محمد الشمري',
+      isTrial: false,
+      planName: 'باقة النمو',
+      subscriptionType: 'اشتراك سنوي',
+      officesCount: 2,
       phone: '+20 123 456 789',
       location: 'المحلة الشرقي',
       paymentGateway: 'غير محدد',
@@ -74,7 +90,6 @@ export class SubscriptionManagement implements OnInit {
       actionDate: '30-12-2024',
     },
   ];
-
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
@@ -89,5 +104,14 @@ export class SubscriptionManagement implements OnInit {
     if (this.userForm.valid) {
       console.log(this.userForm.value);
     }
+  }
+
+  copyToClipboard(phone: string) {
+    navigator.clipboard.writeText(phone).then(() => {
+      // alert('تم نسخ رقم الهاتف بنجاح');
+    });
+    // .catch(err => {
+    //   console.error('فشل نسخ رقم الهاتف:', err);
+    // });
   }
 }
