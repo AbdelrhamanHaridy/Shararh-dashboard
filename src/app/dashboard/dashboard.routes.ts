@@ -25,4 +25,11 @@ export const dashboardRoutes: Routes = [
         (m) => m.PotentialCustomerCenter,
       ),
   },
+  {
+    path: 'contact-log',
+    loadComponent: () =>
+      import('./pages/contact-log/contact-log').then(
+        (m) => m.ContactLog,
+      ),
+  },
 ];

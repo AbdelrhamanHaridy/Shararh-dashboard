@@ -1,0 +1,102 @@
+<section class="px-6 mb-8">
+    <app-page-header title="سجل الاتصال" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+</section>
+<section class="grid grid-cols-3 gap-8 p-6" dir="rtl">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-8 px-5 py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
+
+        <section class="">
+            <div class="flex flex-row items-center gap-3 mb-7">
+                <img src="assets/icons/global/green_small_border.svg" alt="border" />
+                <h2 class="text-[#191C18] text-xl font-medium">تسجيل تواصل جديد</h2>
+
+            </div>
+            <div class="grid grid-cols-2 gap-6">
+                <app-shared-text-input formControlName="customerName" label="اسم العميل" placeholder="ادخل اسم العميل"
+                    inputId="customerName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="customerNumber" label="رقم العميل" placeholder="ادخل رقم العميل"
+                    inputId="customerNumber" primeNgIcon="pi pi-hashtag" [isRequired]="true"></app-shared-text-input>
+
+                <app-shared-select formControlName="contactType" label="نوع التواصل" placeholder="اختر نوع التواصل"
+                    inputId="contactType" [options]="contactTypeOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="contactVia" label="التواصل عبر" placeholder="اختر طريقة التواصل"
+                    inputId="contactVia" [options]="contactViaOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="contactReason" label="سبب التواصل" class="col-span-2"
+                    placeholder="اختر سبب التواصل" inputId="contactReason" [options]="contactReasonOptions"
+                    optionLabel="label" optionValue="value" primeNgIcon="pi pi-question-circle"
+                    [isRequired]="true"></app-shared-select>
+
+                <div class="flex flex-col gap-2 col-span-2">
+                    <label for="notes" class="text-sm font-medium text-text-primary font-tajawal">ملاحظات</label>
+                    <textarea id="notes" formControlName="notes" placeholder="ادخل الملاحظات"
+                        class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm"
+                        rows="3"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-row gap-8 justify-end">
+            <button type="submit" [disabled]="contactForm.invalid"
+                class="px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit font-tajawal font-medium">تسجيل
+                التواصل</button>
+        </div>
+    </form>
+
+    <!-- Left column: task overview + suggested tasks -->
+    <div class="flex flex-col gap-8">
+
+        <!-- Box 1: Task stats -->
+        <div class="flex flex-col gap-5 p-6 rounded-3xl bg-white border border-[#C2C8BD]">
+            <h3 class="text-lg font-medium text-[#191C18] font-tajawal">المهام المقترحه</h3>
+
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#196D00] shrink-0"></span>
+                        <span class="text-base text-[#42493F] font-tajawal">إجمالي المهام</span>
+                    </div>
+                    <span class="text-2xl font-medium text-text-primary font-tajawal">{{ taskStats.total }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#3D6634] shrink-0"></span>
+                        <span class="text-base text-[#42493F] font-tajawal">مهام منتهيه</span>
+                    </div>
+                    <span class="text-2xl font-medium text-text-primary font-tajawal">{{ taskStats.completed }}</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 pt-4 border-t border-gray-100">
+                <div class="h-2 w-full rounded-full bg-[#E5E8E0]">
+                    <div class="h-full rounded-full bg-[#196D00]" [style.width.%]="taskStats.progress"></div>
+                </div>
+                <span class="text-[10px] text-[#42493F] font-tajawal">{{ taskStats.progress }}% تم من المهام
+                    المقترحه</span>
+            </div>
+        </div>
+
+        <!-- Box 2: Suggested tasks list -->
+        <div class="flex flex-col gap-5 p-6 rounded-3xl bg-white border border-[#C2C8BD]">
+            <h3 class="text-lg font-medium text-[#191C18] font-tajawal">المهام المقترحه</h3>
+
+            <ul class="flex flex-col gap-4">
+                @for (task of suggestedTasks; track task.id) {
+                <li class="flex items-center gap-2">
+                    <span class="w-1 h-1 rounded-full bg-[#8A97A8]  shrink-0"></span>
+                    <span class="text-base text-[#8A97A8] font-normal font-tajawal leading-relaxed">{{ task.title
+                        }}</span>
+                </li>
+                }
+            </ul>
+
+            <button type="button"
+                class="w-full px-4 py-3 rounded-xl border border-[#C2C8BD] text-sm font-medium text-[#42493F] font-tajawal text-center hover:bg-gray-50 transition-colors cursor-pointer">
+                عرض جميع المهام
+            </button>
+        </div>
+    </div>
+</section>

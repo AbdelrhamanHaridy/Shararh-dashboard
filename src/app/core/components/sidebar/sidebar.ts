@@ -24,7 +24,7 @@ export class Sidebar {
     { label: 'قاعدة بيانات المستخدمين', icon: 'icon-1.svg', route: '/user-database' },
     { label: 'إدارة الاشتراكات', icon: 'icon-2.svg', route: '/subscription-management' },
     { label: 'مركز العملاء المحتملين', icon: 'icon-3.svg', route: '/potential-customer-center' },
-    { label: 'سجل الاتصال', icon: 'icon-4.svg', route: '/contact-logs' },
+    { label: 'سجل الاتصال', icon: 'icon-4.svg', route: '/contact-log' },
     { label: 'لوحة التقدم', icon: 'icon-5.svg', route: '/progress-dashboard' },
     { label: 'إدارة النسخ والتحديثات', icon: 'icon-6.svg', route: '/version-control' },
     { label: 'الاشعارات', icon: 'icon-7.svg', route: '/notifications' },
