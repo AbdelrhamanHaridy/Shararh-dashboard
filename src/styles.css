@@ -1,7 +1,51 @@
 @import 'tailwindcss';
 
+/* Tajawal Font */
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-Light.ttf') format('truetype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-Medium.ttf') format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('assets/fonts/Tajawal-Black.ttf') format('truetype');
+  font-weight: 900;
+}
+
 @theme {
-  --color-background: #F7F7F7;
+  --font-tajawal: 'Tajawal', sans-serif;
+  --color-background: #f7f7f7;
   /* COLORS */
   --color-primary: #10a922;
   --color-primary-op-8: #10a92214;
@@ -16,7 +60,8 @@
 }
 
 body {
-      background-color: var(--color-background);
+  @apply font-tajawal;
+  background-color: var(--color-background);
 }
 /*  primary: "#10A922", */
 /* primary: "#1E293B",

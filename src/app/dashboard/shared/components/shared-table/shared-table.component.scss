@@ -11,11 +11,11 @@
   // --p-paginator-border-radius: 0 0 32px 32px;
   // --p-paginator-padding: 1.188rem 2rem;
   // --p-datatable-body-cell-border-color: #fff;
-  --p-datatable-header-cell-background: #E6F7F4; // #F8FAFC80
-  --p-datatable-header-cell-color: #2E3139;
+  --p-datatable-header-cell-background: #e6f7f4; // #F8FAFC80
+  --p-datatable-header-cell-color: #2e3139;
   --p-datatable-header-cell-font-size: 16px;
   --p-datatable-header-cell-padding: 1.25rem 0.75rem;
-    --p-datatable-body-cell-padding: 1.4rem 0.75rem;
+  --p-datatable-body-cell-padding: 1.4rem 0.75rem;
 
   //   Paginator
   --p-paginator-nav-button-color: #000;
@@ -27,12 +27,12 @@
 
   --p-icon-size: 18px;
   ::ng-deep .p-datatable-sortable-column {
-      --p-icon-size: 14px;
+    --p-icon-size: 14px;
   }
   ::ng-deep .p-datatable {
     border-radius: 32px;
     overflow: hidden;
-    font-family: "Lexend", sans-serif;
+    font-family: 'tajawal';
     .p-datatable-thead > tr > th {
       font-size: 16px;
       text-align: center;
@@ -46,10 +46,10 @@
     font-weight: bold;
     font-size: 12px;
     color: #94a3b8;
-    font-family: "Lexend", sans-serif;
+    font-family: 'tajawal';
   }
   ::ng-deep .p-paginator-page {
-    font-family: "Lexend";
+    font-family: 'tajawal';
   }
 
   //   ::ng-deep .p-paginator-next,

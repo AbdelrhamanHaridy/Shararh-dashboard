@@ -6,13 +6,14 @@
         }
     </div>
     @if (linkText() && linkUrl()) {
-    <a [href]="linkUrl()" class="text-text-success font-lexend font-bold underline whitespace-nowrap  flex-1 text-center">{{ linkText()
+    <a [href]="linkUrl()"
+        class="text-text-success font-tajawal font-bold underline whitespace-nowrap  flex-1 text-center">{{ linkText()
         }}</a>
     }
     @if (time()) {
     <div class="flex flex-row gap-2 w-fit">
         <img src="assets/icons/global/clock.svg" alt="Time">
-        <p class="text-text-secondary text-sm font-lexend font-bold text-nowrap">{{ time() }}</p>
+        <p class="text-text-secondary text-sm font-tajawal font-bold text-nowrap">{{ time() }}</p>
     </div>
     }
 </div>
