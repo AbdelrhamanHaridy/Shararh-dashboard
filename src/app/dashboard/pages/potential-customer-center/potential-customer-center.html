@@ -51,83 +51,9 @@
 <section class="p-6">
     <div class="grid grid-cols-2 gap-5">
         @for (customer of customers; track customer.id) {
-        <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4" dir="rtl">
-
-            <!-- Header -->
-            <div class="flex items-start justify-between">
-                <!-- avatar (right) + name/location/date -->
-                <div class="flex flex-row gap-3">
-                    <img [src]="customer.avatarUrl" alt="avatar" class="w-12 h-12 rounded-full object-cover shrink-0" />
-
-                    <div class="flex flex-col gap-1">
-                        <h3 class="text-lg font-medium text-[#0F172A] font-tajawal text-nowrap">{{ customer.name }}
-                        </h3>
-                        <div class="flex items-center gap-1 text-xs text-text-secondary font-tajawal">
-                            <img src="assets/icons/global/location_mark.svg" alt="location" />
-                            <span>{{ customer.city }}، {{ customer.country }}</span>
-                        </div>
-                        <span class="text-[10px] font-normal text-text-secondary font-tajawal text-nowrap">تم قبوله {{
-                            customer.acceptedDate }}</span>
-                    </div>
-                </div>
-
-                <!-- badge (right of kebab) + kebab (far left) -->
-                <div class="flex items-center gap-5">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-medium font-tajawal shrink-0"
-                        [style.color]="customer.statusColor" [style.backgroundColor]="customer.statusBgColor">
-                        {{ customer.status }}
-                    </span>
-                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-                        <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
-                    </button>
-                </div>
-            </div>
-
-            <!-- Info boxes -->
-            <div class="grid grid-cols-2 gap-2.5">
-                <div class="flex items-center justify-between bg-[#F8FAFC] rounded-xl p-4">
-                    <div class="flex flex-col gap-1">
-                        <span class="text-[10px] text-text-secondary font-tajawal">رقم الهاتف</span>
-                        <span class="text-sm font-medium text-[#0F172A] font-tajawal" dir="ltr">{{ customer.phone
-                            }}</span>
-                    </div>
-                    <img src="assets/icons/global/clipboard.svg" alt="phone" class="w-5 h-5 shrink-0"
-                        (click)="onCopyPhone()" />
-                </div>
-                <div class="flex flex-col gap-1 bg-[#F8FAFC] rounded-xl p-4">
-                    <span class="text-[10px] text-text-secondary font-tajawal">الموظف المسؤول</span>
-                    <span class="text-sm font-medium text-[#0F172A] font-tajawal">{{ customer.assignedEmployee }}</span>
-                </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="flex flex-col gap-2">
-                <span class="text-[10px] font-medium text-text-secondary font-tajawal">ملاحظات</span>
-                <div class="bg-[#F8FAFC] rounded-xl p-3 border-s-4 border-s-[#84D28F]">
-                    <p class="text-sm font-medium text-[#475569] font-tajawal leading-relaxed line-clamp-2">{{
-                        customer.notes }}</p>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="flex items-center justify-between pt-4 border-t border-[#F1F5F9]">
-                <div class="flex items-center gap-2">
-                    <button type="button"
-                        class="w-10 h-10 rounded-xl bg-[#10A922] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
-                        <img src="assets/icons/global/whatsapp.svg" alt="whatsapp" class="w-6 h-6" />
-                    </button>
-                    <button type="button"
-                        class="w-10 h-10 rounded-xl bg-[#308FEE] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
-                        <img src="assets/icons/global/phone.svg" alt="call" class="w-6 h-6" />
-                    </button>
-                </div>
-                <button type="button"
-                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-text-primary font-tajawal hover:bg-gray-50 transition-colors cursor-pointer">
-                    <span>تغيير الحالة</span>
-                    <img src="assets/icons/global/down_arrow.svg" alt="chevron" />
-                </button>
-            </div>
-        </div>
+        <app-customer-card [customer]="customer" (copyPhone)="copyToClipboard($event)"
+            (changeStatus)="onChangeStatus($event)" (whatsappContact)="onWhatsappContact($event)"
+            (phoneCall)="onPhoneCall($event)" />
         }
     </div>
 </section>

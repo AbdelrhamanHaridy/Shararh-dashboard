@@ -1,15 +1,12 @@
-import { Component, input, output } from '@angular/core';
-import {
-  Subscription,
-  SubscriptionCard,
-} from '../subscription-management/components/subscription-card/subscription-card';
+import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
+import { CustomerCard } from './components/customer-card/customer-card';
 
 @Component({
   selector: 'app-potential-customer-center',
-  imports: [SharedKpiCard, PageHeaderComponent, SubscriptionCard],
+  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard],
   templateUrl: './potential-customer-center.html',
   styleUrl: './potential-customer-center.scss',
 })
@@ -75,24 +72,29 @@ export class PotentialCustomerCenter {
       notes: 'يحتاج إلى معاينة الموقع للتأكد من المساحات المتاحة قبل البدء في التنفيذ...',
     },
   ];
-  ngOnInit() {}
 
   copyToClipboard(phone: string) {
     navigator.clipboard.writeText(phone).then(() => {
       // alert('تم نسخ رقم الهاتف بنجاح');
     });
-    // .catch(err => {
-    //   console.error('فشل نسخ رقم الهاتف:', err);
-    // });
   }
-  subscription = input.required<Subscription>();
-  copyPhone = output<string>();
 
-  onViewDetails(subscriptionId: number) {
-    console.log('View details for subscription:', subscriptionId);
-    // Add navigation logic here
+  onChangeStatus(customerId: number) {
+    console.log('Change status for customer:', customerId);
+    // Add status change logic here
   }
-  onCopyPhone() {
-    this.copyPhone.emit(this.subscription().phone);
+
+  onWhatsappContact(customerId: number) {
+    const customer = this.customers.find((c) => c.id === customerId);
+    if (customer) {
+      window.open(`https://wa.me/${customer.phone.replace(/[^0-9]/g, '')}`, '_blank');
+    }
+  }
+
+  onPhoneCall(customerId: number) {
+    const customer = this.customers.find((c) => c.id === customerId);
+    if (customer) {
+      window.location.href = `tel:${customer.phone}`;
+    }
   }
 }
