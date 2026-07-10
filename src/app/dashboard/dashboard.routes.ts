@@ -18,4 +18,11 @@ export const dashboardRoutes: Routes = [
         (m) => m.SubscriptionManagement,
       ),
   },
+  {
+    path: 'potential-customer-center',
+    loadComponent: () =>
+      import('./pages/potential-customer-center/potential-customer-center').then(
+        (m) => m.PotentialCustomerCenter,
+      ),
+  },
 ];
