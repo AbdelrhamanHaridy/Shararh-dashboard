@@ -1,0 +1,107 @@
+<section class="px-6 mb-8">
+    <app-page-header title="لوحة التقدم" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+</section>
+
+<section class="px-6" dir="rtl">
+    <!-- Description -->
+    <p class="text-center text-[#8A97A8] text-sm font-normal font-tajawal mb-12 max-w-2xl mx-auto">
+        استعراض أداء الفريق الموظفين وتحديد المساهمات الفردية الموظفين وتحديد نظام النقاط تدخل
+    </p>
+
+    <!-- Top 3 Podium -->
+    <div class="flex items-end justify-center gap-8 mb-16">
+        <!-- 2nd Place (Left) -->
+        <div class="flex flex-col items-center gap-4 pb-8">
+            <div class="relative">
+                <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-[#C0C0C0] shadow-lg">
+                    <img [src]="topThree[0].avatar" [alt]="topThree[0].name" class="w-full h-full object-cover" />
+                </div>
+                <div
+                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#C0C0C0] flex items-center justify-center border-2 border-white">
+                    <span class="text-white text-sm font-bold font-tajawal">2</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <h3 class="text-[#191C18] text-base font-medium font-tajawal mb-1">{{ topThree[0].name }}</h3>
+                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree[0].points }} نقطة</p>
+            </div>
+            <div class="w-20 h-20 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center">
+                <i class="pi pi-trophy text-2xl text-[#C0C0C0]"></i>
+            </div>
+        </div>
+
+        <!-- 1st Place (Center) -->
+        <div class="flex flex-col items-center gap-4">
+            <div class="relative">
+                <i class="pi pi-star-fill text-4xl text-[#FFD700] absolute -top-8 left-1/2 -translate-x-1/2"></i>
+                <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-[#FFD700] shadow-xl">
+                    <img [src]="topThree[1].avatar" [alt]="topThree[1].name" class="w-full h-full object-cover" />
+                </div>
+                <div
+                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#FFD700] flex items-center justify-center border-2 border-white">
+                    <span class="text-white text-sm font-bold font-tajawal">1</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <h3 class="text-[#191C18] text-base font-medium font-tajawal mb-1">{{ topThree[1].name }}</h3>
+                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree[1].points }} نقطة</p>
+            </div>
+            <div class="w-20 h-20 rounded-xl bg-[#FFF9E6] border border-[#FFD700] flex items-center justify-center">
+                <i class="pi pi-star-fill text-2xl text-[#FFD700]"></i>
+            </div>
+        </div>
+
+        <!-- 3rd Place (Right) -->
+        <div class="flex flex-col items-center gap-4 pb-8">
+            <div class="relative">
+                <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-[#CD7F32] shadow-lg">
+                    <img [src]="topThree[2].avatar" [alt]="topThree[2].name" class="w-full h-full object-cover" />
+                </div>
+                <div
+                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#CD7F32] flex items-center justify-center border-2 border-white">
+                    <span class="text-white text-sm font-bold font-tajawal">3</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <h3 class="text-[#191C18] text-base font-medium font-tajawal mb-1">{{ topThree[2].name }}</h3>
+                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree[2].points }} نقطة</p>
+            </div>
+            <div class="w-20 h-20 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center">
+                <i class="pi pi-trophy text-2xl text-[#CD7F32]"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Employees Section -->
+    <div class="max-w-xl mx-auto mb-8">
+        <h2 class="text-[#191C18] text-xl font-medium font-tajawal mb-6 text-center">ترتيب باقي الموظفين</h2>
+
+        <div class="flex flex-col gap-4">
+            @for (employee of rankedEmployees; track employee.id) {
+            <div
+                class="flex items-center justify-between px-6 py-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                <!-- Avatar and Info -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#E2E8F0]">
+                        <img [src]="employee.avatar" [alt]="employee.name" class="w-full h-full object-cover" />
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-[#191C18] text-base font-medium font-tajawal">{{ employee.name }}</h4>
+                        <p class="text-[#8A97A8] text-sm font-normal font-tajawal">{{ employee.position }}</p>
+                    </div>
+                </div>
+                <!-- Points Badge -->
+                <div class="px-4 py-2 rounded-xl border-2 border-[#10A922] bg-white">
+                    <span class="text-[#10A922] text-base font-bold font-tajawal">{{ employee.points }}</span>
+                    <span class="text-[#10A922] text-sm font-normal font-tajawal mr-1">نقطة</span>
+                </div>
+
+                <!-- Rank Number -->
+
+                <span class="text-[#10A922] text-lg font-bold font-tajawal min-w-8">#{{ employee.rank }}</span>
+
+            </div>
+            }
+        </div>
+    </div>
+</section>

@@ -16,6 +16,25 @@
         iconBgColor="#C3E1FF" numberColor="#FF9500">
     </app-shared-kpi-card>
 </section>
+
+<!-- Custom Tabs Section -->
+<section class="px-6 mb-6" dir="rtl">
+    <div class="flex gap-2 border-b-2 border-[#E2E8F0]">
+        <button type="button" (click)="switchTab('underImplementation')"
+            [class]="activeTab === 'underImplementation' 
+                ? 'px-6 py-3 text-base font-medium font-tajawal text-primary border-b-2 border-primary -mb-0.5 transition-all' 
+                : 'px-6 py-3 text-base font-medium font-tajawal text-[#8A97A8] hover:text-text-primary transition-all'">
+            تحت التنفيذ
+        </button>
+        <button type="button" (click)="switchTab('potential')"
+            [class]="activeTab === 'potential' 
+                ? 'px-6 py-3 text-base font-medium font-tajawal text-primary border-b-2 border-primary -mb-0.5 transition-all' 
+                : 'px-6 py-3 text-base font-medium font-tajawal text-[#8A97A8] hover:text-text-primary transition-all'">
+            العملاء المحتملون
+        </button>
+    </div>
+</section>
+
 <section class="p-6">
     <div class="p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5">
         <!-- Search Bar -->
@@ -50,10 +69,10 @@
 </section>
 <section class="p-6">
     <div class="grid grid-cols-2 gap-5">
-        @for (customer of customers; track customer.id) {
-        <app-customer-card [customer]="customer" (copyPhone)="copyToClipboard($event)"
+        @for (customer of currentCustomers; track customer.id) {
+        <app-customer-card [customer]="customer" [mode]="activeTab" (copyPhone)="copyToClipboard($event)"
             (changeStatus)="onChangeStatus($event)" (whatsappContact)="onWhatsappContact($event)"
-            (phoneCall)="onPhoneCall($event)" />
+            (phoneCall)="onPhoneCall($event)" (acceptCustomer)="onAcceptCustomer($event)" />
         }
     </div>
 </section>

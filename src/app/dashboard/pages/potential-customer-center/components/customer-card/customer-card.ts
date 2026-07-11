@@ -22,10 +22,12 @@ export interface Customer {
 })
 export class CustomerCard {
   customer = input.required<Customer>();
+  mode = input<'potential' | 'underImplementation'>('underImplementation');
   copyPhone = output<string>();
   changeStatus = output<number>();
   whatsappContact = output<number>();
   phoneCall = output<number>();
+  acceptCustomer = output<number>();
 
   onCopyPhone() {
     this.copyPhone.emit(this.customer().phone);
@@ -41,5 +43,9 @@ export class CustomerCard {
 
   onPhoneCall() {
     this.phoneCall.emit(this.customer().id);
+  }
+
+  onAcceptCustomer() {
+    this.acceptCustomer.emit(this.customer().id);
   }
 }

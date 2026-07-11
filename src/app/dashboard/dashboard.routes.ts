@@ -32,4 +32,11 @@ export const dashboardRoutes: Routes = [
         (m) => m.ContactLog,
       ),
   },
+  {
+    path: 'progress-board',
+    loadComponent: () =>
+      import('./pages/progress-board/progress-board').then(
+        (m) => m.ProgressBoard,
+      ),
+  },
 ];

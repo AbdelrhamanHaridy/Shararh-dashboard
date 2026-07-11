@@ -14,7 +14,9 @@ export class PotentialCustomerCenter {
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems = [{ label: 'مركز العملاء المحتملين' }];
 
-  customers = [
+  activeTab: 'potential' | 'underImplementation' = 'potential';
+
+  potentialCustomers = [
     {
       id: 1,
       name: 'أحمد محمد العتيبي',
@@ -31,47 +33,56 @@ export class PotentialCustomerCenter {
     },
     {
       id: 2,
-      name: 'أحمد محمد العتيبي',
+      name: 'سارة خالد سليمان',
       avatarUrl: 'assets/testing/avatar.png',
       status: 'محتمل',
       statusColor: '#B4630D',
       statusBgColor: '#FFEDC3',
-      city: 'القاهرة',
-      country: 'مصر',
-      acceptedDate: '12 مارس 2026 ، 05:00 م',
-      phone: '+20 100 234 5678',
-      assignedEmployee: 'محمد الشمري',
-      notes: 'يحتاج إلى معاينة الموقع للتأكد من المساحات المتاحة قبل البدء في التنفيذ...',
+      city: 'الرياض',
+      country: 'السعودية',
+      acceptedDate: '15 مارس 2026 ، 02:30 م',
+      phone: '+966 50 123 4567',
+      assignedEmployee: 'لين كيلر',
+      notes: 'مهتمة بالتعرف على الباقات والعروض المتاحة...',
     },
+  ];
+
+  underImplementationCustomers = [
     {
       id: 3,
-      name: 'أحمد محمد العتيبي',
+      name: 'خالد الشمري',
       avatarUrl: 'assets/testing/avatar.png',
-      status: 'محتمل',
-      statusColor: '#B4630D',
-      statusBgColor: '#FFEDC3',
-      city: 'القاهرة',
-      country: 'مصر',
-      acceptedDate: '12 مارس 2026 ، 05:00 م',
-      phone: '+20 100 234 5678',
-      assignedEmployee: 'محمد الشمري',
-      notes: 'يحتاج إلى معاينة الموقع للتأكد من المساحات المتاحة قبل البدء في التنفيذ...',
+      status: 'تحت التنفيذ',
+      statusColor: '#137FEC',
+      statusBgColor: '#E3F2FD',
+      city: 'جدة',
+      country: 'السعودية',
+      acceptedDate: '10 مارس 2026 ، 10:00 ص',
+      phone: '+966 55 987 6543',
+      assignedEmployee: 'نورة السديري',
+      notes: 'جاري تجهيز المعدات والأدوات اللازمة للبدء...',
     },
     {
       id: 4,
-      name: 'أحمد محمد العتيبي',
+      name: 'فاطمة العتيبي',
       avatarUrl: 'assets/testing/avatar.png',
-      status: 'محتمل',
-      statusColor: '#B4630D',
-      statusBgColor: '#FFEDC3',
-      city: 'القاهرة',
-      country: 'مصر',
-      acceptedDate: '12 مارس 2026 ، 05:00 م',
-      phone: '+20 100 234 5678',
-      assignedEmployee: 'محمد الشمري',
-      notes: 'يحتاج إلى معاينة الموقع للتأكد من المساحات المتاحة قبل البدء في التنفيذ...',
+      status: 'تحت التنفيذ',
+      statusColor: '#137FEC',
+      statusBgColor: '#E3F2FD',
+      city: 'الدمام',
+      country: 'السعودية',
+      acceptedDate: '08 مارس 2026 ، 03:15 م',
+      phone: '+966 50 555 8888',
+      assignedEmployee: 'أحمد العتيبي',
+      notes: 'تم التواصل وترسيخ الطلب، في انتظار التنفيذ...',
     },
   ];
+
+  get currentCustomers() {
+    return this.activeTab === 'potential'
+      ? this.potentialCustomers
+      : this.underImplementationCustomers;
+  }
 
   copyToClipboard(phone: string) {
     navigator.clipboard.writeText(phone).then(() => {
@@ -85,16 +96,26 @@ export class PotentialCustomerCenter {
   }
 
   onWhatsappContact(customerId: number) {
-    const customer = this.customers.find((c) => c.id === customerId);
+    const customer = this.currentCustomers.find((c) => c.id === customerId);
     if (customer) {
       window.open(`https://wa.me/${customer.phone.replace(/[^0-9]/g, '')}`, '_blank');
     }
   }
 
   onPhoneCall(customerId: number) {
-    const customer = this.customers.find((c) => c.id === customerId);
+    const customer = this.currentCustomers.find((c) => c.id === customerId);
     if (customer) {
       window.location.href = `tel:${customer.phone}`;
     }
+  }
+
+  switchTab(tab: 'potential' | 'underImplementation') {
+    this.activeTab = tab;
+  }
+
+  onAcceptCustomer(customerId: number) {
+    console.log('Accept customer:', customerId);
+    // Add accept customer logic here
+    // This could move the customer from potential to under implementation
   }
 }
