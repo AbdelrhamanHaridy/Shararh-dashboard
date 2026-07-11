@@ -1,7 +1,11 @@
 <section class="px-6 mb-8">
     <app-page-header title="سجل الاتصال" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
 </section>
+
+<h2 class="text-[#42493F] text-lg font-medium font-tajawal px-6">إدارة وتتبع كافة مراسلات العملاء بدقة</h2>
+
 <section class="grid grid-cols-3 gap-8 p-6" dir="rtl">
+
     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()"
         class="flex flex-col gap-8 px-5 py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
 
@@ -99,4 +103,63 @@
             </button>
         </div>
     </div>
+</section>
+
+<!-- Timeline Section: السجل الزمني -->
+<section class="px-6 py-8 max-w-[610px]" dir="rtl">
+    <h2 class="text-[#191C18] text-2xl font-medium mb-8 font-tajawal">السجل الزمني</h2>
+
+    <!-- Day separators and entries -->
+    @for (dayGroup of contactLogDays; track dayGroup.day) {
+    <div class="mb-12">
+        <!-- Day separator -->
+        <div class="flex items-center mb-8">
+            <div class="flex-1 h-px bg-[#E2E8F0]"></div>
+            <span class="text-[#10A922] bg-[#FDFDF6] px-4 text-sm font-medium font-tajawal whitespace-nowrap">{{
+                dayGroup.day }}</span>
+            <div class="flex-1 h-px bg-[#E2E8F0]"></div>
+        </div>
+
+        <!-- Entries for this day -->
+        <div class="flex flex-col gap-4">
+            @for (entry of dayGroup.entries; track entry.id) {
+            <div class="flex items-center gap-4 pl-6 rounded-2xl bg-white border border-[#E2E8F0] hover:shadow-md transition-shadow"
+                [style.border-right]="'4px solid ' + entry.borderColor">
+
+                <!-- Main content -->
+                <div class="flex-1 flex items-center gap-6 py-6 pr-6">
+                    <button type="button"
+                        class="w-10 h-10 rounded-xl bg-[#10A922] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
+                        <img src="assets/icons/global/whatsapp.svg" alt="whatsapp" class="w-6 h-6" />
+                    </button>
+
+
+
+                    <!-- Center: Contact info -->
+                    <div class="flex-1 flex flex-col">
+                        <h3 class="text-[#191C18] text-lg font-medium font-tajawal leading-7">{{ entry.name }}</h3>
+                        <div class="flex items-center gap-1 flex-wrap">
+                            <span class="text-[#196D00] text-sm font-medium font-tajawal">{{ entry.direction }}</span>
+                            <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                            <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.contactType }}</span>
+                            <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                            <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.reason }}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right icon button -->
+                <div class="shrink-0 mr-4">
+                    <div class="flex flex-col items-start">
+                        <span class="text-[#191C18] text-base leading-6 font-medium font-tajawal">{{ entry.time
+                            }}</span>
+                        <span class="text-[#42493F] text-xs font-medium font-tajawal pr-2">{{ entry.timeAgo }}</span>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
 </section>
