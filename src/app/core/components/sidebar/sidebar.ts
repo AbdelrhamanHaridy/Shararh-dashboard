@@ -29,7 +29,7 @@ export class Sidebar {
     { label: 'إدارة النسخ والتحديثات', icon: 'icon-6.svg', route: '/version-control-and-updates' },
     { label: 'الاشعارات', icon: 'icon-7.svg', route: '/notifications' },
     { label: 'الشكاوي والاقتراحات', icon: 'icon-8.svg', route: '/complaints-and-suggestions' },
-    { label: 'الاسئله الشائعه', icon: 'icon-9.svg', route: '/faq' },
+    { label: 'الاسئله الشائعه', icon: 'icon-9.svg', route: '/frequently-asked-questions' },
     { label: 'الجلسات', icon: 'icon-10.svg', route: '/sessions' },
     { label: 'الارشيف', icon: 'icon-11.svg', route: '/archive' },
     { label: 'المزيد', icon: 'icon-12.svg', route: '/more' },

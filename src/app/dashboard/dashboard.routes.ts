@@ -60,4 +60,11 @@ export const dashboardRoutes: Routes = [
         (m) => m.ComplaintsAndSuggestions,
       ),
   },
+  {
+    path: 'frequently-asked-questions',
+    loadComponent: () =>
+      import('./pages/frequently-asked-questions/frequently-asked-questions').then(
+        (m) => m.FrequentlyAskedQuestions,
+      ),
+  },
 ];
