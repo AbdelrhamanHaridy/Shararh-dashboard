@@ -39,4 +39,25 @@ export const dashboardRoutes: Routes = [
         (m) => m.ProgressBoard,
       ),
   },
+  {
+    path: 'version-control-and-updates',
+    loadComponent: () =>
+      import('./pages/version-control-and-updates/version-control-and-updates').then(
+        (m) => m.VersionControlAndUpdates,
+      ),
+  },
+  {
+    path: 'notifications',
+    loadComponent: () =>
+      import('./pages/notifications/notifications').then(
+        (m) => m.Notifications,
+      ),
+  },
+  {
+    path: 'complaints-and-suggestions',
+    loadComponent: () =>
+      import('./pages/complaints-and-suggestions/complaints-and-suggestions').then(
+        (m) => m.ComplaintsAndSuggestions,
+      ),
+  },
 ];

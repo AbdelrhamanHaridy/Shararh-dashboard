@@ -1,0 +1,85 @@
+<section class="px-6 mb-8">
+    <app-page-header title="إدارة النسخ والتحديثات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+</section>
+<section class="p-6">
+    <div class="p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5 border border-[#E2E8F0]">
+        <!-- Search Bar -->
+        <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
+            style="width: 879px; height: 52px;">
+            <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
+            <input type="text" placeholder="ابحث..."
+                class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
+                style="color: #6B7280;" />
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-row gap-5">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-primary shrink-0"></span>
+                <span class="text-base font-medium text-[#475569] font-tajawal">آخر تحديث: منذ ٥ دقائق</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <img src="assets/icons/global/green_restart_arrow.svg" alt="update" />
+                <span class="text-base font-medium text-primary font-tajawal">تحديث</span>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="p-6">
+    <h2 class="text-text-primary text-xl font-medium font-tajawal mb-6 text-start">قائمة المحلات</h2>
+    <div class="grid grid-cols-2 gap-5">
+        @for (merchant of merchants; track merchant.id) {
+        <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4" dir="rtl">
+            <!-- Header: name/location (right) + building icon (left) -->
+            <div class="flex items-start gap-4">
+                <div class="rounded-2xl w-11 h-11 flex items-center justify-center bg-[#EEF3F7] shrink-0">
+                    <img src="assets/icons/global/building.svg" alt="building" class="w-5 h-5" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-xl font-medium text-text-primary font-tajawal">
+                        {{ merchant.name }}
+                    </h3>
+                    <span class="flex items-center gap-1 text-sm font-medium text-text-secondary font-tajawal">
+                        <img src="assets/icons/global/location_mark.svg" alt="location" class="w-3.5 h-3.5" />
+                        {{ merchant.location }}
+                    </span>
+                </div>
+
+            </div>
+
+            <!-- Apps list -->
+            <div class="flex flex-col gap-3">
+                @for (app of merchant.apps; track app.id) {
+                <div
+                    class="flex items-center justify-between bg-[#F6F7F8] border border-[#CBD5E1] rounded-2xl px-3 py-3">
+                    <!-- App icon -->
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-white shrink-0">
+                        <img [src]="app.iconUrl" [alt]="app.name" class="w-5 h-5" />
+                    </div>
+
+                    <!-- Name + version -->
+                    <div class="flex flex-col items-start gap-0.5 flex-1 mx-3">
+                        <span class="text-sm font-medium text-text-secondary font-tajawal">
+                            {{ app.name }} ({{ app.devicesCount }} جهاز)
+                        </span>
+                        <span class="text-lg font-medium text-text-primary font-tajawal">
+                            v{{ app.version }}
+                        </span>
+                    </div>
+
+                    <!-- Expand arrow + status badge -->
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-medium font-tajawal text-nowrap"
+                            [style.color]="app.badgeColor" [style.backgroundColor]="app.badgeBgColor">
+                            {{ app.badgeLabel }}
+                        </span>
+                        <img src="assets/icons/global/left_arrow.svg" alt="expand" class="w-3 h-3 opacity-60" />
+                    </div>
+
+                </div>
+                }
+            </div>
+        </div>
+        }
+    </div>
+</section>
