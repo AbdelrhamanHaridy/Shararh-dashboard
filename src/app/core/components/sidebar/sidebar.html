@@ -37,7 +37,7 @@
             <!-- Group item -->
             <div *ngIf="item.children">
                 <button type="button" (click)="toggle(item)"
-                    class="flex w-full items-center gap-3 rounded-[10px] p-3.75 transition-colors duration-300">
+                    class="flex w-full items-center gap-3 rounded-[10px] p-3.75 transition-colors duration-300 cursor-pointer">
 
 
                     <span class="flex h-6 w-6 shrink-0 items-center justify-center">
@@ -48,9 +48,9 @@
                         [class.font-semibold]="isOpen(item)" [class.text-gray-900]="isOpen(item)">
                         {{ item.label }}
                     </span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                         class="h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300"
-                        [class.rotate-180]="!isOpen(item)">
+                        [class.rotate-180]="isOpen(item)">
                         <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
 

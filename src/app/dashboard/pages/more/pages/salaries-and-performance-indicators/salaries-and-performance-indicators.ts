@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
+import { SharedKpiCard } from "../../../../shared/components/shared-kpi-card/shared-kpi-card";
 
 @Component({
   selector: 'app-salaries-and-performance-indicators',
-  imports: [PageHeaderComponent],
+  imports: [PageHeaderComponent, SharedKpiCard],
   templateUrl: './salaries-and-performance-indicators.html',
   styleUrl: './salaries-and-performance-indicators.scss',
 })
@@ -20,17 +21,17 @@ export class SalariesAndPerformanceIndicators {
   paymentMethods = [
     {
       id: 99,
-      name: 'تفاصيل الخصم',
+      name: 'أحمد محمد',
       time: 'تفعيل لحظي',
     },
     {
       id: 100,
-      name: 'فوري باي',
+      name: 'أحمد محمد',
       time: 'تفعيل لحظي',
     },
     {
       id: 101,
-      name: 'محفظه الكترونيه',
+      name: 'أحمد محمد',
       time: 'تفعيل لحظي',
       data: [
         {
@@ -49,7 +50,7 @@ export class SalariesAndPerformanceIndicators {
     },
     {
       id: 102,
-      name: 'تحويل بنكي / ايداع بنكي ',
+      name: ' أحمد محمد ',
       time: 'تفعيل لحظي',
       data: [
         {

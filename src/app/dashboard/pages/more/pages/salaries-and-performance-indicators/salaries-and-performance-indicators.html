@@ -3,7 +3,23 @@
         <app-page-header title="الرواتب ومؤشرات الاداء" [home]="home"
             [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
-
+    <section class="p-6 grid grid-cols-5 gap-2.5">
+        <app-shared-kpi-card [title]="'العملاء المسجلين'" [type]="'currency'" [number]="120" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#000">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'الاشتراكات المنتهيه'" [type]="'currency'" [number]="5" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#000">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [type]="'currency'" [number]="15" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#000">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [type]="'currency'" [number]="20" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#000">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [type]="'currency'" [number]="20" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#000">
+        </app-shared-kpi-card>
+    </section>
     <section>
         <div class="flex flex-row justify-between items-center">
             <h2 class="text-text-secondary text-lg font-tajawal font-medium mb-7 flex flex-row gap-2 items-center">
@@ -15,27 +31,36 @@
                 <span>120 موظف</span>
             </span>
         </div>
-        <div class="grid grid-cols-2 gap-5">
+        <div class="grid grid-cols-3 gap-5">
             @for (method of paymentMethods; track method.id) {
-            <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4" dir="rtl">
+            <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-5" dir="rtl">
                 <div class="flex flex-row justify-between items-start">
                     <div class="flex items-start gap-4">
-                        <div class="rounded-2xl w-12 h-12 flex items-center justify-center bg-[#46EC131A] shrink-0">
-                            <img src="assets/icons/global/green_wallet.svg" alt="building" class="w-5 h-5" />
+                        <div
+                            class="rounded-full w-10 h-10 flex items-center justify-center bg-[#46EC131A] shrink-0 overflow-hidden">
+                            <img src="assets/testing/avatar-2.jpg" alt="person" />
                         </div>
                         <div class="flex flex-col gap-1">
-                            <h3 class="text-xl font-medium text-text-primary font-tajawal">
+                            <h3 class="text-sm font-bold text-[#0F172A] font-tajawal">
                                 {{ method.name }}
                             </h3>
-                            <span class="flex items-center gap-1 text-sm font-medium text-text-secondary font-tajawal">
-                                {{ method.time }}
-                            </span>
+                            <div class="flex flex-row gap-3">
+                                <h4
+                                    class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                                    خدمة عملاء
+                                </h4>
+                                <h4
+                                    class="text-xs font-medium text-[#137FEC] font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                                    200 نقاط
+                                </h4>
+
+                            </div>
                         </div>
                     </div>
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-row items-center gap-5">
                         <span
-                            class="px-3 py-1 rounded-[20px] text-xs font-medium font-tajawal shrink-0 flex items-center gap-2 text-primary bg-[#10A9220D] border border-primary-op-30">
-                            <span>بدون رسوم</span>
+                            class="px-4 py-1 rounded-[20px] text-[10px] font-bold font-tajawal shrink-0 leading-4 flex items-center gap-2 text-[#B34E0A] bg-[#F1B31C1A]">
+                            <span>جاهز</span>
                         </span>
                         <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                             <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
@@ -43,23 +68,39 @@
                     </div>
                 </div>
                 <!-- Apps list -->
-                @if (method.data && method.data.length > 0) {
-                <div class="grid grid-cols-2 gap-2.5">
-                    @for (app of method.data; track app.name) {
-                    <div class="flex items-center justify-between bg-[#f7f7f7] rounded-2xl p-3">
-                        <!-- Name + version -->
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-[10px] font-medium text-[#5A6354] font-tajawal">
-                                {{ app.name }}
-                            </span>
-                            <span class="text-sm font-medium text-[#151E11] font-tajawal">
-                                {{ app.value }}
-                            </span>
-                        </div>
+                <div class="grid grid-cols-4 gap-x-2.5 gap-y-5">
+                    <div class="col-span-1 flex flex-col items-center gap-3.5 border-l border-[#00000012]">
+                        <h5 class="text-xs font-medium text-[#6B6B6B]">الراتب الاساسي</h5>
+                        <p class="text-lg font-bold text-black">12.500</p>
                     </div>
-                    }
+                    <div class="col-span-1 flex flex-col items-center gap-3.5 border-l border-[#00000012]">
+                        <h5 class="text-xs font-medium text-[#6B6B6B]">الخصومات</h5>
+                        <p class="text-lg font-bold text-[#D22F27]">0</p>
+                    </div>
+                    <div class="col-span-1 flex flex-col items-center gap-3.5 border-l border-[#00000012]">
+                        <h5 class="text-xs font-medium text-[#6B6B6B]">الحوافز</h5>
+                        <p class="text-lg font-bold text-primary">+300</p>
+                    </div>
+                    <div class="col-span-1 flex flex-col items-center gap-3.5">
+                        <h5 class="text-xs font-medium text-[#6B6B6B]">المكافآت</h5>
+                        <p class="text-lg font-bold text-primary">+200</p>
+                    </div>
+                    <div
+                        class="col-span-4 flex flex-row items-center justify-between bg-[#F1F5F9] rounded-2xl px-5 py-7">
+                        <p class="text-xs font-medium text-[#6B6B6B] font-tajawal">
+                            صافي الراتب
+                        </p>
+                        <p class="text-lg font-bold text-black font-tajawal">
+                            <span class="text-xs font-medium">EGP</span> 13,000
+                        </p>
+                    </div>
+                    <button type="button"
+                        class="col-auto px-6 py-2.5 bg-white border border-[#2E3139] text-[#2E3139] text-sm  font-bold rounded-lg cursor-pointer">التفاصيل</button>
+                    <button type="button"
+                        class="col-span-3 px-6 py-2.5 text-white bg-primary text-sm font-bold rounded-lg cursor-pointer">صرف
+                        الراتب</button>
                 </div>
-                }
+
             </div>
             }
         </div>
