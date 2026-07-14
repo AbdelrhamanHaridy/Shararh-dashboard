@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { userDatabaseRoutes } from './pages/user-database/user-database.routing';
 import { archiveRoutes } from './pages/archive/archive.routing';
+import { moreRoutes } from './pages/more/more.routing';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -67,5 +68,9 @@ export const dashboardRoutes: Routes = [
   {
     path: 'archive',
     children: archiveRoutes,
+  },
+  {
+    path: 'more',
+    children: moreRoutes,
   },
 ];

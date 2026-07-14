@@ -1,1 +1,131 @@
-<p>trusted-devices works!</p>
+<main class="p-6 flex flex-col gap-7">
+    <section class="">
+        <app-page-header title="الأجهزة الموثوقة" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+
+    <h2 class="text-text-primary text-base font-tajawal font-medium">
+        إدارة طلبات الوصول والأجهزة المرتبطة بحسابك بكل أمان.
+    </h2>
+    <section class="px-5 py-7 border border-[#E2E8F0] rounded-[20px] bg-white">
+        <div class="flex flex-row items-center gap-3 mb-6">
+            <h2 class="text-text-primary text-lg font-tajawal font-medium">
+                طلبات الوصول الجديدة
+            </h2>
+            <div class="rounded-full text-xs font-medium bg-[#196D001A] px-3 py-1">1 طلب معلق</div>
+        </div>
+
+        <div class="rounded-3xl flex flex-col gap-7 border border-[#E2E8F0] p-8 bg-white">
+            <div class="flex flex-row gap-6">
+                <div class="rounded-2xl w-16 h-16 flex items-center justify-center bg-[#EEF3F7]">
+                    <img src="assets/icons/global/laptop.svg" alt="building">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex flex-row items-center gap-10">
+                        <h3 class="text-xl font-medium text-nowrap text-[#0F172A] font-tajawal">
+                            كمبيوتر (MacBook Pro)
+                        </h3>
+                        <span class="rounded-sm text-xs font-medium text-primary bg-[#10A92233] px-3 py-1">طلب
+                            جديد</span>
+                    </div>
+                    <div class="flex flex-row gap-3">
+                        <h4
+                            class="text-sm font-medium text-text-secondary font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            <img src="assets/icons/global/global.svg" alt="details" class="w-3.5 h-3.5" />
+                            طنطا , الغربيه , مصر
+                        </h4>
+                        <h4
+                            class="text-sm font-medium text-text-secondary font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            <img src="assets/icons/global/lang.svg" alt="details" class="w-3.5 h-3.5" />
+                            Chrome Browser
+                        </h4>
+                        <h4
+                            class="text-sm font-medium text-text-secondary font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            <img src="assets/icons/global/grey_clock.svg" alt="details" class="w-3.5 h-3.5" />
+                            منذ دقيقتين
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <h5 class="text-xs font-medium text-[#94A3B8] font-tajawal">معرف الجهاز</h5>
+                <p
+                    class="rounded-2xl flex flex-col bg-[#F8FAFC] border border-[#E2E8F0] px-6 py-4 text-base font-medium text-[#334155]">
+                    ID-99283-XK-2024</p>
+            </div>
+            <div class="flex flex-row gap-4 justify-end">
+                <button type="submit"
+                    class=" px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-xl cursor-pointer w-fit">توثيق
+                    الجهاز</button>
+                <button type="button"
+                    class=" px-5 py-2.5 bg-[#ED4C5C] text-white text-sm font-medium rounded-xl cursor-pointer w-fit">حظر
+                    الوصول</button>
+            </div>
+        </div>
+    </section>
+    <section class="border border-[#E2E8F0] rounded-[20px] bg-white overflow-hidden">
+        <div class="flex flex-row gap-4 justify-start border-b border-[#E2E8F0]  bg-[#F8FAFC80] p-2">
+            <button type="submit"
+                class=" px-8 py-4 bg-white border border-[#E2E8F080] text-primary text-sm  font-medium rounded-2xl cursor-pointer w-fit">توثيق
+                الجهاز</button>
+            <button type="button"
+                class=" px-8 py-4 text-[#94A3B8] text-sm  font-medium rounded-2xl cursor-pointer w-fit">حظر
+                الوصول</button>
+        </div>
+        <div class="flex flex-row justify-between border-b border-[#E2E8F0] p-6 bg-white">
+            <div class="flex flex-row gap-6">
+                <div class="rounded-2xl w-12 h-12 flex items-center justify-center bg-[#EEF3F7]">
+                    <img src="assets/icons/global/green_phone.svg" alt="phone">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-base font-medium text-nowrap text-[#0F172A] font-tajawal">
+                        iPhone 15 Pro
+                    </h3>
+                    <div class="flex flex-row gap-3">
+                        <h4
+                            class="text-xs font-medium text-primary font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                            نشط الآن
+                        </h4>
+                        <h4
+                            class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            • Safari on iOS
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row items-center justify-end gap-2">
+                <img class="p-2" src="assets/icons/global/block.svg" alt="">
+                <img class="p-2" src="assets/icons/global/light_grey_delete.svg" alt="">
+            </div>
+        </div>
+        <div class="flex flex-row justify-between border-b border-[#E2E8F0] p-6 bg-white">
+            <div class="flex flex-row gap-6">
+                <div class="rounded-2xl w-12 h-12 flex items-center justify-center bg-[#EEF3F7]">
+                    <img src="assets/icons/global/green_tablet.svg" alt="tablet">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-base font-medium text-nowrap text-[#0F172A] font-tajawal">
+                        Samsung Tab S9
+                    </h3>
+                    <div class="flex flex-row gap-3">
+                        <!-- <h4
+                            class="text-xs font-medium text-primary font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                            نشط الآن
+                        </h4> -->
+                        <h4
+                            class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1 text-nowrap">
+                            آخر نشاط: أمس الساعة 9:30 م • Microsoft Edge
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row items-center justify-end gap-2">
+                <img class="p-2" src="assets/icons/global/block.svg" alt="">
+                <img class="p-2" src="assets/icons/global/light_grey_delete.svg" alt="">
+            </div>
+        </div>
+        <p class=" flex items-center justify-center bg-[#F8FAFC] p-6 text-sm font-medium text-primary cursor-pointer">
+            عرض جميع الأجهزة المرتبطة (12)</p>
+    </section>
+</main>
