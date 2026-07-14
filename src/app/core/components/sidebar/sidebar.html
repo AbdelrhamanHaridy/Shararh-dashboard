@@ -17,11 +17,11 @@
     <!-- Nav -->
     <nav class="flex flex-1 flex-col gap-5 px-4">
         <ng-container *ngFor="let item of navItems">
-            <!-- #0D7F1A -->
-            <!-- Active item *ngIf="item.active" -->
-            <a [routerLink]="item.route" routerLinkActive="is-active" #rla="routerLinkActive"
-                [routerLinkActiveOptions]="{ exact: false }" class="relative flex items-center  gap-3 rounded-[10px] bg-transparent p-3.75
-                        border-r-3  border-transparent
+
+            <!-- Leaf item (unchanged, exact same style as before) -->
+            <a *ngIf="!item.children" [routerLink]="item.route" routerLinkActive="is-active" #rla="routerLinkActive"
+                [routerLinkActiveOptions]="{ exact: false }" class="relative flex items-center gap-3 rounded-[10px] bg-transparent p-3.75
+                        border-r-3 border-transparent
                         transition-all duration-1000" [class.border-primary]="rla.isActive"
                 [class.bg-primary-op-8]="rla.isActive">
 
@@ -32,20 +32,51 @@
                 <span class="text-[15px] font-medium text-text-secondary" [class.text-text-success]="rla.isActive">
                     {{ item.label }}
                 </span>
-
             </a>
-            <!-- Regular item -->
-            <!-- <a *ngIf="!item.active" [routerLink]="item.route"
-                class="group flex items-center justify-between rounded-xl px-3 py-2 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900">
-                <span class="text-[15px] font-medium">{{ item.label }}</span>
 
-                <span class="flex h-6 w-6 shrink-0 items-center justify-center">
-                    <img [src]="'assets/icons/sidebar/' + item.icon" [alt]="item.label"
-                        class="h-5 w-5 object-contain" />
-                </span>
-            </a> -->
+            <!-- Group item -->
+            <div *ngIf="item.children">
+                <button type="button" (click)="toggle(item)"
+                    class="flex w-full items-center gap-3 rounded-[10px] p-3.75 transition-colors duration-300">
 
-            <!-- <div *ngIf="!item.active" class="mx-3 my-1 border-t border-gray-100"></div> -->
+
+                    <span class="flex h-6 w-6 shrink-0 items-center justify-center">
+                        <img [src]="'assets/icons/sidebar/' + item.icon" [alt]="item.label"
+                            class="h-6 w-6 object-contain" />
+                    </span>
+                    <span class="flex-1 text-right text-[15px] font-medium text-text-secondary"
+                        [class.font-semibold]="isOpen(item)" [class.text-gray-900]="isOpen(item)">
+                        {{ item.label }}
+                    </span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        class="h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300"
+                        [class.rotate-180]="!isOpen(item)">
+                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+
+                </button>
+
+                <!-- Sub items -->
+                <div class="overflow-hidden transition-all duration-300" [class.max-h-0]="!isOpen(item)"
+                    [class.max-h-96]="isOpen(item)">
+                    <ul class="mt-1 flex flex-col">
+                        <li *ngFor="let child of item.children">
+                            <a [routerLink]="child.route" routerLinkActive="is-active" #crla="routerLinkActive"
+                                [routerLinkActiveOptions]="{ exact: false }"
+                                class="relative flex items-center py-2.5 pr-11 pl-3.75 text-[14px] font-medium text-text-secondary transition-colors duration-300"
+                                [class.text-text-success]="crla.isActive">
+
+                                <span *ngIf="crla.isActive"
+                                    class="absolute right-9 top-1/2 h-3.5 w-0.5 -translate-y-1/2 rounded-full bg-primary">
+                                </span>
+
+                                {{ child.label }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </ng-container>
     </nav>
 </aside>

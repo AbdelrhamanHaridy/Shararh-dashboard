@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { userDatabaseRoutes } from './pages/user-database/user-database.routing';
+import { archiveRoutes } from './pages/archive/archive.routing';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -27,17 +28,12 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: 'contact-log',
-    loadComponent: () =>
-      import('./pages/contact-log/contact-log').then(
-        (m) => m.ContactLog,
-      ),
+    loadComponent: () => import('./pages/contact-log/contact-log').then((m) => m.ContactLog),
   },
   {
     path: 'progress-board',
     loadComponent: () =>
-      import('./pages/progress-board/progress-board').then(
-        (m) => m.ProgressBoard,
-      ),
+      import('./pages/progress-board/progress-board').then((m) => m.ProgressBoard),
   },
   {
     path: 'version-control-and-updates',
@@ -48,10 +44,7 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: 'notifications',
-    loadComponent: () =>
-      import('./pages/notifications/notifications').then(
-        (m) => m.Notifications,
-      ),
+    loadComponent: () => import('./pages/notifications/notifications').then((m) => m.Notifications),
   },
   {
     path: 'complaints-and-suggestions',
@@ -66,5 +59,13 @@ export const dashboardRoutes: Routes = [
       import('./pages/frequently-asked-questions/frequently-asked-questions').then(
         (m) => m.FrequentlyAskedQuestions,
       ),
+  },
+  {
+    path: 'sessions',
+    loadComponent: () => import('./pages/sessions/sessions').then((m) => m.Sessions),
+  },
+  {
+    path: 'archive',
+    children: archiveRoutes,
   },
 ];

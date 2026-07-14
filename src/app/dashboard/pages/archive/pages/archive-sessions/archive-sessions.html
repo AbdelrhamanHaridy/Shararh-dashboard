@@ -1,0 +1,22 @@
+<main class="p-6 flex flex-col gap-6">
+    <section>
+        <app-page-header title="ارشيف الجلسات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+    <h2 class="text-text-primary text-base font-tajawal font-medium">استعرض وراقب أداء الجلسات المالية لموظفيك بدقة</h2>
+    <section class="bg-white rounded-3xl p-7 border border-[#3D4B361A] flex flex-col gap-4 relative">
+        <div class="grid grid-cols-3 gap-6 items-end">
+            <app-shared-select label="التاريخ" placeholder="حدد التاريخ" inputId="contactVia"
+                [options]="contactViaOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-phone"
+                [isRequired]="true"></app-shared-select>
+            <app-shared-select label="الموظف" placeholder="اسم الموظف" inputId="contactVia"
+                [options]="contactViaOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-phone"
+                [isRequired]="true"></app-shared-select>
+            <app-shared-select label="نوع الجلسه" placeholder="اختر نوع الجلسه" inputId="contactVia"
+                [options]="contactViaOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-phone"
+                [isRequired]="true"></app-shared-select>
+        </div>
+    </section>
+<section >
+    <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"></app-shared-table>
+</section>
+</main>
