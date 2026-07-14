@@ -46,7 +46,20 @@ export class Sidebar {
         { label: 'ارشيف المستخدمين', route: '/archive/users' },
       ],
     },
-    { label: 'المزيد', icon: 'icon-12.svg', route: '/more' },
+    {
+      icon: 'icon-12.svg',
+      label: 'المزيد',
+      children: [
+        { label: 'الاجهزه الموثوقه', route: '/more/trusted-devices' },
+        { label: 'إعدادات وسائل الدفع', route: '/more/payment-methods-settings' },
+        { label: 'الرواتب ومؤشرات الاداء', route: '/more/salaries-and-performance-indicators' },
+        { label: 'الحسابات والصلاحيات', route: '/more/accounts-and-permissions' },
+        { label: 'الكوبونات واكواد الخصم', route: '/more/coupons-and-discount-codes' },
+        { label: 'التسعير والباقات', route: '/more/pricing-and-plans' },
+        { label: 'سجل الإيرادات', route: '/more/revenue-log' },
+        { label: 'حسابات المديونيات', route: '/more/debt-accounts' },
+      ],
+    },
     { label: 'إعدادات', icon: 'icon-13.svg', route: '/settings' },
   ];
 
