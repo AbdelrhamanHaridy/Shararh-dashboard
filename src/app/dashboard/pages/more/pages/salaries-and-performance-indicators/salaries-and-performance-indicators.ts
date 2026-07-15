@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
 import { SharedKpiCard } from "../../../../shared/components/shared-kpi-card/shared-kpi-card";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-salaries-and-performance-indicators',
-  imports: [PageHeaderComponent, SharedKpiCard],
+  imports: [PageHeaderComponent, SharedKpiCard, RouterLink],
   templateUrl: './salaries-and-performance-indicators.html',
   styleUrl: './salaries-and-performance-indicators.scss',
 })
