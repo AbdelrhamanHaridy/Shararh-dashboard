@@ -73,4 +73,8 @@ export const dashboardRoutes: Routes = [
     path: 'more',
     children: moreRoutes,
   },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings/settings').then((m) => m.Settings),
+  },
 ];
