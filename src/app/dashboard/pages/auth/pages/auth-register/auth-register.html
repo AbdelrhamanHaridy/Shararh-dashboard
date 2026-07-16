@@ -1,0 +1,92 @@
+        <!-- Logo -->
+        <div class="flex items-center justify-center gap-2">
+            <img src="assets/images/logo.svg" alt="Sharara" />
+        </div>
+        <div class="flex flex-col items-center gap-3 mb-4">
+            <h1 class="text-black text-[32px] font-bold">أنشئ حسابك على sharara</h1>
+            <p class="text-text-secondary text-base font-normal">انضم إلى منصتنا وابدأ رحلتك</p>
+        </div>
+
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+
+            <div class="flex flex-col gap-4">
+                <h2 class="text-black text-2xl font-medium ">البيانات الشخصية</h2>
+                <!-- <hr> -->
+                <div class="grid grid-cols-2 gap-y-2 gap-x-12">
+                    <app-shared-text-input formControlName="fullName" label="الاسم كامل" placeholder="ادخل اسمك الكامل"
+                        inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+                    <app-shared-text-input formControlName="username" label="اسم المستخدم" placeholder="اسم المستخدم"
+                        inputId="username" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+                    <app-shared-select formControlName="country" label="الدوله" placeholder="اختر الدوله"
+                        inputId="country" [options]="countryOptions" optionLabel="label" optionValue="value"
+                        primeNgIcon="pi pi-globe" [isRequired]="false"></app-shared-select>
+
+                    <app-shared-text-input formControlName="phone" label="رقم الموبايل" placeholder="رقم موبايلك"
+                        inputId="phone" primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-text-input>
+
+                    <app-shared-text-input formControlName="email" label="البريد الإلكتروني"
+                        placeholder="ادخل بريدك الإلكتروني" inputId="email" primeNgIcon="pi pi-envelope"
+                        [isRequired]="true" class="col-span-2"></app-shared-text-input>
+
+                    <app-shared-text-input formControlName="confirmPassword" label="تأكيد كلمة المرور"
+                        placeholder="اعد ادخال كلمة المرور" inputId="confirmPassword" type="password"
+                        primeNgIcon="pi pi-lock" [isRequired]="true"></app-shared-text-input>
+
+                    <app-shared-text-input formControlName="password" label="كلمة المرور" placeholder="ادخل كلمة المرور"
+                        inputId="password" type="password" primeNgIcon="pi pi-lock"
+                        [isRequired]="true"></app-shared-text-input>
+                </div>
+            </div>
+
+            <!-- نوع الحساب -->
+            <div class="flex flex-col gap-3">
+                <!-- <h2 class="text-[#191C18] text-base font-semibold">نوع الحساب</h2> -->
+                <h2 class="text-black text-2xl font-medium ">نوع الحساب</h2>
+                <!-- <hr class="mb-4"> -->
+                <label (click)="selectAccountType('business')"
+                    class="flex flex-row items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors"
+                    [ngClass]="userForm.get('accountType')?.value === 'business'
+                        ? 'bg-[#EAF7EC] ring-1 ring-primary'
+                        : 'bg-[#F8FAFC]'">
+                    <span class="text-sm"
+                        [ngClass]="userForm.get('accountType')?.value === 'business' ? 'text-[#191C18] font-medium' : 'text-[#94A3B8]'">
+                        حساب تجاري
+                    </span>
+                    <input type="radio" formControlName="accountType" value="business"
+                        class="w-4 h-4 accent-primary" />
+                </label>
+
+                <label (click)="selectAccountType('personal')"
+                    class="flex flex-row items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors"
+                    [ngClass]="userForm.get('accountType')?.value === 'personal'
+                        ? 'bg-[#EAF7EC] ring-1 ring-primary'
+                        : 'bg-[#F8FAFC]'">
+                    <span class="text-sm"
+                        [ngClass]="userForm.get('accountType')?.value === 'personal' ? 'text-[#191C18] font-medium' : 'text-[#94A3B8]'">
+                        حساب شخصي
+                    </span>
+                    <input type="radio" formControlName="accountType" value="personal"
+                        class="w-4 h-4 accent-primary" />
+                </label>
+            </div>
+
+            <!-- الشروط والخدمات -->
+            <label class="flex flex-row items-center gap-2 cursor-pointer">
+                <input type="checkbox" formControlName="acceptTerms" class="w-4 h-4 accent-primary rounded" />
+                <span class="text-[#64748B] text-base">
+                    <a class="text-primary font-medium">الشروط والخدمات</a> أوافق على الشروط والخدمات
+                </span>
+            </label>
+
+            <button type="submit" [disabled]="userForm.invalid"
+                class="w-full py-3 bg-primary hover:bg-[#16A34A] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
+                إنشاء حساب
+            </button>
+
+            <p class="text-center text-[#64748B] text-sm">
+                لدي حساب بالفعل؟
+                <a routerLink="../login" class="text-primary font-semibold cursor-pointer">تسجيل الدخول</a>
+            </p>
+        </form>

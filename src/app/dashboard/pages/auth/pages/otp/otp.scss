@@ -1,0 +1,11 @@
+:host {
+  --p-progressbar-background: #cccccc;
+  --p-progressbar-value-background: #10a922;
+  --p-progressbar-height: 10px;
+  --p-progressbar-border-radius: 12px;
+  --p-inputotp-gap: 20px;
+}
+.p-inputotp-input.p-inputtext-lg {
+  width: 48px;
+  height: 48px;
+}

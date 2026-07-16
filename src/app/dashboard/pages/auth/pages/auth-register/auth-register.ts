@@ -1,30 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
-import { SharedTextInputComponent } from '../../shared/components/shared-text-input/shared-text-input.component';
-import { RouterOutlet } from "@angular/router";
-import { ProgressBarModule } from "primeng/progressbar";
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { SharedSelectComponent } from '../../../../shared/components/shared-select/shared-select.component';
+import { SharedTextInputComponent } from '../../../../shared/components/shared-text-input/shared-text-input.component';
+import { RouterLink } from '@angular/router';
 interface CountryOption {
   label: string;
   value: string;
 }
 
 @Component({
-  selector: 'app-auth',
+  selector: 'app-auth-register',
   imports: [
+    SharedTextInputComponent,
+    SharedSelectComponent,
     ReactiveFormsModule,
     ToggleSwitchModule,
     CommonModule,
-    RouterOutlet,
-    ProgressBarModule
-],
-  templateUrl: './auth.html',
-  styleUrl: './auth.scss',
+    RouterLink
+  ],
+  templateUrl: './auth-register.html',
+  styleUrl: './auth-register.scss',
 })
-export class Auth {
+export class AuthRegister {
   userForm!: FormGroup;
   countryOptions: CountryOption[] = [
     { label: 'مصر', value: 'EG' },
