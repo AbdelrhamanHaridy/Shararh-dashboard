@@ -1,0 +1,24 @@
+<main class="px-6 flex flex-col gap-8">
+    <section class="">
+        <app-page-header title="حسابات المديونيات" [home]="home"
+            [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+    
+    
+    <section class="">
+        <div class="p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5">
+            <!-- Search Bar -->
+            <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
+                style="width: 879px; height: 52px;">
+                <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
+                <input type="text" placeholder="ابحث..."
+                    class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
+                    style="color: #6B7280;" />
+            </div>
+    
+        </div>
+    </section>
+    <section class="">
+        <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"></app-shared-table>
+    </section>
+</main>

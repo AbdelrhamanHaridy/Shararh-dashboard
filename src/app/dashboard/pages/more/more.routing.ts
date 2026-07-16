@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { salariesAndPerformanceIndicatorsRoutes } from './pages/salaries-and-performance-indicators/salaries-and-performance-indicators.routing';
+import { accountsAndPermissionsRoutes } from './pages/accounts-and-permissions/accounts-and-permissions.routing';
 
 export const moreRoutes: Routes = [
   {
@@ -29,10 +30,7 @@ export const moreRoutes: Routes = [
   },
   {
     path: 'accounts-and-permissions',
-    loadComponent: () =>
-      import('./pages/accounts-and-permissions/accounts-and-permissions').then(
-        (m) => m.AccountsAndPermissions,
-      ),
+    children: accountsAndPermissionsRoutes,
   },
   {
     path: 'coupons-and-discount-codes',
@@ -46,15 +44,14 @@ export const moreRoutes: Routes = [
     loadComponent: () =>
       import('./pages/pricing-and-plans/pricing-and-plans').then((m) => m.PricingAndPlans),
   },
-
-  //   {
-  //     path: 'revenue-log',
-  //     loadComponent: () =>
-  //       import('./pages/revenue-log/revenue-log').then((m) => m.RevenueLog),
-  //   },
-  //   {
-  //     path: 'debt-accounts',
-  //     loadComponent: () =>
-  //       import('./pages/debt-accounts/debt-accounts').then((m) => m.DebtAccounts),
-  //   },
+  {
+    path: 'revenue-history',
+    loadComponent: () =>
+      import('./pages/revenue-history/revenue-history').then((m) => m.RevenueHistory),
+  },
+  {
+    path: 'accounts-receivable',
+    loadComponent: () =>
+      import('./pages/accounts-receivable/accounts-receivable').then((m) => m.AccountsReceivable),
+  },
 ];

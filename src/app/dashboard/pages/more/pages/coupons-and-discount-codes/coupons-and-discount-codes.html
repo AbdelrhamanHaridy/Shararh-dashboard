@@ -1,10 +1,32 @@
 <main class="p-6 flex flex-col gap-6">
     <section class="">
-        <app-page-header title="الأجهزة الموثوقة" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+        <app-page-header title="كوبونات واكواد الخصم" [home]="home"
+            [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+    <section class=" grid grid-cols-3 gap-2.5">
+        <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#137FEC" >
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'المستخدمون النشطون'" [number]="165" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#10A922">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'المستخدمون غير النشطين'" [number]="15" iconPath="assets/icons/cards/people.svg"
+            iconBgColor="#C3E1FF" numberColor="#D22F27">
+        </app-shared-kpi-card>
     </section>
 
+    <div class="flex flex-row justify-between items-center">
+        <p class="text-base text-[#43493E] font-medium py-3 px-6">مراقبة التدفقات النقدية والاشتراكات في الوقت الفعلي
+        </p>
+        <button type="button"
+            class="px-12 py-3 text-white bg-primary text-base font-bold rounded-2xl cursor-pointer inline-flex items-center gap-2 ">
+            <img src="assets/icons/global/plus.svg" alt="Plus">
+
+            إضافة كوبون جديد
+        </button>
+    </div>
+
     <section class="">
-        <h2 class="text-text-primary text-base font-tajawal font-medium mb-7">
-        </h2>
+        <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"></app-shared-table>
     </section>
 </main>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { PageHeaderComponent } from "../../../../shared/components/page-header/page-header.component";
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-accounts-and-permissions',
@@ -13,6 +14,11 @@ export class AccountsAndPermissions {
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },
-    { label: 'الأجهزة الموثوقة', routerLink: '/trusted-devices' },
+    { label: 'الحسابات والصلاحيات', routerLink: '/accounts-and-permissions' },
   ];
+  constructor(private router: Router) {}
+
+  navigateToAddNewAccount() {
+    this.router.navigate(['/more/accounts-and-permissions/add-new-account']);
+  }
 }

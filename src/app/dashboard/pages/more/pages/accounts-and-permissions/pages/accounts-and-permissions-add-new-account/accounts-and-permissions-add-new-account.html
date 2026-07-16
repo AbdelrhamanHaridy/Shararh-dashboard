@@ -1,0 +1,97 @@
+<main class="p-6 flex flex-col gap-6">
+    <section class="">
+        <app-page-header title="الحسابات والصلاحيات" [home]="home"
+            [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+    <section class="">
+        <div class="flex flex-col gap-1 mb-8">
+            <h2 class="text-[#1E293B] text-2xl font-medium">إضافة حساب جديد</h2>
+            <p class="text-text-secondary text-base font-medium">قم بإنشاء ملف تعريف جديد للموظف وتحديد صلاحياته في
+                النظام</p>
+        </div>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+            <div class="grid grid-cols-2 gap-6 p-5 bg-white rounded-3xl">
+                <h2 class="text-[#1E293B] text-base font-medium mb-7 col-span-2">المعلومات الأساسية</h2>
+
+                <app-shared-text-input formControlName="fullName" label="ادخل الاسم بالكامل"
+                    placeholder="الاسم الاول بالكامل" inputId="fullName" primeNgIcon="pi pi-user"
+                    [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="email" label="البريد الالكتروني"
+                    placeholder="ادخل البريد الالكتروني" inputId="email" primeNgIcon="pi pi-user"
+                    [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="phone" label="رقم الهاتف" placeholder="ادخل رقم الهاتف"
+                    inputId="phone" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="branch" label="الفرع" placeholder="ادخل الفرع" inputId="branch"
+                    primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+                <app-shared-select formControlName="role" label="الدور الوظيفي" placeholder="اختر الدور الوظيفي"
+                    inputId="role" [options]="roleOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
+            </div>
+            <div class="p-2.5 bg-white rounded-3xl">
+                <h2 class="text-[#1E293B] text-base font-medium mb-4 px-6 py-1.5">الصلاحيات</h2>
+
+                <!-- Static permission item 1 -->
+                <div
+                    class="p-4 bg-white rounded-2xl border border-[#F8FAFC] flex flex-row justify-between items-center mb-3">
+                    <div class="flex flex-row items-center gap-4">
+                        <div class="rounded-2xl p-3 bg-[#FEF2F2]">
+                            <img class="w-6 h-6" src="assets/icons/global/remove_user.svg" alt="Notifications">
+                        </div>
+                        <div>
+                            <p class="text-[#334155] text-sm font-medium">إمكانية حذف عميل مسجل</p>
+                            <p class="text-text-secondary text-xs font-medium">يسمح للموظف بمسح بيانات العملاء وسجل
+                                المعاملات نهائياً</p>
+                        </div>
+                    </div>
+                    <div dir="ltr">
+                        <p-toggleswitch />
+                    </div>
+                </div>
+
+                <!-- Static permission item 2 -->
+                <div
+                    class="px-4 py-2.5 bg-white rounded-2xl border border-[#F8FAFC] flex flex-row justify-between items-center mb-3">
+                    <div class="flex flex-row items-center gap-4">
+                        <div class="rounded-2xl p-3 bg-[#F0FDF4]">
+                            <img class="w-6 h-6" src="assets/icons/global/check.svg" alt="Notifications">
+                        </div>
+                        <div>
+                            <p class="text-[#334155] text-sm font-medium">إمكانية تفعيل اشتراك</p>
+                            <p class="text-text-secondary text-xs font-medium">صلاحية الموافقة على طلبات الاشتراك
+                                الجديدة وتفعيل الخدمات</p>
+                        </div>
+                    </div>
+                    <div dir="ltr">
+                        <p-toggleswitch />
+                    </div>
+                </div>
+                <!-- Static permission item 2 -->
+                <div
+                    class="px-4 py-2.5 bg-white rounded-2xl border border-[#F8FAFC] flex flex-row justify-between items-center mb-3">
+                    <div class="flex flex-row items-center gap-4">
+                        <div class="rounded-2xl p-3 bg-[#FFFBEB]">
+                            <img class="w-6 h-6" src="assets/icons/global/orange_block.svg" alt="Notifications">
+                        </div>
+                        <div>
+                            <p class="text-[#334155] text-sm font-medium">إمكانية تفعيل اشتراك</p>
+                            <p class="text-text-secondary text-xs font-medium">صلاحية الموافقة على طلبات الاشتراك
+                                الجديدة وتفعيل الخدمات</p>
+                        </div>
+                    </div>
+                    <div dir="ltr">
+                        <p-toggleswitch />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="flex flex-row gap-8 justify-end">
+                <button type="button"
+                    class=" px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
+                <button type="submit" [disabled]="userForm.invalid"
+                    class=" px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">إضافة</button>
+            </div>
+        </form>
+    </section>
+</main>

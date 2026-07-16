@@ -1,10 +1,160 @@
 <main class="p-6 flex flex-col gap-6">
     <section class="">
-        <app-page-header title="الأجهزة الموثوقة" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+        <app-page-header title="الحسابات والصلاحيات" [home]="home" [breadcrumbItems]="breadcrumbItems"
+            [showActionButton]="true" actionButtonLabel="إضافة حساب جديد" (actionButtonClick)="navigateToAddNewAccount()"></app-page-header>
     </section>
 
-    <section class="">
-        <h2 class="text-text-primary text-base font-tajawal font-medium mb-7">
-        </h2>
+    <section>
+        <div class="flex flex-col gap-4">
+
+            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-row justify-between items-start">
+                    <div class="flex flex-row items-start gap-4">
+                        <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                            <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                        </div>
+                        <div class="flex flex-col">
+                            <h2 class="text-[#0F172A] text-base font-tajawal font-bold">ريم عبد الله</h2>
+                            <p class="text-text-secondary text-xs font-medium">@REE_A • <span
+                                    class="text-[#475569]">صلاحيات محدوده</span></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-5">
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
+                            <span>دعم فني</span>
+                        </span>
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-text-secondary bg-[#D5E3F8]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-text-secondary shrink-0"></span>
+                            <span>نشط منذ يوم</span>
+                        </span>
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                            <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 items-center">
+                    <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">...</p>
+                </div>
+            </div>
+
+            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-row justify-between items-start">
+                    <div class="flex flex-row items-start gap-4">
+                        <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                            <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                        </div>
+                        <div class="flex flex-col">
+                            <h2 class="text-[#0F172A] text-base font-tajawal font-bold">ريم عبد الله</h2>
+                            <p class="text-text-secondary text-xs font-medium">@REE_A • <span
+                                    class="text-[#475569]">صلاحيات محدوده</span></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-5">
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
+                            <span>خدمة عملاء</span>
+                        </span>
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#E11D48] bg-[#FFE4E6]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#E11D48] shrink-0"></span>
+                            <span>موقوف</span>
+                        </span>
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                            <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 items-center">
+                    <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">...</p>
+                </div>
+            </div>
+
+            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-row justify-between items-start">
+                    <div class="flex flex-row items-start gap-4">
+                        <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                            <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                        </div>
+                        <div class="flex flex-col">
+                            <h2 class="text-[#0F172A] text-base font-tajawal font-bold">ريم عبد الله</h2>
+                            <p class="text-text-secondary text-xs font-medium">@REE_A • <span
+                                    class="text-[#475569]">صلاحيات محدوده</span></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-5">
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
+                            <span>مشرف</span>
+                        </span>
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#059669] bg-[#D1FAE5]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#059669] shrink-0"></span>
+                            <span>نشط</span>
+                        </span>
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                            <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 items-center">
+                    <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">...</p>
+                </div>
+            </div>
+
+            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-row justify-between items-start">
+                    <div class="flex flex-row items-start gap-4">
+                        <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                            <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                        </div>
+                        <div class="flex flex-col">
+                            <h2 class="text-[#0F172A] text-base font-tajawal font-bold">ريم عبد الله</h2>
+                            <p class="text-text-secondary text-xs font-medium">@REE_A • <span
+                                    class="text-[#475569]">صلاحيات محدوده</span></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-5">
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
+                            <span>مبيعات</span>
+                        </span>
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#059669] bg-[#D1FAE5]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#059669] shrink-0"></span>
+                            <span>نشط</span>
+                        </span>
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                            <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 items-center">
+                    <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-base font-medium">|</p>
+                    <p class="text-primary text-base font-medium">...</p>
+                </div>
+            </div>
+
+        </div>
     </section>
 </main>

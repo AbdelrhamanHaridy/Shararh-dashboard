@@ -1,25 +1,23 @@
 import { Component } from '@angular/core';
+import { SharedKpiCard } from '../../../../shared/components/shared-kpi-card/shared-kpi-card';
+import { SharedTableComponent } from '../../../../shared/components/shared-table/shared-table.component';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
-import { PageHeaderComponent } from "../../../../shared/components/page-header/page-header.component";
-import { SharedTableComponent } from "../../../../shared/components/shared-table/shared-table.component";
-import { SharedKpiCard } from "../../../../shared/components/shared-kpi-card/shared-kpi-card";
 
 @Component({
-  selector: 'app-coupons-and-discount-codes',
-  imports: [PageHeaderComponent, SharedTableComponent, SharedKpiCard],
-  templateUrl: './coupons-and-discount-codes.html',
-  styleUrl: './coupons-and-discount-codes.scss',
+  selector: 'app-revenue-history',
+  imports: [SharedKpiCard, SharedTableComponent, PageHeaderComponent],
+  templateUrl: './revenue-history.html',
+  styleUrl: './revenue-history.scss',
 })
-export class CouponsAndDiscountCodes {
+export class RevenueHistory {
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },
-    { label: 'كوبونات واكواد الخصم', routerLink: '/coupons-and-discount-codes' },
+    { label: 'سجل الايرادات', routerLink: '/more/revenue-history' },
   ];
-
-
-    columns = [
+  columns = [
     { field: 'username', header: 'اسم المستخدم' },
     { field: 'fullName', header: 'الاسم الكامل' },
     { field: 'role', header: 'الدور' },
