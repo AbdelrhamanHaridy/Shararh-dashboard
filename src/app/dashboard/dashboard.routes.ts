@@ -2,9 +2,14 @@ import { Routes } from '@angular/router';
 import { userDatabaseRoutes } from './pages/user-database/user-database.routing';
 import { archiveRoutes } from './pages/archive/archive.routing';
 import { moreRoutes } from './pages/more/more.routing';
+import { authRoutes } from './pages/auth/auth.routing';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: 'auth',
+    children: authRoutes,
+  },
   {
     path: 'home',
     loadComponent: () => import('./pages/home/home').then((m) => m.Home),
