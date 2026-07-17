@@ -3,10 +3,14 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { MenuItem } from 'primeng/api';
 import { SubscriptionCard } from './components/subscription-card/subscription-card';
+import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import { BranchStaffManagement } from './components/branch-staff-management/branch-staff-management';
+import { AddNewSubscriber } from './components/add-new-subscriber/add-new-subscriber';
 
 @Component({
   selector: 'app-subscription-management',
-  imports: [SharedKpiCard, PageHeaderComponent, SubscriptionCard],
+  imports: [SharedKpiCard, PageHeaderComponent, SubscriptionCard, BranchStaffManagement],
+  providers: [DialogService],
   templateUrl: './subscription-management.html',
   styleUrl: './subscription-management.scss',
 })
@@ -14,6 +18,76 @@ export class SubscriptionManagement implements OnInit {
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems = [{ label: 'إدارة الاشتراكات' }];
 
+  ref: DynamicDialogRef | null = null;
+
+  constructor(public dialogService: DialogService) {}
+  ngOnInit() {}
+  showBranchStaffManagementDialog() {
+    this.ref = this.dialogService.open(BranchStaffManagement, {
+      header: 'Branch & Staff Management',
+      width: '502px',
+      modal: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        // Pass any data you want to the dialog
+        userId: 123,
+        context: 'subscription',
+      },
+    });
+
+    // Subscribe to dialog close event
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with result:', result);
+        // Handle the result data here
+        this.handleDialogResult(result);
+      }
+    });
+  }
+  showAddNewSubscriberDialog() {
+    this.ref = this.dialogService.open(AddNewSubscriber, {
+      header: 'إضافة مشترك جديد',
+      width: '502px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        // Pass any data you want to the dialog
+        userId: 123,
+        context: 'subscription',
+      },
+    });
+
+    // Subscribe to dialog close event
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with result:', result);
+        // Handle the result data here
+        this.handleDialogResult(result);
+      }
+    });
+  }
+
+  handleDialogResult(result: any) {
+    // Process the data returned from the dialog
+    if (result && result.success) {
+      // Refresh data or update UI
+      console.log('Data saved successfully:', result.data);
+    }
+  }
+
+  // Clean up on component destroy
+  ngOnDestroy() {
+    if (this.ref) {
+      this.ref.close();
+    }
+  }
   subscriptions = [
     {
       id: 5,
@@ -88,8 +162,6 @@ export class SubscriptionManagement implements OnInit {
       actionDate: '30-12-2024',
     },
   ];
-
-  ngOnInit() {}
 
   copyToClipboard(phone: string) {
     navigator.clipboard.writeText(phone).then(() => {

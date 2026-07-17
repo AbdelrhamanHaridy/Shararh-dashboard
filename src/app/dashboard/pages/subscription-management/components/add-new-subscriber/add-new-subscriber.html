@@ -1,0 +1,50 @@
+<div class="branch-staff-container">
+    <div class="p-fluid">
+        <form [formGroup]="subscriberForm" (ngSubmit)="saveAndClose()" class="flex flex-col gap-6">
+            <div class="flex flex-col gap-5 bg-white rounded-lg">
+                <app-shared-select formControlName="subscriberName" label="اسم المشترك" placeholder="اختر المشترك"
+                    inputId="subscriberName" [options]="subscribers" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-select>
+
+                <app-shared-text-input formControlName="phoneNumber" label="رقم الجوال للتواصل"
+                    placeholder="ادخل رقم الجوال" inputId="phoneNumber" primeNgIcon="pi pi-phone" [isRequired]="true"
+                    type="number"></app-shared-text-input>
+
+                <app-shared-select formControlName="packageType" label="نوع الباقة" placeholder="اختر نوع الباقة"
+                    inputId="packageType" [options]="packages" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-box" [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="subscriptionDuration" label="مدة الاشتراك"
+                    placeholder="اختر مدة الاشتراك" inputId="subscriptionDuration" [options]="subscriptionDurations"
+                    optionLabel="label" optionValue="value" primeNgIcon="pi pi-calendar"
+                    [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="paymentMethod" label="طريقة الدفع" placeholder="اختر طريقة الدفع"
+                    inputId="paymentMethod" [options]="paymentMethods" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-credit-card" [isRequired]="true"></app-shared-select>
+
+                <div class="field">
+                    <label for="paymentNotes" class="text-[#44483f] text-base font-medium">ملاحظات الدفع</label>
+                    <textarea id="paymentNotes" formControlName="paymentNotes" placeholder="ادخل ملاحظات الدفع"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg mt-2" rows="4"></textarea>
+                </div>
+                <div class="flex flex-row justify-between items-center">
+                    <p class="text-black text-lg font-medium">تفعيل الباقه</p>
+                    <p-toggleswitch dir="ltr" />
+                </div>
+                <button type="submit"
+                    class="px-18 py-3 bg-primary text-white rounded-2xl cursor-pointer w-full hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    إضافة
+                </button>
+            </div>
+
+            <div class="dialog-actions flex flex-row gap-4 justify-end">
+                <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
+                    (click)="closeDialog()">
+                </button>
+                <button pButton type="submit" label="Save" icon="pi pi-check" [disabled]="subscriberForm.invalid">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

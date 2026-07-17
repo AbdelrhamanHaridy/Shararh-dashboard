@@ -1,6 +1,6 @@
 <section class="px-6">
     <app-page-header title="إدارة الاشتراكات" [home]="home" [breadcrumbItems]="breadcrumbItems"
-        [showActionButton]="true" actionButtonLabel="تفعيل اشتراك جديد"></app-page-header>
+        [showActionButton]="true" actionButtonLabel="تفعيل اشتراك جديد" (actionButtonClick)="showAddNewSubscriberDialog()"></app-page-header>
 </section>
 <section class="p-6 grid grid-cols-4 gap-2.5">
     <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"

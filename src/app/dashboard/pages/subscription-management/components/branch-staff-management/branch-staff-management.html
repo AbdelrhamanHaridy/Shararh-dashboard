@@ -1,0 +1,25 @@
+<div class="branch-staff-container">
+    <div class="p-fluid">
+        <div class="field">
+            <label for="branch">Select Branch</label>
+        </div>
+
+        <div class="field">
+            <label>Staff Members</label>
+            <div class="staff-list">
+                <!-- <div *ngFor="let staff of staffMembers" class="staff-item">
+                    <span>{{ staff.name }}</span>
+                    <span class="role-badge">{{ staff.role }}</span>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="dialog-actions">
+            <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
+                (click)="closeDialog()">
+            </button>
+            <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveAndClose()">
+            </button>
+        </div>
+    </div>
+</div>

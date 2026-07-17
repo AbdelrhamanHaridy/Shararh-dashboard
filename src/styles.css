@@ -58,10 +58,27 @@
   --color-text-danger: #0d7f1a;
   --color-text-label: #44483f;
 }
-
+:host {
+  --p-toggleswitch-height: 1.5rem;
+}
 body {
   @apply font-tajawal;
   background-color: var(--color-background);
+}
+.p-dialog-header {
+  direction: ltr;
+  justify-content: center !important;
+  --p-dialog-header-padding: 40px 20px 18px 20px;
+}
+.p-dialog-title {
+  --p-dialog-title-font-weight: bold;
+  --p-dialog-title-font-size: 16px;
+  color: black !important;
+}
+.p-dialog-header-actions {
+  position: absolute;
+  top: 35px;
+  right: 30px;
 }
 /*  primary: "#10A922", */
 /* primary: "#1E293B",
