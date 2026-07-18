@@ -1,25 +1,140 @@
-<div class="branch-staff-container">
-    <div class="p-fluid">
-        <div class="field">
-            <label for="branch">Select Branch</label>
+<div class="branch-staff-container flex flex-col gap-2.5">
+    <div class="grid grid-cols-4 gap-2.5">
+        <div class="h-fit flex flex-col px-4 py-2 gap-1 rounded-xl border border-[#F1F5F9] bg-[#F8FAFC]">
+            <h5 class="text-sm font-medium text-[#2E3139]">مندوب</h5>
+            <p class="text-2xl font-bold text-black">1</p>
         </div>
-
-        <div class="field">
-            <label>Staff Members</label>
-            <div class="staff-list">
-                <!-- <div *ngFor="let staff of staffMembers" class="staff-item">
-                    <span>{{ staff.name }}</span>
-                    <span class="role-badge">{{ staff.role }}</span>
-                </div> -->
-            </div>
+        <div class="h-fit flex flex-col px-4 py-2 gap-1 rounded-xl border border-[#F1F5F9] bg-[#F8FAFC]">
+            <h5 class="text-sm font-medium text-[#2E3139]">كاشير</h5>
+            <p class="text-2xl font-bold text-[#137FEC]">2</p>
         </div>
-
-        <div class="dialog-actions">
-            <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
-                (click)="closeDialog()">
-            </button>
-            <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveAndClose()">
-            </button>
+        <div class="h-fit flex flex-col px-4 py-2 gap-1 rounded-xl border border-[#F1F5F9] bg-[#F8FAFC]">
+            <h5 class="text-sm font-medium text-[#2E3139]">محاسب</h5>
+            <p class="text-2xl font-bold text-black">1</p>
+        </div>
+        <div class="h-fit flex flex-col px-4 py-2 gap-1 rounded-xl border border-[#F1F5F9] bg-[#F8FAFC]">
+            <h5 class="text-sm font-medium text-[#2E3139]">شريك</h5>
+            <p class="text-2xl font-bold text-[#137FEC]">1</p>
         </div>
     </div>
+    <p class="text-base font-bold text-black">قائمة المستخدمين</p>
+    <div class="flex flex-col gap-5">
+        <div class="p-4 bg-white rounded-2xl flex flex-col gap-3 border border-[#D9D9D9]">
+            <div class="flex flex-row justify-between items-start">
+                <div class="flex flex-row items-start gap-4">
+                    <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                        <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <h2 class="text-black text-sm font-tajawal font-medium">أحمد محمد</h2>
+                        <p class="text-[#2E3139] text-sm font-normal">ahmed@business.com</p>
+                        <p class="text-text-secondary text-xs font-normal">
+                            <span class="text-[#137FEC] font-medium">الفروع:</span>
+                            طنطا , المنوفيه
+                        </p>
+                        <span class="text-[#2E3139] text-xs font-normal shrink-0 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                            <span>آخر نشاط: منذ ساعتين</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-5">
+                    <span
+                        class="px-2 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 text-[#FA3EAC] bg-[#FA3EAC1A]">
+                        <span>شريك</span>
+                    </span>
+                </div>
+            </div>
+            <div class="flex flex-row gap-2">
+                <button type="submit"
+                    class="px-18 py-2 flex-1 bg-[#E3FFE6] text-xs font-medium text-text-success rounded-lg cursor-pointer w-full flex flex-row gap-1.5 items-center justify-center hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <img src="assets/icons/global/green_location_mark.svg" alt="location" />
+                    إضافة
+                </button>
+                <button type="button"
+                    class=" hover:bg-gray-100 transition-colors cursor-pointer rounded-lg border border-[#D9D9D9] w-10 h-9 flex justify-center items-center">
+                    <img src="assets/icons/global/menu_dots.svg" alt="more" />
+                </button>
+            </div>
+        </div>
+        <div class="p-4 bg-white rounded-2xl flex flex-col gap-3 border border-[#D9D9D9]">
+            <div class="flex flex-row justify-between items-start">
+                <div class="flex flex-row items-start gap-4">
+                    <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                        <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <h2 class="text-black text-sm font-tajawal font-medium">أحمد محمد</h2>
+                        <p class="text-[#2E3139] text-sm font-normal">ahmed@business.com</p>
+                        <p class="text-text-secondary text-xs font-normal">
+                            <span class="text-[#137FEC] font-medium">الفروع:</span>
+                            طنطا , المنوفيه
+                        </p>
+                        <span class="text-[#2E3139] text-xs font-normal shrink-0 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                            <span>آخر نشاط: منذ ساعتين</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-5">
+                    <span
+                        class="px-2 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 text-[#FA3EAC] bg-[#FA3EAC1A]">
+                        <span>شريك</span>
+                    </span>
+                </div>
+            </div>
+            <div class="flex flex-row gap-2">
+                <button type="submit"
+                    class="px-18 py-2 flex-1 bg-[#E3FFE6] text-xs font-medium text-text-success rounded-lg cursor-pointer w-full flex flex-row gap-1.5 items-center justify-center hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <img src="assets/icons/global/green_location_mark.svg" alt="location" />
+                    إضافة
+                </button>
+                <button type="button"
+                    class=" hover:bg-gray-100 transition-colors cursor-pointer rounded-lg border border-[#D9D9D9] w-10 h-9 flex justify-center items-center">
+                    <img src="assets/icons/global/menu_dots.svg" alt="more" />
+                </button>
+            </div>
+        </div>
+        <div class="p-4 bg-white rounded-2xl flex flex-col gap-3 border border-[#D9D9D9]">
+            <div class="flex flex-row justify-between items-start">
+                <div class="flex flex-row items-start gap-4">
+                    <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
+                        <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <h2 class="text-black text-sm font-tajawal font-medium">عمر فاروق</h2>
+                        <p class="text-[#2E3139] text-sm font-normal">omar@business.com</p>
+                        <p class="text-text-secondary text-xs font-normal">
+                            <span class="text-[#137FEC] font-medium">الفروع:</span>
+                            طنطا , المنوفيه
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-5">
+                    <span
+                        class="px-2 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 text-[#137FEC] bg-[#137FEC1A]">
+                        <span>كاشير</span>
+                    </span>
+                </div>
+            </div>
+            <div class="flex flex-row gap-2">
+                <button type="submit"
+                    class="px-18 py-2 flex-1 text-xs font-medium text-[#D22F27] border border-[#D22F27] rounded-lg cursor-pointer w-full flex flex-row gap-1.5 items-center justify-center hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    إلغاء الحظر
+                </button>
+                <button type="button"
+                    class=" hover:bg-gray-100 transition-colors cursor-pointer rounded-lg border border-[#D9D9D9] w-10 h-9 flex justify-center items-center">
+                    <img src="assets/icons/global/menu_dots.svg" alt="more" />
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-actions">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
+            (click)="closeDialog()">
+        </button>
+        <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveAndClose()">
+        </button>
+    </div>
+
 </div>

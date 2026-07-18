@@ -24,9 +24,10 @@ export class SubscriptionManagement implements OnInit {
   ngOnInit() {}
   showBranchStaffManagementDialog() {
     this.ref = this.dialogService.open(BranchStaffManagement, {
-      header: 'Branch & Staff Management',
+      header: 'إدارة مستخدمي الفرع',
       width: '502px',
       modal: true,
+      closable: true,
       breakpoints: {
         '960px': '75vw',
         '640px': '90vw',
