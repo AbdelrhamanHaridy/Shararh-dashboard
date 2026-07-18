@@ -6,10 +6,11 @@ import { SubscriptionCard } from './components/subscription-card/subscription-ca
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { BranchStaffManagement } from './components/branch-staff-management/branch-staff-management';
 import { AddNewSubscriber } from './components/add-new-subscriber/add-new-subscriber';
+import { BranchDetailsDialog } from './components/branch-details-dialog/branch-details-dialog';
 
 @Component({
   selector: 'app-subscription-management',
-  imports: [SharedKpiCard, PageHeaderComponent, SubscriptionCard, BranchStaffManagement],
+  imports: [SharedKpiCard, PageHeaderComponent, SubscriptionCard],
   providers: [DialogService],
   templateUrl: './subscription-management.html',
   styleUrl: './subscription-management.scss',
@@ -52,6 +53,32 @@ export class SubscriptionManagement implements OnInit {
     this.ref = this.dialogService.open(AddNewSubscriber, {
       header: 'إضافة مشترك جديد',
       width: '502px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        // Pass any data you want to the dialog
+        userId: 123,
+        context: 'subscription',
+      },
+    });
+
+    // Subscribe to dialog close event
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with result:', result);
+        // Handle the result data here
+        this.handleDialogResult(result);
+      }
+    });
+  }
+  showBranchDetailsDialog() {
+    this.ref = this.dialogService.open(BranchDetailsDialog, {
+      header: 'تفاصيل الفرع',
+      width: '707px',
       modal: true,
       closable: true,
       breakpoints: {
@@ -175,6 +202,6 @@ export class SubscriptionManagement implements OnInit {
 
   onViewDetails(subscriptionId: number) {
     console.log('View details for subscription:', subscriptionId);
-    // Add navigation logic here
+    this.showBranchDetailsDialog();
   }
 }
