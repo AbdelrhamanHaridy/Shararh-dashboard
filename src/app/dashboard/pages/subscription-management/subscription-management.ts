@@ -7,6 +7,7 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { BranchStaffManagement } from './components/branch-staff-management/branch-staff-management';
 import { AddNewSubscriber } from './components/add-new-subscriber/add-new-subscriber';
 import { BranchDetailsDialog } from './components/branch-details-dialog/branch-details-dialog';
+import { TimelineOfEventsDialog } from './components/timeline-of-events-dialog/timeline-of-events-dialog';
 
 @Component({
   selector: 'app-subscription-management',
@@ -79,6 +80,32 @@ export class SubscriptionManagement implements OnInit {
     this.ref = this.dialogService.open(BranchDetailsDialog, {
       header: 'تفاصيل الفرع',
       width: '707px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        // Pass any data you want to the dialog
+        userId: 123,
+        context: 'subscription',
+      },
+    });
+
+    // Subscribe to dialog close event
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with result:', result);
+        // Handle the result data here
+        this.handleDialogResult(result);
+      }
+    });
+  }
+  showTimelineOfEventsDialog() {
+    this.ref = this.dialogService.open(TimelineOfEventsDialog, {
+      header: 'الخط الزمني للأحداث',
+      width: '784px',
       modal: true,
       closable: true,
       breakpoints: {
@@ -202,6 +229,7 @@ export class SubscriptionManagement implements OnInit {
 
   onViewDetails(subscriptionId: number) {
     console.log('View details for subscription:', subscriptionId);
-    this.showBranchDetailsDialog();
+    // this.showBranchDetailsDialog();
+    this.showTimelineOfEventsDialog();
   }
 }
