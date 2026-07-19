@@ -1,6 +1,8 @@
 <section class="px-6">
     <app-page-header title="مركز العملاء المحتملين" [home]="home" [breadcrumbItems]="breadcrumbItems"
-        [showActionButton]="true" actionButtonLabel="تفعيل اشتراك جديد"></app-page-header>
+        [showActionButton]="true" actionButtonLabel="إضافة عميل جديد"
+        (actionButtonClick)="onActionButtonClick($event, actionMenu)"></app-page-header>
+    <p-menu #actionMenu [popup]="true" [model]="actionMenuItems" appendTo="body"></p-menu>
 </section>
 <section class="p-6 grid grid-cols-4 gap-2.5">
     <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"

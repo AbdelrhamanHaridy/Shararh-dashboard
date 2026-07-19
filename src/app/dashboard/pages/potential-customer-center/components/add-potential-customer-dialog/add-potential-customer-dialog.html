@@ -1,0 +1,50 @@
+<div class="">
+    <div class="p-fluid">
+        <form [formGroup]="customerForm" (ngSubmit)="saveAndClose()" class="flex flex-col gap-6">
+            <div class="flex flex-col gap-5 bg-white rounded-lg">
+                <app-shared-select formControlName="customerName" label="اسم العميل" placeholder="اختر العميل"
+                    inputId="customerName" [options]="customers" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-select>
+
+                <app-shared-text-input formControlName="phoneNumber" label="رقم الجوال للتواصل"
+                    placeholder="ادخل رقم الجوال" inputId="phoneNumber" primeNgIcon="pi pi-phone" [isRequired]="true"
+                    type="number"></app-shared-text-input>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <app-shared-select formControlName="governorate" label="المحافظه" placeholder="اختر المحافظه"
+                        inputId="governorate" [options]="governorates" optionLabel="label" optionValue="value"
+                        primeNgIcon="pi pi-map-marker" [isRequired]="true"></app-shared-select>
+
+                    <app-shared-text-input formControlName="cityCenter" label="المدينه / المركز"
+                        placeholder="ادخل المدينه / المركز" inputId="cityCenter" primeNgIcon="pi pi-building"
+                        [isRequired]="true" type="text"></app-shared-text-input>
+                </div>
+
+                <app-shared-text-input formControlName="streetName" label="اسم الشارع" placeholder="ادخل اسم الشارع"
+                    inputId="streetName" primeNgIcon="pi pi-map" [isRequired]="true"
+                    type="text"></app-shared-text-input>
+
+                <app-shared-select formControlName="customerSource" label="مصدر العميل" placeholder="اختر مصدر العميل"
+                    inputId="customerSource" [options]="customerSources" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-briefcase" [isRequired]="true"></app-shared-select>
+
+                <app-shared-text-input formControlName="notes" label="ملاحظات" placeholder="ادخل ملاحظات"
+                    inputId="notes" primeNgIcon="pi pi-comment" [isRequired]="false"
+                    type="text"></app-shared-text-input>
+
+                <button type="submit"
+                    class="px-18 py-3 bg-primary text-white rounded-2xl cursor-pointer w-full hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    إضافة
+                </button>
+            </div>
+
+            <div class="dialog-actions flex flex-row gap-4 justify-end">
+                <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
+                    (click)="closeDialog()">
+                </button>
+                <button pButton type="submit" label="Save" icon="pi pi-check" [disabled]="customerForm.invalid">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+host {
+}
+::ng-deep .p-component.p-menu.p-menu-overlay {
+    position: relative !important;
+}
+::ng-deep .p-menu-list {
+    gap: 10px !important;
+    --p-menu-item-padding: 10px !important;
+}

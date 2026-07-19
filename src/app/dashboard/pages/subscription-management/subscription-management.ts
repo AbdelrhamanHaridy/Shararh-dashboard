@@ -256,7 +256,7 @@ export class SubscriptionManagement implements OnInit {
 
   onViewDetails(subscriptionId: number) {
     console.log('View details for subscription:', subscriptionId);
-    // this.showBranchDetailsDialog();
-    this.showSubscriptionPlanDialog();
+    this.showBranchDetailsDialog();
+    // this.showSubscriptionPlanDialog();
   }
 }

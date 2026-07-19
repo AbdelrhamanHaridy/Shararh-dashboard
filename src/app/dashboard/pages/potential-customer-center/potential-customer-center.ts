@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
+import { Menu } from 'primeng/menu';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { CustomerCard } from './components/customer-card/customer-card';
+import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import { AddCustomerGroupDialog } from './components/add-customer-group-dialog/add-customer-group-dialog';
+import { AddPotentialCustomerDialog } from './components/add-potential-customer-dialog/add-potential-customer-dialog';
 
 @Component({
   selector: 'app-potential-customer-center',
-  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard],
+  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard, MenuModule],
+  providers: [DialogService],
   templateUrl: './potential-customer-center.html',
   styleUrl: './potential-customer-center.scss',
 })
@@ -15,6 +21,25 @@ export class PotentialCustomerCenter {
   breadcrumbItems = [{ label: 'مركز العملاء المحتملين' }];
 
   activeTab: 'potential' | 'underImplementation' = 'potential';
+
+  actionMenuItems: MenuItem[] = [
+    {
+      label: 'إضافة عميل محتمل',
+      command: () => this.showAddPotentialCustomerDialog(),
+    },
+    {
+      label: 'إضافة مجموعة عملاء',
+      command: () => this.showAddCustomerGroupDialog(),
+    },
+    {
+      label: 'الارشيف',
+      disabled: true,
+    },
+  ];
+
+  ref: DynamicDialogRef | null = null;
+
+  constructor(public dialogService: DialogService) {}
 
   potentialCustomers = [
     {
@@ -113,9 +138,75 @@ export class PotentialCustomerCenter {
     this.activeTab = tab;
   }
 
+  onActionButtonClick(event: MouseEvent, menu: Menu): void {
+    menu.toggle(event);
+  }
+
   onAcceptCustomer(customerId: number) {
     console.log('Accept customer:', customerId);
     // Add accept customer logic here
     // This could move the customer from potential to under implementation
+  }
+
+  showAddPotentialCustomerDialog() {
+    this.ref = this.dialogService.open(AddPotentialCustomerDialog, {
+      header: 'إضافة عميل محتمل',
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        userId: 123,
+        context: 'addPotentialCustomer',
+      },
+    });
+
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with result:', result);
+        this.handleDialogResult(result);
+      }
+    });
+  }
+
+  showAddCustomerGroupDialog() {
+    this.ref = this.dialogService.open(AddCustomerGroupDialog, {
+      header: 'إضافة مجموعة عملاء',
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        userId: 123,
+        context: 'addCustomerGroup',
+      },
+    });
+
+    // Subscribe to dialog close event
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        console.log('Dialog closed with result:', result);
+        // Handle the result data here
+        this.handleDialogResult(result);
+      }
+    });
+  }
+
+  openArchive(): void {
+    console.log('Open archive');
+    // TODO: navigate to archive page
+  }
+  handleDialogResult(result: any) {
+    // Process the data returned from the dialog
+    if (result && result.success) {
+      // Refresh data or update UI
+      console.log('Data saved successfully:', result.data);
+    }
   }
 }

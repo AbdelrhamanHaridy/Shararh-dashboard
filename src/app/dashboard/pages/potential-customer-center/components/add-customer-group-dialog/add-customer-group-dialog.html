@@ -1,0 +1,72 @@
+<div class="w-full max-w-sm mx-auto bg-white rounded-2xl font-tajawal">
+
+    <!-- Header -->
+    <div class="relative flex items-center justify-center px-6 py-4">
+        <h2 class="text-center text-[#191C18] text-base font-bold">تحميل ملف</h2>
+        <button type="button" (click)="onClose()"
+            class="absolute right-6 text-gray-400 hover:text-gray-600 cursor-pointer">
+            <i class="pi pi-times text-lg"></i>
+        </button>
+    </div>
+
+    <div class="flex flex-col gap-5 px-6 pb-6">
+
+        <!-- Dropzone -->
+        <div (click)="onBrowseClick(fileInput)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+            class="flex flex-col items-center justify-center gap-4 py-10 px-6 rounded-xl border-2 border-dashed cursor-pointer transition-colors"
+            [ngClass]="isDraggingOver ? 'border-[#22C55E] bg-[#F0FDF4]' : 'border-[#BFDBFE] bg-[#F8FAFF]'">
+
+            <img src="assets/icons/global/upload_icon.svg" alt="رفع ملف" class="w-[69px] object-contain" />
+
+            <div class="flex flex-row items-center gap-1 text-sm">
+                <span class="text-[#64748B]">سحب وإسقاط أو</span>
+                <button type="button" (click)="$event.stopPropagation(); onBrowseClick(fileInput)"
+                    class="text-[#22C55E] font-medium underline cursor-pointer">
+                    ابحث هنا
+                </button>
+            </div>
+
+            <p class="text-[#94A3B8] text-xs">الملفات المسموحة : {{ allowedTypes }}</p>
+
+            <input #fileInput type="file" multiple class="hidden" (change)="onFilesSelected($event)" />
+        </div>
+
+        <!-- Upload count -->
+        <p class="text-[#64748B] text-sm text-right">تحميل .. - {{ files.length }} / {{ maxFiles }} ملفات</p>
+
+        <!-- Currently uploading -->
+        <div *ngIf="uploadingFile" class="flex flex-col gap-2 border border-gray-200 rounded-lg p-3">
+            <div class="flex flex-row items-center justify-between gap-3">
+                <button type="button" (click)="removeFile(uploadingFile)"
+                    class="w-5 h-5 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 cursor-pointer shrink-0">
+                    <i class="pi pi-times text-[10px]"></i>
+                </button>
+                <span class="flex-1 text-left text-sm text-[#334155] truncate">{{ uploadingFile.name }}</span>
+            </div>
+            <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-[#22C55E] rounded-full transition-all" [style.width.%]="uploadingFile.progress">
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed files -->
+        <div *ngIf="completedFiles.length" class="flex flex-col gap-3">
+            <p class="text-[#64748B] text-sm text-right">تم تحميل</p>
+
+            <div *ngFor="let file of completedFiles"
+                class="flex flex-row items-center justify-between gap-3 border border-[#86EFAC] rounded-lg px-4 py-3">
+                <button type="button" (click)="removeFile(file)" class="cursor-pointer shrink-0">
+                    <img src="assets/icons/global/red_delete.svg" alt="حذف الملف" class="w-4 h-4 object-contain" />
+                </button>
+                <span class="flex-1 text-left text-sm text-[#334155] truncate">{{ file.name }}</span>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="button" (click)="onUploadFiles()" [disabled]="!completedFiles.length"
+            class="w-full py-3 bg-[#22C55E] hover:bg-[#16A34A] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors cursor-pointer">
+            تحميل الملفات
+        </button>
+    </div>
+</div>

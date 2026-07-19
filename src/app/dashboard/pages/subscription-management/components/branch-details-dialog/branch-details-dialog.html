@@ -17,7 +17,8 @@
         <!-- Quick actions -->
         <div class="flex flex-row justify-center gap-12.5">
             <div *ngFor="let action of quickActions" class="flex flex-col items-center gap-1">
-                <div class="w-15 h-15 rounded-2xl flex items-center justify-center" [style.background-color]="action.bgColor">
+                <div class="w-15 h-15 rounded-2xl flex items-center justify-center"
+                    [style.background-color]="action.bgColor">
                     <img [src]="action.iconSrc" [alt]="action.label" class="w-full p-2.5" />
                 </div>
                 <span class="text-text-secondary text-base font-medium">{{ action.label }}</span>
@@ -58,12 +59,13 @@
             <span class="text-[#0F172A] text-base font-bold">{{ branch.ownerName }}</span>
         </div>
 
-        <div class="flex flex-row items-center justify-between p-4">
+        <button type="button" (click)="onOpenSubscriptionPlan()"
+            class="w-full flex flex-row items-center justify-between p-4 cursor-pointer hover:bg-gray-50 text-right">
             <span class="text-text-secondary text-base font-normal">خطة الاشتراك</span>
             <span class="bg-[#F1B31C1A] text-[#FF6600] text-xs font-bold px-2 py-1 rounded-sm">
                 {{ branch.subscriptionPlan }}
             </span>
-        </div>
+        </button>
 
         <div class="flex flex-row items-center justify-between p-4">
             <span class="text-text-secondary text-base font-normal">آخر تفعيل</span>

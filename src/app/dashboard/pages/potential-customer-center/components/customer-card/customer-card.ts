@@ -1,4 +1,6 @@
 import { Component, input, output } from '@angular/core';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 export interface Customer {
   id: number;
@@ -17,6 +19,14 @@ export interface Customer {
 
 @Component({
   selector: 'app-customer-card',
+  standalone: true,
+  imports: [ConfirmDialogModule],
+  // NOTE: ConfirmationService is provided here so this component works
+  // standalone in isolation/demos. If you render many <app-customer-card>
+  // instances in a list, move ConfirmationService up to a shared ancestor
+  // (e.g. the list/page component, or app.config.ts) instead — otherwise
+  // every card gets its own isolated confirm-dialog instance.
+  providers: [ConfirmationService],
   templateUrl: './customer-card.html',
   styleUrl: './customer-card.scss',
 })
@@ -28,6 +38,8 @@ export class CustomerCard {
   whatsappContact = output<number>();
   phoneCall = output<number>();
   acceptCustomer = output<number>();
+
+  constructor(private confirmationService: ConfirmationService) {}
 
   onCopyPhone() {
     this.copyPhone.emit(this.customer().phone);
@@ -46,6 +58,8 @@ export class CustomerCard {
   }
 
   onAcceptCustomer() {
-    this.acceptCustomer.emit(this.customer().id);
+    this.confirmationService.confirm({
+      accept: () => this.acceptCustomer.emit(this.customer().id),
+    });
   }
 }

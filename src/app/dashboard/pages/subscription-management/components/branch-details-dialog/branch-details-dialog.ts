@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import { TimelineOfEventsDialog } from '../timeline-of-events-dialog/timeline-of-events-dialog';
+import { SubscriptionPlanDialog } from '../subscription-plan-dialog/subscription-plan-dialog';
 
 interface BranchStat {
   label: string;
@@ -11,10 +14,15 @@ interface BranchStat {
 @Component({
   selector: 'app-branch-details-dialog',
   imports: [CommonModule, ToggleSwitch],
+  providers: [DialogService],
   templateUrl: './branch-details-dialog.html',
   styleUrl: './branch-details-dialog.scss',
 })
 export class BranchDetailsDialog {
+  ref: DynamicDialogRef | null = null;
+
+  constructor(private readonly dialogService: DialogService) {}
+
   branch = {
     name: 'محل الحرمين',
     subtitle: 'فرع وسط المدينة (الرئيسي)',
@@ -58,7 +66,37 @@ export class BranchDetailsDialog {
     // TODO: call API to activate / deactivate branch
   }
 
+  onOpenSubscriptionPlan(): void {
+    this.ref = this.dialogService.open(SubscriptionPlanDialog, {
+      header: 'خطة الاشتراك',
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        userId: 123,
+        context: 'subscription',
+      },
+    });
+  }
+
   onOpenTimeline(): void {
-    // TODO: navigate to branch events timeline
+    this.ref = this.dialogService.open(TimelineOfEventsDialog, {
+      header: 'الخط الزمني للأحداث',
+      width: '784px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        userId: 123,
+        context: 'subscription',
+      },
+    });
   }
 }
