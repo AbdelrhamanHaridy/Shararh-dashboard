@@ -1,0 +1,31 @@
+.nav-arrow-prev {
+  transform: rotate(180deg);
+}
+
+.nav-arrow-next {
+  transform: rotate(0deg);
+}
+
+.nav-arrow-prev.nav-arrow-disabled {
+  transform: rotate(180deg);
+}
+
+.nav-arrow-next.nav-arrow-disabled {
+  transform: rotate(0deg);
+}
+
+:host-context([dir='rtl']) .nav-arrow-prev {
+  transform: rotate(0deg);
+}
+
+:host-context([dir='rtl']) .nav-arrow-next {
+  transform: rotate(180deg);
+}
+
+:host-context([dir='rtl']) .nav-arrow-prev.nav-arrow-disabled {
+  transform: rotate(0deg);
+}
+
+:host-context([dir='rtl']) .nav-arrow-next.nav-arrow-disabled {
+  transform: rotate(180deg);
+}
