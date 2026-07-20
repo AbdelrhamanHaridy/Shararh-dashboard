@@ -4,10 +4,10 @@
 
 <h2 class="text-[#42493F] text-lg font-medium font-tajawal px-6">إدارة وتتبع كافة مراسلات العملاء بدقة</h2>
 
-<section class="grid grid-cols-3 gap-8 p-6" dir="rtl">
+<section class="grid grid-cols-1  lg:grid-cols-3 gap-x-0 gap-y-8 lg:gap-8 p-6" dir="rtl">
 
     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-8 px-5 py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
+        class="order-2 lg:order-1 flex flex-col gap-8 px-5 py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
 
         <section class="">
             <div class="flex flex-row items-center gap-3 mb-7">
@@ -51,7 +51,7 @@
     </form>
 
     <!-- Left column: task overview + suggested tasks -->
-    <div class="flex flex-col gap-8">
+    <div class="order-1 lg:order-2 flex flex-col gap-8">
 
         <!-- Box 1: Task stats -->
         <div class="flex flex-col gap-5 p-6 rounded-3xl bg-white border border-[#C2C8BD]">
