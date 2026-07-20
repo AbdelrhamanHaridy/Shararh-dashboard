@@ -1,17 +1,40 @@
 <div class="flex min-h-screen">
-  <main class="flex-1 min-h-screen overflow-x-auto w-full min-w-0" [class]="!isAuthRoute() ? 'mr-71.75' : ''">
+  <main class="flex-1 min-h-screen overflow-x-auto w-full min-w-0" [class]="!isAuthRoute() ? 'lg:mr-71.75' : ''">
     @if (!isAuthRoute()) {
-    <div class="fixed top-0 right-71.75 left-0 z-30 bg-white shadow-lg">
+    <div class="fixed top-0 right-71.75 left-0 z-30 bg-white shadow-lg hidden lg:block">
       <app-header></app-header>
     </div>
+    <div class="fixed top-0 right-0 left-0 z-30 bg-white shadow-lg lg:hidden">
+      <div class="flex h-16 items-center justify-between px-4">
+        <button type="button" (click)="openMobileSidebar()"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#E2E8F0] text-[#0F172A] cursor-pointer"
+          aria-label="فتح القائمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+          </svg>
+        </button>
+        <p class="text-sm font-bold text-[#0F172A]">Sharara</p>
+      </div>
+    </div>
     }
-    <div [class.pt-24]="!isAuthRoute()">
+    <div [class]="!isAuthRoute() ? 'pt-16 lg:pt-24' : ''">
       <router-outlet></router-outlet>
     </div>
   </main>
   @if (!isAuthRoute()) {
-  <div class="fixed right-0 top-0 h-screen w-71.75 z-40 shadow-lg">
+  <div class="fixed right-0 top-0 h-screen w-71.75 z-40 shadow-lg hidden lg:block">
     <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="fixed inset-0 z-50 lg:hidden" [class.pointer-events-none]="!isMobileSidebarOpen()">
+    <button type="button" class="absolute inset-0 bg-black/35 transition-opacity duration-300"
+      [class.opacity-0]="!isMobileSidebarOpen()" [class.opacity-100]="isMobileSidebarOpen()"
+      [attr.aria-hidden]="!isMobileSidebarOpen()" (click)="closeMobileSidebar()"></button>
+
+    <div class="absolute right-0 top-0 h-screen w-71.75 max-w-full bg-white shadow-lg transition-transform duration-300"
+      [class.translate-x-full]="!isMobileSidebarOpen()" [class.translate-x-0]="isMobileSidebarOpen()">
+      <app-sidebar></app-sidebar>
+    </div>
   </div>
   }
 </div>

@@ -4,27 +4,27 @@
     </h1>
     <p>home works!</p>
 </main> -->
-<section class="p-6 grid grid-cols-4 gap-2.5">
-    <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="120" iconPath="assets/icons/cards/people.svg"
+<section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
+    <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="120" iconPath="assets/icons/cards/layers.svg"
+        iconBgColor="#EEEEEE" numberColor="#000" navigateLink="/subscriptions">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="5" iconPath="assets/icons/cards/circle_check.svg"
+        iconBgColor="#D8FFDC" numberColor="#10A922">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'الاشتراكات المنتهيه'" [number]="15" iconPath="assets/icons/cards/timer_off.svg"
+        iconBgColor="#FFCFCF" numberColor="#D22F27">
+    </app-shared-kpi-card>
+    <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="20" iconPath="assets/icons/cards/people.svg"
         iconBgColor="#C3E1FF" numberColor="#137FEC" navigateLink="/subscriptions">
-    </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الاشتراكات المنتهيه'" [number]="5" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#D22F27">
-    </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="15" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#10A922">
-    </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="20" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#000" navigateLink="/subscriptions">
     </app-shared-kpi-card>
 </section>
 <section class="p-6 grid grid-cols-10 gap-5">
-    <div class="col-span-6">
+    <div class="col-span-10 md:col-span-6">
         <app-child-table [tableData]="sessions" [columns]="sessionColumns" [title]="'متابعة أداء الموظفين'"
             [showAllButton]="true" [showAllButtonLabel]="'View all captains'">
         </app-child-table>
     </div>
-    <div class="col-span-4 bg-white rounded-2xl p-5 shadow-md">
+    <div class="col-span-10 md:col-span-4 bg-white rounded-2xl p-5 shadow-md">
         <div class="flex flex-row gap-2">
             <img src="assets/icons/global/partition.svg" alt="Navigate">
             <h2 class="text-text-secondary text-lg font-tajawal font-bold">إحصائيات العملاء</h2>
@@ -47,9 +47,10 @@
 </section>
 <section class="p-6">
     <div class="pb-7">
-        <div class="flex flex-row gap-2">
-            <img src="assets/icons/global/notification.svg" alt="Notifications">
-            <h2 class="text-text-primary text-xl font-tajawal font-medium">الاشعارات الأخيرة</h2>
+        <div class="flex flex-wrap items-center gap-2">
+            <img src="assets/icons/global/notification.svg" alt="Notifications" class="shrink-0">
+            <h2 class="text-text-primary text-base sm:text-xl font-tajawal font-medium text-nowrap">الاشعارات الأخيرة
+            </h2>
         </div>
         <p></p>
     </div>
@@ -71,21 +72,22 @@
 </section>
 <section class="p-6">
     <div class="pb-7">
-        <div class="flex flex-row gap-2">
-            <img src="assets/icons/global/chat.svg" alt="Notifications">
-            <h2 class="text-text-primary text-xl font-tajawal font-medium">الشكاوى والمقترحات</h2>
+        <div class="flex flex-wrap items-center gap-2">
+            <img src="assets/icons/global/chat.svg" alt="Notifications" class="shrink-0">
+            <h2 class="text-text-primary text-base sm:text-xl font-tajawal font-medium text-nowrap">الشكاوى والمقترحات
+            </h2>
         </div>
         <p></p>
     </div>
     <div class="flex flex-col gap-5">
-        <div class="p-5 bg-white rounded-2xl shadow-md flex flex-row justify-between items-end">
-            <div class="flex flex-row items-start gap-4">
+        <div class="p-5 bg-white rounded-2xl shadow-md flex flex-row  flex-wrap gap-4 justify-between items-end">
+            <div class="flex flex-row  flex-wrap items-start gap-4">
                 <div class="rounded-full p-2 bg-[#FEE2E2]">
                     <img class="w-5 h-w-5" src="assets/icons/cards/people.svg" alt="Notifications">
                 </div>
                 <div class="flex flex-col gap-3.5">
                     <div class="flex flex-row gap-7">
-                        <h2 class="text-[#2E3139] text-xl font-tajawal font-bold">صيدلية الشفاء</h2>
+                        <h2 class="text-[#2E3139] text-xl font-tajawal font-bold text-nowrap">صيدلية الشفاء</h2>
                         <p class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">تم بنجاح
                         </p>
                     </div>
@@ -99,14 +101,14 @@
                 <img src="assets/icons/global/eye.svg" alt="Eye">
             </div>
         </div>
-        <div class="p-5 bg-white rounded-2xl shadow-md flex flex-row justify-between items-end">
+        <div class="p-5 bg-white rounded-2xl shadow-md flex flex-row flex-wrap gap-4 justify-between items-end">
             <div class="flex flex-row items-start gap-4">
                 <div class="rounded-full p-2 bg-[#FEE2E2]">
                     <img class="w-5 h-w-5" src="assets/icons/cards/people.svg" alt="Notifications">
                 </div>
-                <div class="flex flex-col gap-3.5">
-                    <div class="flex flex-row gap-7">
-                        <h2 class="text-[#2E3139] text-xl font-tajawal font-bold">صيدلية الشفاء</h2>
+                <div class="flex flex-col flex-wrap gap-3.5">
+                    <div class="flex flex-row  gap-7">
+                        <h2 class="text-[#2E3139] text-xl font-tajawal font-bold text-nowrap">صيدلية الشفاء</h2>
                         <p class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">تم بنجاح
                         </p>
                     </div>

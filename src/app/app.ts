@@ -14,12 +14,22 @@ export class App {
   protected readonly title = signal('sharara-project');
   private router = inject(Router);
   protected isAuthRoute = signal(false);
+  protected isMobileSidebarOpen = signal(false);
 
   constructor() {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.isAuthRoute.set(this.router.url.includes('/auth'));
+      this.isMobileSidebarOpen.set(false);
     });
     // Check initial route
     this.isAuthRoute.set(this.router.url.includes('/auth'));
+  }
+
+  protected openMobileSidebar(): void {
+    this.isMobileSidebarOpen.set(true);
+  }
+
+  protected closeMobileSidebar(): void {
+    this.isMobileSidebarOpen.set(false);
   }
 }

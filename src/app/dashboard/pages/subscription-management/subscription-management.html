@@ -2,7 +2,7 @@
     <app-page-header title="إدارة الاشتراكات" [home]="home" [breadcrumbItems]="breadcrumbItems"
         [showActionButton]="true" actionButtonLabel="تفعيل اشتراك جديد" (actionButtonClick)="showAddNewSubscriberDialog()"></app-page-header>
 </section>
-<section class="p-6 grid grid-cols-4 gap-2.5">
+<section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
     <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
         iconBgColor="#C3E1FF" numberColor="#137FEC" navigateLink="/user-database">
     </app-shared-kpi-card>
@@ -49,7 +49,7 @@
     </div>
 </section>
 <section class="p-6">
-    <div class="grid grid-cols-2 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
         @for (subscription of subscriptions; track subscription.id) {
         <app-subscription-card [subscription]="subscription" (copyPhone)="copyToClipboard($event)"
             (viewDetails)="onViewDetails($event)" />

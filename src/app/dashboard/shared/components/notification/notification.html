@@ -1,17 +1,19 @@
-<div [class]="'px-8 py-5 ' + bgColor() + ' rounded-2xl shadow-md flex flex-row justify-between items-center gap-4'">
-    <div class="flex flex-col">
-        <h2 [class]="'text-base font-medium ' + messageColor()">{{ message() }}</h2>
+<div
+    [class]="'px-8 py-5 ' + bgColor() + ' rounded-2xl shadow-md flex flex-col md:flex-row flex-wrap md:flex-nowrap justify-between items-start md:items-center gap-4'">
+    <div class="flex flex-col flex-wrap min-w-0 flex-1">
+        <h2 [class]="'text-base font-medium whitespace-normal wrap-break-word ' + messageColor()">{{ message() }}</h2>
         @if (description()) {
-        <p class="text-text-secondary text-sm">{{ description() }}</p>
+        <p class="text-text-secondary text-sm whitespace-normal wrap-break-word">{{ description() }}</p>
         }
     </div>
     @if (linkText() && linkUrl()) {
     <a [href]="linkUrl()"
-        class="text-text-success font-tajawal font-bold underline whitespace-nowrap  flex-1 text-center">{{ linkText()
+        class="text-text-success font-tajawal font-bold underline text-nowrap flex-1 md:flex-none text-center shrink-0">{{
+        linkText()
         }}</a>
     }
     @if (time()) {
-    <div class="flex flex-row gap-2 w-fit">
+    <div class="flex flex-row gap-2 w-fit shrink-0">
         <img src="assets/icons/global/clock.svg" alt="Time">
         <p class="text-text-secondary text-sm font-tajawal font-bold text-nowrap">{{ time() }}</p>
     </div>
