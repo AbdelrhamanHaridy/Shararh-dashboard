@@ -8,14 +8,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-shared-table',
-  imports: [
-    CommonModule,
-    FormsModule,
-    TableModule,
-    PaginatorModule,
-    ButtonModule,
-    CheckboxModule,
-  ],
+  imports: [CommonModule, FormsModule, TableModule, PaginatorModule, ButtonModule, CheckboxModule],
   templateUrl: './shared-table.component.html',
   styleUrl: './shared-table.component.scss',
 })
@@ -26,8 +19,8 @@ export class SharedTableComponent {
   @Input() totalRecords: number = 0;
   @Input() itemLabel: string = 'items';
   @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
-  @Output() actionClick: EventEmitter<{ action: string; row: any }> =
-    new EventEmitter();
+  @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() actionClick: EventEmitter<{ action: string; row: any }> = new EventEmitter();
 
   currentFirst: number = 0;
 
@@ -42,5 +35,9 @@ export class SharedTableComponent {
 
   onActionClick(action: string, row: any) {
     this.actionClick.emit({ action, row });
+  }
+
+  onRowClick(row: any) {
+    this.rowClick.emit(row);
   }
 }

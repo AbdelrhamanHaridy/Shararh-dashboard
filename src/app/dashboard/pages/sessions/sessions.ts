@@ -1,19 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 import { SharedTableComponent } from '../../shared/components/shared-table/shared-table.component';
+import { Router } from '@angular/router';
+import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import { RejectPaymentRequestDialog } from './components/reject-payment-request-dialog/reject-payment-request-dialog';
 
 @Component({
   selector: 'app-sessions',
   imports: [PageHeaderComponent, SharedKpiCard, SharedSelectComponent, SharedTableComponent],
   templateUrl: './sessions.html',
+
   styleUrl: './sessions.scss',
 })
 export class Sessions {
+  private readonly router = inject(Router);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems: MenuItem[] = [{ label: 'الجلسات', routerLink: '/sessions' }];
+
   contactViaOptions = [
     { label: 'هاتف', value: 'phone' },
     { label: 'بريد الكتروني', value: 'email' },
@@ -87,4 +94,8 @@ export class Sessions {
     },
   ];
   totalUsers = this.users.length;
+
+  onSessionRowClick(): void {
+    this.router.navigate(['/sessions/session-details']);
+  }
 }

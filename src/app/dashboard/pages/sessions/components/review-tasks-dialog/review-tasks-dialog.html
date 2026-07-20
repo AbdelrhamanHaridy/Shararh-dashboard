@@ -1,0 +1,36 @@
+<div class="flex flex-col gap-5 mb-3">
+    <div class="flex flex-col gap-2.5 mb-3">
+        <p class="text-text-secondary text-sm font-medium mb-2">قم بتحديد المهام بعد التاكد من تنفيذها بالشكل المطلوب</p>
+        @for (entry of communicationLog; track entry.id) {
+        <div class="flex items-center gap-4 rounded-xl bg-white border border-[#E9E9E9] hover:shadow-md transition-shadow cursor-pointer"
+           (click)="toggleSelection(entry.id)">
+
+            <!-- Main content -->
+            <div class="flex-1 flex items-center gap-2.5 py-2.5 px-4">
+                <div class="shrink-0 mr-4">
+                    <div (click)="$event.stopPropagation()">
+                        <p-checkbox [binary]="true" [ngModel]="isSelected(entry.id)"
+                            (onChange)="toggleSelection(entry.id)"></p-checkbox>
+                    </div>
+                </div>
+                <button type="button"
+                    class="w-9 h-10 rounded-xl bg-[#10A9221C] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
+                    <img src="assets/icons/global/green_file.svg" alt="file"/>
+                </button>
+
+
+
+                <!-- Center: Contact info -->
+                <h3 class="text-[#191C18] text-base font-medium font-tajawal leading-7 pr-2">{{ entry.name }}</h3>
+            </div>
+
+            <p class="text-sm text-[#137FEC] font-bold underline pl-8">مراجعه</p>
+        </div>
+        }
+    </div>
+    <!-- Apply -->
+    <button type="button"
+        class="inline-flex items-center justify-center gap-2.5 w-full h-fit py-3 pr-2.5 pl-2.5 rounded-[15px] bg-[#10A922] text-white text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer">
+        تأكيد المراجعه
+    </button>
+</div>

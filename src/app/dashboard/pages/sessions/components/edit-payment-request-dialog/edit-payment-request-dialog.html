@@ -1,0 +1,38 @@
+<div class="flex flex-col gap-5 mb-3">
+    <app-shared-select label="نوع الباقه" placeholder="اختر نوع الباقه" inputId="packageType" [options]="packageOptions"
+        optionLabel="label" optionValue="value" primeNgIcon="pi pi-box" [isRequired]="true"></app-shared-select>
+    <app-shared-select label="مدة الاشتراك" placeholder="اختر مدة الاشتراك" inputId="subscriptionDuration"
+        [options]="durationOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-calendar"
+        [isRequired]="true"></app-shared-select>
+    <div>
+        <label for="updateMessage" class="w-91 max-w-full text-black text-base font-normal text-right">
+            حالة الطلب
+        </label>
+        <div class="grid grid-cols-3 gap-5  py-4">
+            <button *ngFor="let filter of filters" type="button" (click)="selectFilter(filter.key)"
+                class="px-5.25 py-1.25 rounded-xl text-sm font-medium transition-colors cursor-pointer" [ngClass]="selectedFilter === filter.key
+                ? 'bg-white text-primary border-2 border-primary'
+                : 'bg-white text-[#191D17] border-2 border-[#E0E4DA]'">
+                {{ filter.label }}
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-2 ">
+        <label for="updateMessage" class="w-91 max-w-full text-black text-base font-normal text-right">
+            ملاحظة الدفع
+        </label>
+        <textarea id="updateMessage" maxlength="200"
+            class="w-91 h-28.25 max-w-full rounded-2xl border-2 border-[#F1F5F9] bg-[#F8FAFC] p-5 text-sm text-[#0F172A] resize-none outline-none"
+            placeholder="اكتب الرسالة هنا..."></textarea>
+        <!-- <p class="w-91 max-w-full text-right text-[10px] font-normal text-text-secondary">
+            الحد الأقصى: ٢٠٠ حرف
+        </p> -->
+    </div>
+
+    <!-- Apply -->
+    <button type="button"
+        class="inline-flex items-center justify-center gap-2.5 w-full h-fit py-3 pr-2.5 pl-2.5 rounded-[15px] bg-[#10A922] text-white text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer">
+        حفظ
+    </button>
+</div>

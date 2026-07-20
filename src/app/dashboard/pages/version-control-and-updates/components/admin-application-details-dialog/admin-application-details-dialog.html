@@ -1,1 +1,84 @@
-<p>admin-application-details-dialog works!</p>
+<div class="relative w-full mx-auto font-tajawal">
+
+    <!-- Close -->
+    <button type="button" (click)="onClose()"
+        class="absolute top-5 right-6 text-gray-400 hover:text-gray-600 cursor-pointer">
+        <i class="pi pi-times text-lg"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="flex flex-row items-center justify-between gap-4 mb-8">
+        <div class="flex flex-col  gap-1.5">
+            <h2 class="text-[#0F172A] text-sm font-bold">{{ application.name }}</h2>
+        </div>
+
+        <span
+            class="shrink-0 text-xs text-black font-medium bg-[#F1F5F9] border border-gray-200 rounded-full px-3 py-1.5 h-fit">
+            {{ application.organization }}
+        </span>
+    </div>
+
+    <!-- Stats -->
+    <div class="flex flex-col gap-3 mb-6">
+        <div class="flex flex-col gap-1 bg-[#F8FAFC] border border-[#D9D9D9] rounded-3xl p-5">
+            <div class="flex flex-row items-center gap-3 mb-6">
+                <div class="bg-[#F0FDF4] p-2 rounded-xl w-10">
+                    <img src="assets/icons/global/check.svg" alt="">
+                </div>
+                <span class="text-[#0F172A] text-base font-bold">{{ application.currentVersion }} ({{
+                    application.isOutdated ? 'قديم' : 'الأحدث' }})</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="flex flex-col items-center  bg-white border border-[#D9D9D9] rounded-xl p-4">
+                    <span class="text-text-secondary text-sm font-medium">إجمالي الأجهزة</span>
+                    <span class="text-[#0F172A] text-lg font-bold">{{ application.totalDevices }}</span>
+                </div>
+                <div class="flex flex-col items-center  bg-white border border-[#D9D9D9] rounded-xl p-4">
+                    <span class="text-text-secondary text-sm font-medium">الأجهزة النشطة</span>
+                    <span class="text-[#16A34A] text-lg font-bold">{{ application.activeDevices }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-1 bg-[#F8FAFC] border border-[#D9D9D9] rounded-3xl p-5">
+            <div class="flex flex-row justify-between items-center  mb-6">
+                <div class="flex flex-row items-center gap-3">
+                    <div class="bg-[#F0FDF4] p-2 rounded-xl w-10">
+                        <img src="assets/icons/global/check.svg" alt="">
+                    </div>
+                    <span class="text-[#0F172A] text-base font-bold">{{ application.currentVersion }} ({{
+                        application.isOutdated ? 'قديم' : 'الأحدث' }})</span>
+                </div>
+                <span
+                    class="shrink-0 text-xs text-[#EA580C] font-bold bg-[#FFEDD5]rounded-full px-2 py-1 h-fit">
+                    مطلوب التحديث
+                </span>
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="flex flex-col items-center  bg-white border border-[#D9D9D9] rounded-xl p-4">
+                    <span class="text-text-secondary text-sm font-medium">إجمالي الأجهزة</span>
+                    <span class="text-[#0F172A] text-lg font-bold">{{ application.totalDevices }}</span>
+                </div>
+                <div class="flex flex-col items-center  bg-white border border-[#D9D9D9] rounded-xl p-4">
+                    <span class="text-text-secondary text-sm font-medium">الأجهزة النشطة</span>
+                    <span class="text-[#16A34A] text-lg font-bold">{{ application.activeDevices }}</span>
+                </div>
+            </div>
+            <div class="flex flex-row gap-3 mt-9">
+                <button type="button" (click)="onNotifyUpdate()"
+                    class="w-full py-2 rounded-[15px] bg-primary hover:bg-[#15803D] text-white text-sm font-bold flex flex-row items-center justify-center gap-2 transition-colors cursor-pointer">
+                    <img src="assets/icons/global/white_bell.svg" alt="bell" class="w-6" />
+                    <span>تنبيه بالتحديث</span>
+                </button>
+
+                <button type="button" (click)="onForceUpdate()"
+                    class="w-full py-2 rounded-[15px] bg-white border border-[#D22F27] text-[#D22F27] hover:bg-red-50 text-sm font-bold flex flex-row items-center justify-center gap-2 transition-colors cursor-pointer">
+                    <img src="assets/icons/global/red_thunder.svg" alt="thunder" class="" />
+                    <span>تحديث اجباري</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -30,7 +30,8 @@
                 [isRequired]="true"></app-shared-select>
         </div>
     </section>
-<section >
-    <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"></app-shared-table>
-</section>
+    <section>
+        <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"
+            (rowClick)="onSessionRowClick()"></app-shared-table>
+    </section>
 </main>

@@ -18,7 +18,7 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-row>
-        <tr class="hover:bg-light-hover cursor-pointer transition">
+        <tr class="hover:bg-light-hover cursor-pointer transition" (click)="onRowClick(row)">
             <!-- <td class="px-4 py-2" (click)="$event.stopPropagation()">
                     <p-tableCheckbox [value]="row"></p-tableCheckbox>
                 </td> -->
@@ -32,11 +32,12 @@
                 @case('actions') {
                 <div class="flex flex-row items-center gap-3">
                     <p-button icon="pi pi-eye" [rounded]="true" [text]="true"
-                        [style]="{'color': 'var(--color-primary)'}" (click)="onActionClick('view', row)" />
+                        [style]="{'color': 'var(--color-primary)'}"
+                        (click)="$event.stopPropagation(); onActionClick('view', row)" />
                     <p-button icon="pi pi-ban" [rounded]="true" [text]="true" severity="help"
-                        (click)="onActionClick('ban', row)" />
+                        (click)="$event.stopPropagation(); onActionClick('ban', row)" />
                     <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
-                        (click)="onActionClick('delete', row)" />
+                        (click)="$event.stopPropagation(); onActionClick('delete', row)" />
                 </div>
                 } @default {
                 <p>{{ row[col.field] }}</p>

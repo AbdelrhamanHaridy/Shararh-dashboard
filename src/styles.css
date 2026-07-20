@@ -61,6 +61,7 @@
 :host {
   --p-toggleswitch-height: 1.5rem;
 }
+
 body {
   @apply font-tajawal;
   background-color: var(--color-background);

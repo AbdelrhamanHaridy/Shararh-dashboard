@@ -3,6 +3,7 @@ import { userDatabaseRoutes } from './pages/user-database/user-database.routing'
 import { archiveRoutes } from './pages/archive/archive.routing';
 import { moreRoutes } from './pages/more/more.routing';
 import { authRoutes } from './pages/auth/auth.routing';
+import { sessionsRoutes } from './pages/sessions/sessions.routing';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -68,7 +69,7 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: 'sessions',
-    loadComponent: () => import('./pages/sessions/sessions').then((m) => m.Sessions),
+    children: sessionsRoutes,
   },
   {
     path: 'archive',

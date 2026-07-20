@@ -1,0 +1,56 @@
+<div class="flex flex-col gap-5 mb-3">
+    <div class="flex flex-col gap-2.5 mb-3">
+        @for (entry of communicationLog; track entry.id) {
+        <div class="flex items-center gap-4 pl-6 rounded-2xl bg-white border border-[#E2E8F0] hover:shadow-md transition-shadow cursor-pointer"
+            [style.border-right]="'4px solid ' + entry.borderColor" (click)="toggleSelection(entry.id)">
+
+            <!-- Main content -->
+            <div class="flex-1 flex items-center gap-6 py-6 pr-6">
+                <button type="button"
+                    class="w-10 h-10 rounded-xl bg-[#10A922] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
+                    <img src="assets/icons/global/whatsapp.svg" alt="whatsapp" class="w-6 h-6" />
+                </button>
+
+
+
+                <!-- Center: Contact info -->
+                <div class="flex-1 flex flex-col">
+                    <h3 class="text-[#191C18] text-lg font-medium font-tajawal leading-7">{{ entry.name }}</h3>
+                    <div class="flex items-center gap-1 flex-wrap">
+                        <span class="text-[#196D00] text-sm font-medium font-tajawal">{{ entry.direction
+                            }}</span>
+                        <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                        <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.contactType
+                            }}</span>
+                        <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                        <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.reason }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right icon button -->
+            <div class="shrink-0 mr-4">
+                <div class="flex flex-row items-center gap-10">
+                    <div class="flex flex-col items-start">
+                        <span class="text-[#191C18] text-base leading-6 font-medium font-tajawal">{{ entry.time
+                            }}</span>
+                        <span class="text-[#42493F] text-xs font-medium font-tajawal pr-2">{{ entry.timeAgo
+                            }}</span>
+                    </div>
+                    <div (click)="$event.stopPropagation()">
+                        <p-checkbox [binary]="true" [ngModel]="isSelected(entry.id)"
+                            (onChange)="toggleSelection(entry.id)"></p-checkbox>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    <!-- Apply -->
+    <button type="button"
+        class="inline-flex items-center justify-center gap-2.5 w-full h-fit py-3 pr-2.5 pl-2.5 rounded-[15px] bg-[#10A922] text-white text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer">
+        حفظ
+    </button>
+</div>

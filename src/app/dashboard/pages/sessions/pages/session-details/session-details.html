@@ -1,0 +1,199 @@
+<main class="p-6 flex flex-col gap-6 font-tajawal">
+
+    <!-- Page header -->
+    <section>
+        <app-page-header title="الجلسات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+
+    <!-- KPI cards -->
+    <section class="grid grid-cols-4 gap-2.5">
+        <app-shared-kpi-card *ngFor="let kpi of kpis" [title]="kpi.title" [number]="kpi.number"
+            [iconPath]="kpi.iconPath" [iconBgColor]="kpi.iconBgColor" [numberColor]="kpi.numberColor">
+        </app-shared-kpi-card>
+    </section>
+
+    <!-- Session details -->
+    <section class="bg-white rounded-3xl p-7 border border-[#3D4B361A] flex flex-col gap-5">
+        <h2 class="text-[#191C18] text-base font-medium">تفاصيل الجلسه</h2>
+
+        <div class="flex flex-row items-start justify-between gap-6">
+
+            <!-- Employee info + status boxes -->
+            <div class="flex flex-col gap-4 flex-1">
+                <div class="flex flex-row gap-3 items-center">
+                    <img [src]="session.avatarUrl" alt="{{ session.employeeName }}"
+                        class="w-12 h-12 rounded-full object-cover shrink-0" />
+                    <div class="flex flex-col gap-1.5">
+                        <h3 class="text-[#191C18] text-base font-bold">{{ session.employeeName }}</h3>
+                        <div class="flex flex-row items-center gap-4 text-xs text-[#64748B]">
+                            <span class="flex flex-row items-center gap-1">
+                                <i class="pi pi-clock text-[10px]"></i>
+                                {{ session.durationHours }} ساعات
+                            </span>
+                            <span class="flex flex-row items-center gap-1">
+                                <i class="pi pi-stopwatch text-[10px]"></i>
+                                {{ session.timeRange }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1 bg-[#F0FDF4] rounded-xl p-3">
+                        <span class="text-[#64748B] text-xs">تقييم الجلسة</span>
+                        <span class="text-primary text-sm font-bold">{{ session.rating }}</span>
+                    </div>
+                    <div class="flex flex-col gap-1 bg-[#FEF2F2] rounded-xl p-3">
+                        <span class="text-[#64748B] text-xs">حالة المراجعة</span>
+                        <span class="text-[#DC2626] text-sm font-bold">{{ session.reviewStatus }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col gap-3 shrink-0">
+                <button type="button" (click)="onEndSession()"
+                    class="flex flex-row items-center gap-2 px-5 py-2.5 rounded-xl bg-[#191C18] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+                    <span>إنهاء الجلسة</span>
+                    <i class="pi pi-stop-circle text-sm"></i>
+                </button>
+                <button type="button" (click)="onRateSession()"
+                    class="flex flex-row items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-[#334155] text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer">
+                    <span>تقييم ومحوظة</span>
+                    <i class="pi pi-file-edit text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Today's subscriptions + subscriptions review -->
+    <section class="grid grid-cols-3 gap-4">
+        <!-- Subscriptions review table -->
+        <div class="col-span-2 bg-white rounded-3xl p-6 border border-[#3D4B361A] flex flex-col gap-4">
+            <div class="flex flex-row items-center justify-between">
+                <h3 class="flex flex-row items-center gap-2 text-text-secondary text-lg font-medium">
+                    <span>مراجعة الاشتراكات (طلبات الدفع)</span>
+                    <i class="pi pi-file text-[#94A3B8] text-sm"></i>
+                </h3>
+                <button type="button" (click)="onReviewSubscriptions()"
+                    class="p-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-[#15803D] transition-colors cursor-pointer">
+                    مراجعة الاشتراكات
+                </button>
+
+            </div>
+
+            <app-shared-table [tableData]="subscriptionRows" [columns]="subscriptionColumns"
+                [totalRecords]="subscriptionRows.length" (rowClick)="onSessionRowClick()"></app-shared-table>
+        </div>
+
+        <!-- Today's subscriptions -->
+        <div class="col-span-1 bg-white rounded-3xl p-6 border border-[#3D4B361A] flex flex-col gap-4">
+            <div class="flex flex-row items-center justify-between">
+                <h3 class="text-[#191C18] text-sm font-medium">اشتراكات اليوم</h3>
+                <i class="pi pi-info-circle text-[#94A3B8] text-sm"></i>
+            </div>
+
+            <div class="flex flex-row w-full h-2 rounded-full overflow-hidden">
+                <div *ngFor="let tier of subscriptionTiers" class="h-full"
+                    [style.width.%]="(tier.count / subscriptionTotal) * 100" [style.backgroundColor]="tier.color"></div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <div *ngFor="let tier of subscriptionTiers" class="flex flex-row items-center justify-between text-xs">
+                    <div class="flex flex-row items-center gap-2">
+                        <span class="w-2 h-2 rounded-full shrink-0" [style.backgroundColor]="tier.color"></span>
+                        <span class="text-[#334155]">{{ tier.label }}</span>
+                    </div>
+                    <span class="text-[#94A3B8]">{{ tier.count }} عمليات</span>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+    <!-- Communication log + tasks -->
+    <section class="grid grid-cols-3 gap-4">
+
+        <!-- Communication log -->
+        <div class="col-span-2 bg-white rounded-3xl p-6 border border-[#3D4B361A] flex flex-col gap-4">
+            <div class="flex flex-row items-center justify-between">
+                <h3 class="flex flex-row items-center gap-2 text-[#191C18] text-lg font-medium">
+                    <span>سجل التواصل</span>
+                    <i class="pi pi-phone text-[#94A3B8] text-sm"></i>
+                </h3>
+                <button type="button" (click)="onReviewCommunicationLog()"
+                    class="p-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-[#15803D] transition-colors cursor-pointer">
+                    مراجعة السجل
+                </button>
+
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <div *ngFor="let entry of communicationLog"
+                    class="flex items-center gap-4 pl-6 rounded-2xl bg-white border border-[#E2E8F0] hover:shadow-md transition-shadow"
+                    [style.border-right]="'4px solid ' + entry.borderColor">
+
+                    <!-- Main content -->
+                    <div class="flex-1 flex items-center gap-6 py-6 pr-6">
+                        <button type="button"
+                            class="w-10 h-10 rounded-xl bg-[#10A922] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
+                            <img src="assets/icons/global/whatsapp.svg" alt="whatsapp" class="w-6 h-6" />
+                        </button>
+
+
+
+                        <!-- Center: Contact info -->
+                        <div class="flex-1 flex flex-col">
+                            <h3 class="text-[#191C18] text-lg font-medium font-tajawal leading-7">{{ entry.name }}</h3>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <span class="text-[#196D00] text-sm font-medium font-tajawal">{{ entry.direction
+                                    }}</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.contactType
+                                    }}</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.reason }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right icon button -->
+                    <div class="shrink-0 mr-4">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[#191C18] text-base leading-6 font-medium font-tajawal">{{ entry.time
+                                }}</span>
+                            <span class="text-[#42493F] text-xs font-medium font-tajawal pr-2">{{ entry.timeAgo
+                                }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed tasks -->
+        <div class="col-span-1 bg-white rounded-3xl p-6 border border-[#3D4B361A] flex flex-col gap-4">
+            <div class="flex flex-row items-center justify-between">
+                <span class="text-[#94A3B8] text-xs">{{ completedTasksLabel }}</span>
+                <h3 class="flex flex-row items-center gap-2 text-[#191C18] text-sm font-medium">
+                    <span>المهام المنفذه</span>
+                    <i class="pi pi-list-check text-[#94A3B8] text-sm"></i>
+                </h3>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <div *ngFor="let task of tasks" class="bg-[#F0FDF4] rounded-lg px-3 py-2.5 text-sm text-[#334155]">
+                    {{ task.label }}
+                </div>
+            </div>
+
+            <button type="button" (click)="onReviewTasks()"
+                class="text-primary text-sm font-medium hover:underline cursor-pointer self-start">
+                مراجعة المهام
+            </button>
+        </div>
+
+
+    </section>
+</main>

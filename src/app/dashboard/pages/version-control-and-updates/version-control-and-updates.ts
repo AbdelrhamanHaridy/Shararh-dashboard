@@ -4,6 +4,7 @@ import { MenuItem } from 'primeng/api';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { FilterByVersionDialog } from './components/filter-by-version-dialog/filter-by-version-dialog';
 import { EmployeeApplicationDetailsDialog } from './components/employee-application-details-dialog/employee-application-details-dialog';
+import { AdminApplicationDetailsDialog } from './components/admin-application-details-dialog/admin-application-details-dialog';
 
 @Component({
   selector: 'app-version-control-and-updates',
@@ -104,7 +105,7 @@ export class VersionControlAndUpdates {
   }
 
   onOpenEmployeeApplicationDetails(merchantId: number, appId: string): void {
-    this.ref = this.dialogService.open(EmployeeApplicationDetailsDialog, {
+    this.ref = this.dialogService.open(AdminApplicationDetailsDialog, {
       header: 'تفاصيل تطبيق الموظفين',
       width: '520px',
       modal: true,
