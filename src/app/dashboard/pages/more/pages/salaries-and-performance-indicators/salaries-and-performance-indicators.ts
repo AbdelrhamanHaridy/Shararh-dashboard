@@ -1,17 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
-import { SharedKpiCard } from "../../../../shared/components/shared-kpi-card/shared-kpi-card";
-import { RouterLink } from '@angular/router';
+import { SharedKpiCard } from '../../../../shared/components/shared-kpi-card/shared-kpi-card';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { SalaryAndPerformanceDetailsDialog } from './components/salary-and-performance-details-dialog/salary-and-performance-details-dialog';
+import { SalaryDisbursementDialog } from './components/salary-disbursement-dialog/salary-disbursement-dialog';
 
 @Component({
   selector: 'app-salaries-and-performance-indicators',
-  imports: [PageHeaderComponent, SharedKpiCard, RouterLink],
+  imports: [PageHeaderComponent, SharedKpiCard],
+  providers: [DialogService],
   templateUrl: './salaries-and-performance-indicators.html',
   styleUrl: './salaries-and-performance-indicators.scss',
 })
 export class SalariesAndPerformanceIndicators {
+  private readonly dialogService = inject(DialogService);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  ref: DynamicDialogRef | null = null;
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },
@@ -73,4 +79,30 @@ export class SalariesAndPerformanceIndicators {
       ],
     },
   ];
+
+  openSalaryAndPerformanceDetailsDialog(): void {
+    this.ref = this.dialogService.open(SalaryAndPerformanceDetailsDialog, {
+      header: 'تفاصيل الراتب ومؤشرات الاداء',
+      width: '575px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '90vw',
+        '640px': '96vw',
+      },
+    });
+  }
+
+  openSalaryDisbursementDialog(): void {
+    this.ref = this.dialogService.open(SalaryDisbursementDialog, {
+      header: 'صرف الراتب',
+      width: '640px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '90vw',
+        '640px': '96vw',
+      },
+    });
+  }
 }

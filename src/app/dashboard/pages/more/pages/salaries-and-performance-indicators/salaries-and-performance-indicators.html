@@ -94,9 +94,9 @@
                             <span class="text-xs font-medium">EGP</span> 13,000
                         </p>
                     </div>
-                    <button type="button"
+                    <button type="button" (click)="openSalaryAndPerformanceDetailsDialog()"
                         class="col-auto  py-2.5 bg-white border border-[#2E3139] text-[#2E3139] text-sm  font-bold rounded-lg cursor-pointer">التفاصيل</button>
-                    <button type="button"
+                    <button type="button" (click)="openSalaryDisbursementDialog()"
                         class="col-span-3 px-6 py-2.5 text-white bg-primary text-sm font-bold rounded-lg cursor-pointer">صرف
                         الراتب</button>
                 </div>
@@ -177,12 +177,12 @@
                     </div>
 
                     <!-- action buttons -->
-                    <button type="button"
+                    <button type="button" (click)="openSalaryAndPerformanceDetailsDialog()"
                         class="col-auto py-2.5 bg-white border border-[#2E3139] text-[#2E3139] text-sm font-bold rounded-lg cursor-pointer px-4">
                         التفاصيل
                     </button>
-                    <button type="button"
-                        class="col-span-3 px-6 py-2.5 text-white bg-[#334155] text-sm font-bold rounded-lg cursor-pointer" routerLink="salary-calculation">
+                    <button type="button" (click)="openSalaryDisbursementDialog()"
+                        class="col-span-3 px-6 py-2.5 text-white bg-[#334155] text-sm font-bold rounded-lg cursor-pointer">
                         حساب الراتب
                     </button>
                 </div>
