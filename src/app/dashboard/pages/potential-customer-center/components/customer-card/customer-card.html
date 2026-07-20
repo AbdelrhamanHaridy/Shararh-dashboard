@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4 h-full" dir="rtl">
+<div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4" dir="rtl">
     <!-- Header -->
     <div class="flex items-start justify-between">
         <!-- avatar (right) + name/location/date -->
@@ -70,13 +70,13 @@
     @if (mode() === 'potential') {
     <!-- Potential customer: Accept button only -->
     <button type="button"
-        class="w-full py-3 rounded-xl bg-[#10A922] text-white text-base font-medium font-tajawal hover:opacity-90 transition-opacity cursor-pointer"
+        class="w-full py-3 rounded-xl bg-[#10A922] text-white text-base font-medium font-tajawal hover:opacity-90 transition-opacity cursor-pointer mt-auto"
         (click)="onAcceptCustomer()">
         استلام العميل
     </button>
     } @else {
     <!-- Under implementation: Contact buttons + Status change -->
-    <div class="flex items-center justify-between pt-4 border-t border-[#F1F5F9]">
+    <div class="flex items-center justify-between pt-4 border-t border-[#F1F5F9] mt-auto">
         <div class="flex items-center gap-2">
             <button type="button"
                 class="w-10 h-10 rounded-xl bg-[#10A922] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
@@ -110,19 +110,19 @@
                 <i class="pi pi-times text-lg"></i>
             </button>
 
-            <p class="text-center text-black text-lg pt-2">
+            <p class="text-center text-[#0F172A] text-base pt-2">
                 هل تؤكد استلام العميل
-                <span class="text-[#137FEC]  text-lg font-bold">{{ customer().name }}</span>
+                <span class="text-[#308FEE] font-bold">{{ customer().name }}</span>
                 ؟
             </p>
 
-            <div class="flex flex-row gap-5">
+            <div class="flex flex-row gap-4">
                 <button type="button" (click)="onAccept()"
-                    class="inline-flex items-center justify-center gap-2.5 w-60! h-fit py-3 pr-2.5 pl-2.5 rounded-lg bg-[#10A922] text-white text-base font-medium hover:opacity-90 transition-opacity cursor-pointer">
+                    class="flex-1 py-3 rounded-xl bg-[#10A922] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
                     تأكيد
                 </button>
                 <button type="button" (click)="onReject()"
-                    class="inline-flex items-center justify-center gap-2.5 w-60! h-fit py-3 pr-2.5 pl-2.5 rounded-lg bg-[#94A3B8] text-white text-base font-medium hover:opacity-90 transition-opacity cursor-pointer">
+                    class="flex-1 py-3 rounded-xl bg-[#94A3B8] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
                     إلغاء
                 </button>
             </div>
