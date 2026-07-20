@@ -1,8 +1,8 @@
-<main class="p-6 flex flex-col gap-6">
+<main class="p-4 sm:p-6 flex flex-col gap-5 sm:gap-6">
     <section>
         <app-page-header title="الجلسات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
-    <section class="grid grid-cols-4 gap-2.5">
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
         <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="120" iconPath="assets/icons/cards/people.svg"
             iconBgColor="#C3E1FF" numberColor="#137FEC">
         </app-shared-kpi-card>
@@ -16,9 +16,10 @@
             iconBgColor="#C3E1FF" numberColor="#000">
         </app-shared-kpi-card>
     </section>
-    <h2 class="text-text-primary text-base font-tajawal font-medium">استعرض وراقب أداء الجلسات المالية لموظفيك بدقة</h2>
-    <section class="bg-white rounded-3xl p-7 border border-[#3D4B361A] flex flex-col gap-4 relative">
-        <div class="grid grid-cols-3 gap-6 items-end">
+    <h2 class="text-text-primary text-sm sm:text-base font-tajawal font-medium">استعرض وراقب أداء الجلسات المالية
+        لموظفيك بدقة</h2>
+    <section class="bg-white rounded-3xl p-4 sm:p-7 border border-[#3D4B361A] flex flex-col gap-4 relative">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-end">
             <app-shared-select label="التاريخ" placeholder="حدد التاريخ" inputId="contactVia"
                 [options]="contactViaOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-phone"
                 [isRequired]="true"></app-shared-select>
