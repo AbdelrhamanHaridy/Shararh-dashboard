@@ -70,7 +70,7 @@
     </div>
 </section>
 <section class="p-6">
-    <div class="grid grid-cols-2 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
         @for (customer of currentCustomers; track customer.id) {
         <app-customer-card [customer]="customer" [mode]="activeTab" (copyPhone)="copyToClipboard($event)"
             (changeStatus)="onChangeStatus($event)" (whatsappContact)="onWhatsappContact($event)"
