@@ -1,7 +1,7 @@
-<section class="px-6">
+<section class="px-4 sm:px-6">
     <app-page-header title="الشكاوى والاقتراحات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
 </section>
-<section class="p-6 grid grid-cols-4 gap-2.5">
+<section class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
     <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="120" iconPath="assets/icons/cards/people.svg"
         iconBgColor="#C3E1FF" numberColor="#137FEC">
     </app-shared-kpi-card>
@@ -15,28 +15,29 @@
         iconBgColor="#C3E1FF" numberColor="#000">
     </app-shared-kpi-card>
 </section>
-<section class="p-6">
-    <h2 class="text-text-primary text-base font-tajawal font-medium mb-7">إدارة ومتابعة طلبات العملاء لتحسين جودة
+<section class="p-4 sm:p-6">
+    <h2 class="text-text-primary text-sm sm:text-base font-tajawal font-medium mb-5 sm:mb-7">إدارة ومتابعة طلبات العملاء
+        لتحسين جودة
         الخدمة</h2>
     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-8 px-5 py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
+        class="flex flex-col gap-6 sm:gap-8 px-4 sm:px-5 py-6 sm:py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
 
         <section class="">
-            <h2 class="text-[#191C18] text-2xl font-medium mb-8">تسجيل شكوى جديدة أو اقتراح</h2>
-            <div class="grid grid-cols-3 gap-6 items-end">
+            <h2 class="text-[#191C18] text-xl sm:text-2xl font-medium mb-6 sm:mb-8">تسجيل شكوى جديدة أو اقتراح</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-end">
                 <app-shared-text-input formControlName="customerName" label="اسم العميل" placeholder="ادخل اسم العميل"
                     inputId="customerName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
                 <app-shared-text-input formControlName="customerNumber" label="رقم العميل" placeholder="ادخل رقم العميل"
                     inputId="customerNumber" primeNgIcon="pi pi-hashtag" [isRequired]="true"></app-shared-text-input>
                 <div class="flex flex-col gap-2 h-fit">
                     <p class="text-sm text-[#44483F] font-medium">نوع الطلب</p>
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-wrap gap-3 sm:gap-5">
                         <button type="button"
-                            class="inline-flex items-center gap-2 rounded-xl bg-white cursor-pointer px-9 py-2.5 text-sm font-medium text-primary border-2 border-primary transition-colors hover:bg-primary-op-30">
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-white cursor-pointer px-6 sm:px-9 py-2.5 text-sm font-medium text-primary border-2 border-primary transition-colors hover:bg-primary-op-30 w-full sm:w-auto">
                             <span>اقتراح</span>
                         </button>
                         <button type="button"
-                            class="inline-flex items-center gap-2 rounded-xl bg-white cursor-pointer px-9 py-2.5 text-sm font-medium text-text-primary border-1 border-[#E0E4DA] transition-colors ">
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-white cursor-pointer px-6 sm:px-9 py-2.5 text-sm font-medium text-text-primary border border-[#E0E4DA] transition-colors w-full sm:w-auto">
                             <span>شكوى</span>
                         </button>
                     </div>
@@ -49,12 +50,12 @@
                     inputId="contactVia" [options]="contactViaOptions" optionLabel="label" optionValue="value"
                     primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-select>
 
-                <app-shared-select formControlName="contactReason" label="سبب التواصل" class="col-span-1"
-                    placeholder="اختر سبب التواصل" inputId="contactReason" [options]="contactReasonOptions"
-                    optionLabel="label" optionValue="value" primeNgIcon="pi pi-question-circle"
-                    [isRequired]="true"></app-shared-select>
+                <app-shared-select formControlName="contactReason" label="سبب التواصل"
+                    class="col-span-1 md:col-span-2 lg:col-span-1" placeholder="اختر سبب التواصل"
+                    inputId="contactReason" [options]="contactReasonOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-question-circle" [isRequired]="true"></app-shared-select>
 
-                <div class="flex flex-col gap-2 col-span-3">
+                <div class="flex flex-col gap-2 col-span-1 md:col-span-2 lg:col-span-3">
                     <label for="notes" class="text-sm font-medium text-text-primary font-tajawal">تفاصيل الطلب</label>
                     <textarea id="notes" formControlName="notes" placeholder="اكتب هنا ..."
                         class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm"
@@ -63,20 +64,20 @@
             </div>
         </section>
 
-        <div class="flex flex-row gap-8 justify-end">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-8 justify-end">
             <button type="submit" [disabled]="contactForm.invalid"
-                class="px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit font-tajawal font-medium">إرسال
+                class="px-6 sm:px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-full sm:w-fit font-tajawal font-medium">إرسال
                 الطلب</button>
         </div>
     </form>
 </section>
 
-<section class="p-6">
+<section class="p-4 sm:p-6">
     <div class="flex flex-col gap-8">
-        <div class="p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5">
+        <div class="p-4 sm:p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5">
             <!-- Search Bar -->
             <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
-                style="width: 879px; height: 52px;">
+                style="height: 52px;">
                 <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
                 <input type="text" placeholder="ابحث..."
                     class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
@@ -84,7 +85,7 @@
             </div>
 
             <!-- Filter Buttons -->
-            <div class="flex flex-row gap-5">
+            <div class="flex flex-wrap gap-3 sm:gap-5">
                 <button type="button"
                     class="inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30">
                     <span>الكل</span>
@@ -103,18 +104,19 @@
                 </button>
             </div>
         </div>
-        <h2 class="text-black text-2xl font-medium font-tajawal">سجل الشكاوى والاقتراحات</h2>
+        <h2 class="text-black text-xl sm:text-2xl font-medium font-tajawal">سجل الشكاوى والاقتراحات</h2>
         <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col justify-between items-start gap-6">
-            <div class="flex flex-row items-start gap-4 w-full">
-                <div class="rounded-full p-2 bg-[#FEE2E2] w-14 h-14 flex justify-center items-center">
+            <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
+                <div
+                    class="rounded-full p-2 bg-[#FEE2E2] w-12 h-12 sm:w-14 sm:h-14 flex justify-center items-center shrink-0">
                     <img class="w-6" src="assets/icons/global/timer.svg" alt="Notifications">
                 </div>
-                <div class="flex flex-row justify-between flex-1">
+                <div class="flex flex-col lg:flex-row justify-between gap-4 flex-1 w-full min-w-0">
                     <div class="flex flex-col gap-1">
-                        <h2 class="text-[#2E3139] text-lg font-tajawal font-medium"> فيصل العتيبي
+                        <h2 class="text-[#2E3139] text-base sm:text-lg font-tajawal font-medium"> فيصل العتيبي
                             <!-- <span class="text-[#D22F27]">24 ساعة</span> -->
                         </h2>
-                        <div class="flex flex-row gap-3">
+                        <div class="flex flex-wrap gap-3">
                             <p class="flex flex-row items-center gap-1 text-sm text-[#44483F] font-normal" dir="ltr">
                                 +966 54 221 0987
                                 <img src="assets/icons/global/black_phone.svg" alt="details" class="w-2.5 h-2.5" />
@@ -127,7 +129,7 @@
                         <!-- <p class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">تم بنجاح
                         </p> -->
                     </div>
-                    <div class="flex flex-row gap-3 items-center">
+                    <div class="flex flex-wrap gap-3 items-center">
                         <div class="flex flex-col gap-1">
                             <p class="text-[#44483F] text-xs font-medium leading-4">النوع</p>
                             <span
@@ -150,20 +152,21 @@
                 </div>
             </div>
             <p
-                class="text-text-primary px-2.5 py-5 text-lg font-medium bg-[#FAFDFF] w-full border border-[#E2E8F0] rounded-[10px]">
+                class="text-text-primary px-2.5 py-4 sm:py-5 text-base sm:text-lg font-medium bg-[#FAFDFF] w-full border border-[#E2E8F0] rounded-[10px]">
                 اقتراح إضافة ميزه جديده في صفحة التحويلات</p>
         </div>
         <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col justify-between items-start gap-6">
-            <div class="flex flex-row items-start gap-4 w-full">
-                <div class="rounded-full p-2 bg-[#FEE2E2] w-14 h-14 flex justify-center items-center">
+            <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
+                <div
+                    class="rounded-full p-2 bg-[#FEE2E2] w-12 h-12 sm:w-14 sm:h-14 flex justify-center items-center shrink-0">
                     <img class="w-6" src="assets/icons/global/timer.svg" alt="Notifications">
                 </div>
-                <div class="flex flex-row justify-between flex-1">
+                <div class="flex flex-col lg:flex-row justify-between gap-4 flex-1 w-full min-w-0">
                     <div class="flex flex-col gap-1">
-                        <h2 class="text-[#2E3139] text-lg font-tajawal font-medium"> فيصل العتيبي
+                        <h2 class="text-[#2E3139] text-base sm:text-lg font-tajawal font-medium"> فيصل العتيبي
                             <!-- <span class="text-[#D22F27]">24 ساعة</span> -->
                         </h2>
-                        <div class="flex flex-row gap-3">
+                        <div class="flex flex-wrap gap-3">
                             <p class="flex flex-row items-center gap-1 text-sm text-[#44483F] font-normal" dir="ltr">
                                 +966 54 221 0987
                                 <img src="assets/icons/global/black_phone.svg" alt="details" class="w-2.5 h-2.5" />
@@ -176,7 +179,7 @@
                         <!-- <p class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">تم بنجاح
                         </p> -->
                     </div>
-                    <div class="flex flex-row gap-3 items-center">
+                    <div class="flex flex-wrap gap-3 items-center">
                         <div class="flex flex-col gap-1">
                             <p class="text-[#44483F] text-xs font-medium leading-4">النوع</p>
                             <span
@@ -200,7 +203,7 @@
                 </div>
             </div>
             <p
-                class="text-text-primary px-2.5 py-5 text-lg font-medium bg-[#FAFDFF] w-full border border-[#E2E8F0] rounded-[10px]">
+                class="text-text-primary px-2.5 py-4 sm:py-5 text-base sm:text-lg font-medium bg-[#FAFDFF] w-full border border-[#E2E8F0] rounded-[10px]">
                 اقتراح إضافة ميزه جديده في صفحة التحويلات</p>
         </div>
 
