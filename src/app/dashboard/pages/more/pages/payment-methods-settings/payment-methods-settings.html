@@ -3,6 +3,7 @@
         <app-page-header title="إعدادات وسائل الدفع" [home]="home"
             [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
+    <p-menu #actionMenu [popup]="true" [model]="actionMenuItems" appendTo="body"></p-menu>
 
     <section>
         <h2 class="text-text-primary text-xl font-tajawal font-medium mb-7">
@@ -31,7 +32,8 @@
                             class="px-3 py-1 rounded-[20px] text-xs font-medium font-tajawal shrink-0 flex items-center gap-2 text-primary bg-[#10A9220D] border border-primary-op-30">
                             <span>بدون رسوم</span>
                         </span>
-                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            (click)="onActionButtonClick($event, actionMenu, method)">
                             <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
                         </button>
                     </div>

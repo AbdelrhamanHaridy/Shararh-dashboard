@@ -1,10 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, Type } from '@angular/core';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
+import { MenuModule, Menu } from 'primeng/menu';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { EditPaymentMethodEWalletDialog } from './components/edit-payment-method-e-wallet-dialog/edit-payment-method-e-wallet-dialog';
+import { EditPaymentMethodFawryPayDialog } from './components/edit-payment-method-fawry-pay-dialog/edit-payment-method-fawry-pay-dialog';
+import { EditPaymentMethodInstapayDialog } from './components/edit-payment-method-instapay-dialog/edit-payment-method-instapay-dialog';
+
+type PaymentMethodType = 'default' | 'fawry' | 'eWallet' | 'instapay';
+
+type PaymentMethod = {
+  id: number;
+  type: PaymentMethodType;
+  name: string;
+  time: string;
+  data?: Array<{ name: string; value: string }>;
+};
 
 @Component({
   selector: 'app-payment-methods-settings',
-  imports: [PageHeaderComponent],
+  imports: [PageHeaderComponent, MenuModule],
+  providers: [DialogService],
   templateUrl: './payment-methods-settings.html',
   styleUrl: './payment-methods-settings.scss',
 })
@@ -15,20 +31,40 @@ export class PaymentMethodsSettings {
     { label: 'إعدادات وسائل الدفع', routerLink: '/payment-methods-settings' },
   ];
 
-  // Dummy merchants data for the merchant boxes preview
-  paymentMethods = [
+  actionMenuItems: MenuItem[] = [
+    {
+      label: 'تعديل',
+      icon: 'pi pi-pen-to-square',
+      command: () => this.openEditDialogForActiveMethod(),
+    },
+    {
+      label: 'تعطيل',
+      icon: 'pi pi-ban',
+      command: () => this.disableActiveMethod(),
+    },
+  ];
+
+  ref: DynamicDialogRef | null = null;
+  activeMethod: PaymentMethod | null = null;
+
+  constructor(private readonly dialogService: DialogService) {}
+
+  paymentMethods: PaymentMethod[] = [
     {
       id: 99,
+      type: 'default',
       name: 'تفاصيل الخصم',
       time: 'تفعيل لحظي',
     },
     {
       id: 100,
+      type: 'fawry',
       name: 'فوري باي',
       time: 'تفعيل لحظي',
     },
     {
       id: 101,
+      type: 'eWallet',
       name: 'محفظه الكترونيه',
       time: 'تفعيل لحظي',
       data: [
@@ -48,7 +84,8 @@ export class PaymentMethodsSettings {
     },
     {
       id: 102,
-      name: 'تحويل بنكي / ايداع بنكي ',
+      type: 'instapay',
+      name: 'انستا باي',
       time: 'تفعيل لحظي',
       data: [
         {
@@ -104,4 +141,52 @@ export class PaymentMethodsSettings {
     //   ],
     // },
   ];
+
+  onActionButtonClick(event: MouseEvent, menu: Menu, method: PaymentMethod): void {
+    this.activeMethod = method;
+    menu.toggle(event);
+  }
+
+  openEditDialogForActiveMethod(): void {
+    if (!this.activeMethod) {
+      return;
+    }
+
+    const dialogByType: Record<PaymentMethodType, Type<unknown>> = {
+      default: EditPaymentMethodFawryPayDialog,
+      fawry: EditPaymentMethodFawryPayDialog,
+      eWallet: EditPaymentMethodEWalletDialog,
+      instapay: EditPaymentMethodInstapayDialog,
+    };
+
+    const headerByType: Record<PaymentMethodType, string> = {
+      default: 'تعديل وسيلة الدفع',
+      fawry: 'تعديل وسيلة الدفع',
+      eWallet: 'تعديل وسيلة الدفع',
+      instapay: 'تعديل وسيلة الدفع',
+    };
+
+    this.ref = this.dialogService.open(dialogByType[this.activeMethod.type], {
+      header: headerByType[this.activeMethod.type],
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        method: this.activeMethod,
+      },
+    });
+  }
+
+  disableActiveMethod(): void {
+    if (!this.activeMethod) {
+      return;
+    }
+
+    // Placeholder until backend integration for status changes.
+    console.log('Disable payment method:', this.activeMethod);
+  }
 }

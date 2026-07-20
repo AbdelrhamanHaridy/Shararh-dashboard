@@ -1,1 +1,60 @@
-<p>edit-payment-method-e-wallet-dialog works!</p>
+<div class="">
+    <p class="text-base text-primary font-medium text-center mx-auto mb-7">محفظه الكترونيه</p>
+    <div class="p-fluid">
+        <form [formGroup]="paymentMethodForm" (ngSubmit)="saveAndClose()" class="flex flex-col gap-6" dir="rtl">
+            <div class="flex flex-col gap-5 bg-white rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-1">
+                        <app-shared-text-input formControlName="paymentMethodName" label="اسم وسيلة الدفع"
+                            placeholder="ادخل اسم وسيلة الدفع" inputId="paymentMethodName" [isRequired]="true"
+                            type="text"></app-shared-text-input>
+                    </div>
+                    <div class="md:col-span-1"></div>
+
+                    <div class="md:col-span-1">
+                        <app-shared-text-input formControlName="accountName" label="الاسم" placeholder="ادخل الاسم"
+                            inputId="accountName" [isRequired]="true" type="text"></app-shared-text-input>
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <app-shared-text-input formControlName="walletNumber" label="رقم المحفظه"
+                            placeholder="ادخل رقم المحفظه" inputId="walletNumber" [isRequired]="true"
+                            type="text"></app-shared-text-input>
+                    </div>
+
+                    <div class="md:col-span-2 field">
+                        <label for="description" class="text-text-label text-base font-medium">الوصف</label>
+                        <textarea id="description" formControlName="description" rows="4" placeholder="ادخل الوصف"
+                            class="w-full px-4 py-2 border border-[#E2E8F0] rounded-[15px] mt-2 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div
+                    class="flex flex-col justify-between items-center gap-4 px-6 py-2.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-2xl">
+                    <div class="flex flex-row justify-between w-full">
+                        <p class="text-[#151E11] text-base font-medium font-tajawal">تطبيق الرسوم</p>
+                        <div dir="ltr">
+                            <p-toggleswitch formControlName="applyFees" />
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between items-end gap-5 w-full">
+                        <app-shared-text-input formControlName="feesPercentage" label="نسبة الرسوم"
+                            placeholder="ادخل نسبة الرسوم" inputId="feesPercentage" [isRequired]="true"
+                            type="text"></app-shared-text-input>
+                        <p class="text-text-secondary text-xs font-medium mb-1">سيتم خصم هذه النسبة تلقائياً من كل عملية تحويل صادرة من
+                            هذه المحفظة.</p>
+                    </div>
+                </div>
+
+
+
+                <div class="dialog-actions flex flex-row gap-4 justify-end">
+                    <button type="submit"
+                        class="px-12 py-3 bg-primary text-white rounded-2xl cursor-pointer w-fit hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        حفظ التغييرات
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -66,6 +66,7 @@ body {
   @apply font-tajawal;
   background-color: var(--color-background);
 }
+
 .p-dialog-header {
   direction: ltr;
   justify-content: center !important;
