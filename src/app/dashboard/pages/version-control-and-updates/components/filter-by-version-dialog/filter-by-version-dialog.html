@@ -1,0 +1,53 @@
+<div class="relative w-fullmx-auto  font-tajawal">
+
+    <!-- Header -->
+    <div class="relative flex items-center justify-center mb-6">
+
+
+        <button type="button" (click)="onClose()"
+            class="absolute right-0 text-gray-400 hover:text-gray-600 cursor-pointer">
+            <img src="assets/icons/global/close.svg" alt="close" class="" />
+        </button>
+        <h2 class="text-center text-[#0F172A] text-base font-bold">تصفيه حسب الإصدار</h2>
+        <button type="button" (click)="onClearAll()"
+            class="absolute left-0 text-[#137FEC] text-sm font-medium cursor-pointer hover:underline">
+            مسح الكل
+        </button>
+
+    </div>
+
+    <!-- Version groups -->
+    <div class="flex flex-col gap-6 max-h-[60vh] overflow-y-auto">
+        <div *ngFor="let group of groups" class="flex flex-col gap-3">
+            <h3 class="text-[#94A3B8] text-xs font-bold">{{ group.title }}</h3>
+
+            <label *ngFor="let option of group.options" (click)="selectVersion(group, option.id)"
+                class="flex flex-row items-center justify-between p-4 rounded-2xl cursor-pointer transition-colors border-2"
+                [ngClass]="group.selectedId === option.id
+                    ? 'bg-[#10A9220D] border-[#0D7F1A4D]'
+                    : 'bg-[#F8FAFC] border-transparent'">
+
+                <div class="flex flex-row items-center gap-3">
+                    <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+                        [ngClass]="group.selectedId === option.id ? 'border-[#16A34A]' : 'border-gray-300'">
+                        <span *ngIf="group.selectedId === option.id" class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+                    </span>
+                    <span class="text-[#292A2E] text-sm font-bold">{{ option.version }}</span>
+                </div>
+
+                <span class="text-xs font-medium text-[#10A922] bg-[#EBF3EC] rounded-full px-2.5 py-1">
+                    {{ option.usersLabel }}
+                </span>
+
+            </label>
+        </div>
+    </div>
+
+    <hr class="border-gray-100 my-6" />
+
+    <!-- Apply -->
+    <button type="button" (click)="onApplyFilter()"
+        class="w-full py-3 rounded-xl bg-primary hover:bg-[#15803D] text-white text-sm font-medium transition-colors cursor-pointer">
+        تطبيق الفلتر
+    </button>
+</div>
