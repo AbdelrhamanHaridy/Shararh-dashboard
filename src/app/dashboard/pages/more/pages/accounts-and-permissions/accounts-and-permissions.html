@@ -1,15 +1,16 @@
-<main class="p-6 flex flex-col gap-6">
+<main class="p-4 sm:p-6 flex flex-col gap-5 sm:gap-6">
     <section class="">
         <app-page-header title="الحسابات والصلاحيات" [home]="home" [breadcrumbItems]="breadcrumbItems"
-            [showActionButton]="true" actionButtonLabel="إضافة حساب جديد" (actionButtonClick)="navigateToAddNewAccount()"></app-page-header>
+            [showActionButton]="true" actionButtonLabel="إضافة حساب جديد"
+            (actionButtonClick)="navigateToAddNewAccount()"></app-page-header>
     </section>
 
     <section>
         <div class="flex flex-col gap-4">
 
-            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
-                <div class="flex flex-row justify-between items-start">
-                    <div class="flex flex-row items-start gap-4">
+            <div class="p-4 sm:p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-start">
+                    <div class="flex flex-row items-start gap-3 sm:gap-4">
                         <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
                             <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
                         </div>
@@ -19,7 +20,7 @@
                                     class="text-[#475569]">صلاحيات محدوده</span></p>
                         </div>
                     </div>
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-5 items-center">
                         <span
                             class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
                             <span>دعم فني</span>
@@ -34,19 +35,19 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-wrap gap-2 items-center">
                     <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">...</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">...</p>
                 </div>
             </div>
 
-            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
-                <div class="flex flex-row justify-between items-start">
-                    <div class="flex flex-row items-start gap-4">
+            <div class="p-4 sm:p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-start">
+                    <div class="flex flex-row items-start gap-3 sm:gap-4">
                         <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
                             <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
                         </div>
@@ -56,7 +57,7 @@
                                     class="text-[#475569]">صلاحيات محدوده</span></p>
                         </div>
                     </div>
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-5 items-center">
                         <span
                             class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
                             <span>خدمة عملاء</span>
@@ -71,19 +72,19 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-wrap gap-2 items-center">
                     <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">...</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">...</p>
                 </div>
             </div>
 
-            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
-                <div class="flex flex-row justify-between items-start">
-                    <div class="flex flex-row items-start gap-4">
+            <div class="p-4 sm:p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-start">
+                    <div class="flex flex-row items-start gap-3 sm:gap-4">
                         <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
                             <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
                         </div>
@@ -93,7 +94,7 @@
                                     class="text-[#475569]">صلاحيات محدوده</span></p>
                         </div>
                     </div>
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-5 items-center">
                         <span
                             class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
                             <span>مشرف</span>
@@ -108,19 +109,19 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-wrap gap-2 items-center">
                     <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">...</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">...</p>
                 </div>
             </div>
 
-            <div class="p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
-                <div class="flex flex-row justify-between items-start">
-                    <div class="flex flex-row items-start gap-4">
+            <div class="p-4 sm:p-5 bg-white rounded-xl shadow-sm flex flex-col gap-3 border border-[#E2E8F0]">
+                <div class="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-start">
+                    <div class="flex flex-row items-start gap-3 sm:gap-4">
                         <div class="rounded-full flex justify-center items-center bg-[#10A9221A] w-10 h-10">
                             <img class="w-5" src="assets/icons/global/person.svg" alt="Notifications">
                         </div>
@@ -130,7 +131,7 @@
                                     class="text-[#475569]">صلاحيات محدوده</span></p>
                         </div>
                     </div>
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-5 items-center">
                         <span
                             class="px-3 py-1 rounded-[20px] text-xs font-bold font-tajawal shrink-0 flex items-center gap-2 text-[#137FEC] bg-[#137FEC1A]">
                             <span>مبيعات</span>
@@ -145,13 +146,13 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-wrap gap-2 items-center">
                     <p class="text-black text-xs font-medium">الاجهزة المتاحه</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">192.168.1.1</p>
-                    <p class="text-[#2E3139] text-base font-medium">|</p>
-                    <p class="text-primary text-base font-medium">...</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">192.168.1.1</p>
+                    <p class="text-[#2E3139] text-sm sm:text-base font-medium">|</p>
+                    <p class="text-primary text-sm sm:text-base font-medium">...</p>
                 </div>
             </div>
 

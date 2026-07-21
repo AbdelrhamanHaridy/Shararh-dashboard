@@ -3,7 +3,7 @@
         <app-page-header title="كوبونات واكواد الخصم" [home]="home"
             [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
-    <section class=" grid grid-cols-3 gap-2.5">
+    <section class=" grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
         <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
             iconBgColor="#C3E1FF" numberColor="#137FEC" >
         </app-shared-kpi-card>
@@ -15,7 +15,7 @@
         </app-shared-kpi-card>
     </section>
 
-    <div class="flex flex-row justify-between items-center">
+    <div class="flex flex-row justify-between flex-wrap items-center">
         <p class="text-base text-[#43493E] font-medium py-3 px-6">مراقبة التدفقات النقدية والاشتراكات في الوقت الفعلي
         </p>
         <button type="button"

@@ -3,7 +3,7 @@
         <app-page-header title="التسعير والباقات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
 
-    <div class="flex flex-row justify-between items-center">
+    <div class="flex flex-row justify-between flex-wrap items-center">
         <p class="text-base text-[#43493E] font-medium py-3">تحكم في خطط الاشتراك، الأسعار، والقيود لكل باقة
         </p>
         <button type="button"
@@ -23,7 +23,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             <div *ngFor="let plan of plans" class="relative bg-white p-8 rounded-xl flex flex-col gap-6 border-2"
                 [ngClass]="plan.featured ? 'border-[#196D0066]' : 'border-[#C1C9B94D]'">
 

@@ -10,8 +10,8 @@
                 النظام</p>
         </div>
         <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
-            <div class="grid grid-cols-2 gap-6 p-5 bg-white rounded-3xl">
-                <h2 class="text-[#1E293B] text-base font-medium mb-7 col-span-2">المعلومات الأساسية</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 p-5 bg-white rounded-3xl">
+                <h2 class="text-[#1E293B] text-base font-medium mb-7 sm:col-span-2">المعلومات الأساسية</h2>
 
                 <app-shared-text-input formControlName="fullName" label="ادخل الاسم بالكامل"
                     placeholder="الاسم الاول بالكامل" inputId="fullName" primeNgIcon="pi pi-user"
@@ -88,9 +88,9 @@
 
             <div class="flex flex-row gap-8 justify-end">
                 <button type="button"
-                    class=" px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
+                    class="px-10 sm:px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
                 <button type="submit" [disabled]="userForm.invalid"
-                    class=" px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">إضافة</button>
+                    class="px-10 sm:px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">إضافة</button>
             </div>
         </form>
     </section>
