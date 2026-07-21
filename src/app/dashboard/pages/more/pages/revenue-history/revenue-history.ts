@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { SharedKpiCard } from '../../../../shared/components/shared-kpi-card/shared-kpi-card';
 import { SharedTableComponent } from '../../../../shared/components/shared-table/shared-table.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-revenue-history',
@@ -11,77 +12,115 @@ import { MenuItem } from 'primeng/api';
   styleUrl: './revenue-history.scss',
 })
 export class RevenueHistory {
+  private router = inject(Router);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },
     { label: 'سجل الايرادات', routerLink: '/more/revenue-history' },
   ];
+
   columns = [
-    { field: 'username', header: 'اسم المستخدم' },
-    { field: 'fullName', header: 'الاسم الكامل' },
-    { field: 'role', header: 'الدور' },
-    { field: 'storeName', header: 'اسم المحل' },
-    { field: 'deviceCount', header: 'عدد الأجهزة' },
-    { field: 'version', header: 'الإصدار' },
-    { field: 'activity', header: 'الحالة' },
+    { field: 'branchName', header: 'اسم الفرع', style: { fontSize: '16px', color: '#1A1C18' } },
+    // { field: 'submissionTime', header: 'وقت التقديم' },
+    // { field: 'reviewTime', header: 'وقت المراجعة' },
+    { field: 'startTime', header: 'وقت التقديم', style: { color: '#1A1C18' }  },
+    { field: 'endTime', header: 'وقت المراجعة', style: { color: '#1A1C18' }  },
+    { field: 'paymentMethod', header: 'وسيلة الدفع' },
+    {
+      field: 'discountCoupon',
+      header: 'كوبون الخصم',
+      style: { fontSize: '14px', color: '#1A1C18' },
+    },
+    { field: 'amount', header: 'مبلغ الاشتراك' },
+    { field: 'processStatus', header: 'حالة العملية' },
   ];
 
-  users = [
+  revenueRecords = [
     {
-      username: 'ahmed.h',
-      fullName: 'أحمد حسن',
-      role: 'مدير',
-      storeName: 'متجر التقنية',
-      deviceCount: 2,
-      version: 'v2.1.0',
-      activity: 'نشط',
+      branchName: 'الفرع الرئيسي',
+      // submissionTime: '2023/09/15 14:22',
+      // reviewTime: '2023/09/15 16:30',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      paymentMethod: 'بطاقة ائتمان',
+      discountCoupon: 'SAVE20',
+      amount: '500',
+      processStatus: 'ناجحة',
     },
     {
-      username: 'mo.ali',
-      fullName: 'محمد علي',
-      role: 'موظف',
-      storeName: 'سوبر ماركت الوفاء',
-      deviceCount: 1,
-      version: 'v2.0.5',
-      activity: 'نشط',
+      branchName: 'فرع الرياض',
+      // submissionTime: '2023/09/14 10:15',
+      // reviewTime: '2023/09/14 12:45',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      paymentMethod: 'تحويل بنكي',
+      discountCoupon: 'WELCOME10',
+      amount: '350',
+      processStatus: 'ناجحة',
     },
     {
-      username: 'omar.k',
-      fullName: 'عمر خالد',
-      role: 'مدير فرع',
-      storeName: 'محل الأصدقاء',
-      deviceCount: 3,
-      version: 'v2.1.0',
-      activity: 'نشط',
+      branchName: 'فرع جدة',
+      // submissionTime: '2023/09/13 09:30',
+      // reviewTime: '2023/09/13 11:20',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      paymentMethod: 'مدى',
+      discountCoupon: 'لا يوجد',
+      amount: '750',
+      processStatus: 'ناجحة المراجعة',
     },
     {
-      username: 'youssef.n',
-      fullName: 'يوسف نبيل',
-      role: 'موظف',
-      storeName: 'متجر الملابس',
-      deviceCount: 1,
-      version: 'v2.0.0',
-      activity: 'غير نشط',
+      branchName: 'فرع الدمام',
+      // submissionTime: '2023/09/12 16:45',
+      // reviewTime: '2023/09/13 09:00',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      paymentMethod: 'بطاقة ائتمان',
+      discountCoupon: 'FLASH50',
+      amount: '250',
+      processStatus: 'ناجحة',
     },
     {
-      username: 'karim.s',
-      fullName: 'كريم سمير',
-      role: 'مدير',
-      storeName: 'محل الإلكترونيات',
-      deviceCount: 2,
-      version: 'v2.1.0',
-      activity: 'نشط',
+      branchName: 'الفرع الرئيسي',
+      // submissionTime: '2023/09/11 11:00',
+      // reviewTime: '2023/09/11 14:15',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      paymentMethod: 'تحويل بنكي',
+      discountCoupon: 'VIP25',
+      amount: '600',
+      processStatus: 'ناجحة',
     },
     {
-      username: 'tarek.f',
-      fullName: 'طارق فوزي',
-      role: 'موظف',
-      storeName: 'سوبر ماركت النيل',
-      deviceCount: 1,
-      version: 'v2.0.8',
-      activity: 'نشط',
+      branchName: 'فرع مكة',
+      // submissionTime: '2023/09/10 08:20',
+      // reviewTime: '2023/09/10 10:40',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      paymentMethod: 'مدى',
+      discountCoupon: 'SUMMER15',
+      amount: '420',
+      processStatus: 'ناجحة',
     },
   ];
-  totalUsers = this.users.length;
+
+  totalRecords = this.revenueRecords.length;
+
+  onRowClick(row: any): void {
+    this.router.navigate(['/more/revenue-history/details', row.id]);
+  }
 }

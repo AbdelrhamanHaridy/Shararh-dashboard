@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../../../shared/components/shared-kpi-card/shared-kpi-card';
 import { SharedSelectComponent } from '../../../../shared/components/shared-select/shared-select.component';
 import { SharedTableComponent } from '../../../../shared/components/shared-table/shared-table.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-archive-sessions',
@@ -12,82 +13,120 @@ import { SharedTableComponent } from '../../../../shared/components/shared-table
   styleUrl: './archive-sessions.scss',
 })
 export class ArchiveSessions {
+  private readonly router = inject(Router);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
-  breadcrumbItems: MenuItem[] = [
-    { label: 'الارشيف' },
-    { label: 'ارشيف الجلسات', routerLink: '/archive-sessions' },
-  ];
+  breadcrumbItems: MenuItem[] = [{ label: 'الجلسات', routerLink: '/sessions' }];
+
   contactViaOptions = [
     { label: 'هاتف', value: 'phone' },
     { label: 'بريد الكتروني', value: 'email' },
     { label: 'واتس اب', value: 'whatsapp' },
     { label: 'الموقع المجاني', value: 'website' },
   ];
+
   columns = [
-    { field: 'username', header: 'اسم المستخدم' },
-    { field: 'fullName', header: 'الاسم الكامل' },
-    { field: 'role', header: 'الدور' },
-    { field: 'storeName', header: 'اسم المحل' },
-    { field: 'deviceCount', header: 'عدد الأجهزة' },
-    { field: 'version', header: 'الإصدار' },
-    { field: 'activity', header: 'الحالة' },
+    { field: 'employeeName', header: 'اسم الموظف' },
+    { field: 'startTime', header: 'وقت البدء' },
+    { field: 'endTime', header: 'وقت الانتهاء' },
+    {
+      field: 'duration',
+      header: 'المدة',
+      style: { fontWeight: 'bold', color: '#191C19', fontSize: '16px' },
+    },
+    { field: 'status', header: 'حالة الجلسة' },
+    { field: 'rating', header: 'التقييم' },
+    {
+      field: 'operations',
+      header: 'العمليات',
+      style: { fontWeight: 'bold', color: '#191C19', fontSize: '16px' },
+    },
   ];
 
-  users = [
+  sessions = [
     {
-      username: 'ahmed.h',
-      fullName: 'أحمد حسن',
-      role: 'مدير',
-      storeName: 'متجر التقنية',
-      deviceCount: 2,
-      version: 'v2.1.0',
-      activity: 'نشط',
+      avatarUrl: 'assets/testing/avatar.png',
+      employeeName: 'أحمد حسن',
+      jobTitle: 'مهندس برمجيات',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      duration: '60 min',
+      status: 'نشط',
+      rating: 'ممتازة',
+      operations: '90',
     },
     {
-      username: 'mo.ali',
-      fullName: 'محمد علي',
-      role: 'موظف',
-      storeName: 'سوبر ماركت الوفاء',
-      deviceCount: 1,
-      version: 'v2.0.5',
-      activity: 'نشط',
+      avatarUrl: 'assets/testing/avatar.png',
+      employeeName: 'محمد علي',
+      jobTitle: 'مصمم واجهات المستخدم',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      duration: '45 min',
+      status: 'نشط',
+      rating: 'ممتازة',
+      operations: '90',
     },
     {
-      username: 'omar.k',
-      fullName: 'عمر خالد',
-      role: 'مدير فرع',
-      storeName: 'محل الأصدقاء',
-      deviceCount: 3,
-      version: 'v2.1.0',
-      activity: 'نشط',
+      avatarUrl: 'assets/testing/avatar.png',
+      employeeName: 'عمر خالد',
+      jobTitle: 'محلل نظم',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      duration: '60 min',
+      status: 'غير نشط',
+      rating: 'ممتازة',
+      operations: '90',
     },
     {
-      username: 'youssef.n',
-      fullName: 'يوسف نبيل',
-      role: 'موظف',
-      storeName: 'متجر الملابس',
-      deviceCount: 1,
-      version: 'v2.0.0',
-      activity: 'غير نشط',
+      avatarUrl: 'assets/testing/avatar.png',
+      employeeName: 'يوسف نبيل',
+      jobTitle: 'مدير مشروع',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      duration: '90 min',
+      status: 'نشط',
+      rating: 'ممتازة',
+      operations: '90',
     },
     {
-      username: 'karim.s',
-      fullName: 'كريم سمير',
-      role: 'مدير',
-      storeName: 'محل الإلكترونيات',
-      deviceCount: 2,
-      version: 'v2.1.0',
-      activity: 'نشط',
+      avatarUrl: 'assets/testing/avatar.png',
+      employeeName: 'كريم سمير',
+      jobTitle: 'مدير مشروع',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      duration: '60 min',
+      status: 'نشط',
+      rating: 'ممتازة',
+      operations: '90',
     },
     {
-      username: 'tarek.f',
-      fullName: 'طارق فوزي',
-      role: 'موظف',
-      storeName: 'سوبر ماركت النيل',
-      deviceCount: 1,
-      version: 'v2.0.8',
-      activity: 'نشط',
+      avatarUrl: 'assets/testing/avatar.png',
+      employeeName: 'طارق فوزي',
+      jobTitle: 'مهندس برمجيات',
+      startTime: '08:30 ص',
+      startDate: '3 مارس 2023',
+      endTime: '09:15 ص',
+      endDate: '3 مارس 2023',
+      duration: '30 min',
+      status: 'غير نشط',
+      rating: 'ممتازة',
+      operations: '90',
     },
   ];
-  totalUsers = this.users.length;
+
+  totalSessions = this.sessions.length;
+
+  onSessionRowClick(): void {
+    this.router.navigate(['/sessions/session-details']);
+  }
 }

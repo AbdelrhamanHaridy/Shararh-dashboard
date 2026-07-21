@@ -15,29 +15,27 @@ export class ArchiveUsers {
 
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
 
-  breadcrumbItems: MenuItem[] = [
-    { label: 'ارشيف' },
-    { label: 'ارشيف المستخدمين', routerLink: '/archive-users' },
-  ];
+  breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
 
   onAddUser(): void {
     this.router.navigate(['/user-database/add-new-user/add-merchant-for-first-time']);
   }
+
   columns = [
     { field: 'username', header: 'اسم المستخدم' },
-    { field: 'fullName', header: 'الاسم الكامل' },
-    { field: 'role', header: 'الدور' },
-    { field: 'storeName', header: 'اسم المحل' },
-    { field: 'deviceCount', header: 'عدد الأجهزة' },
-    { field: 'version', header: 'الإصدار' },
-    { field: 'activity', header: 'الحالة' },
+    { field: 'fullName', header: 'الاسم' },
+    { field: 'role_text', header: 'الدور', style: { fontWeight: 'bold', color: '#B34E0A' } },
+    { field: 'storeName', header: 'اسم المحل', style: { fontWeight: 'bold', color: '#717171' } },
+    { field: 'deviceCount', header: 'عدد الأجهزة', style: { fontWeight: 'bold', color: '#717171' } },
+    { field: 'version', header: 'الإصدارات', style: { fontWeight: 'bold', color: '#717171' } },
+    { field: 'activity', header: 'النشاط', style: { fontWeight: 'medium', color: '#0D7F1A' } },
   ];
 
   users = [
     {
       username: 'ahmed.h',
       fullName: 'أحمد حسن',
-      role: 'مدير',
+      role_text: 'مدير',
       storeName: 'متجر التقنية',
       deviceCount: 2,
       version: 'v2.1.0',
@@ -46,7 +44,7 @@ export class ArchiveUsers {
     {
       username: 'mo.ali',
       fullName: 'محمد علي',
-      role: 'موظف',
+      role_text: 'موظف',
       storeName: 'سوبر ماركت الوفاء',
       deviceCount: 1,
       version: 'v2.0.5',
@@ -55,7 +53,7 @@ export class ArchiveUsers {
     {
       username: 'omar.k',
       fullName: 'عمر خالد',
-      role: 'مدير فرع',
+      role_text: 'مدير فرع',
       storeName: 'محل الأصدقاء',
       deviceCount: 3,
       version: 'v2.1.0',
@@ -64,7 +62,7 @@ export class ArchiveUsers {
     {
       username: 'youssef.n',
       fullName: 'يوسف نبيل',
-      role: 'موظف',
+      role_text: 'موظف',
       storeName: 'متجر الملابس',
       deviceCount: 1,
       version: 'v2.0.0',
@@ -73,7 +71,7 @@ export class ArchiveUsers {
     {
       username: 'karim.s',
       fullName: 'كريم سمير',
-      role: 'مدير',
+      role_text: 'مدير',
       storeName: 'محل الإلكترونيات',
       deviceCount: 2,
       version: 'v2.1.0',
@@ -82,12 +80,13 @@ export class ArchiveUsers {
     {
       username: 'tarek.f',
       fullName: 'طارق فوزي',
-      role: 'موظف',
+      role_text: 'موظف',
       storeName: 'سوبر ماركت النيل',
       deviceCount: 1,
       version: 'v2.0.8',
       activity: 'نشط',
     },
   ];
+  
   totalUsers = this.users.length;
 }

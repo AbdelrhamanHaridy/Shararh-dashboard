@@ -16,33 +16,79 @@
             </th>
         </tr>
     </ng-template>
-
+    <!-- class="text-sm text-[#717171] font-medium" -->
     <ng-template pTemplate="body" let-row>
         <tr class="hover:bg-light-hover cursor-pointer transition" (click)="onRowClick(row)">
             <!-- <td class="px-4 py-2" (click)="$event.stopPropagation()">
                     <p-tableCheckbox [value]="row"></p-tableCheckbox>
                 </td> -->
 
-            <td *ngFor="let col of columns" class="text-nowrap">
+            <td *ngFor="let col of columns" class="text-nowrap text-sm text-[#717171] font-medium"
+                [ngStyle]="getColumnStyle(col)">
                 @switch (col.field) {
                 @case('number') {
                 <div class="bg-[#EEF2FF] rounded-full w-8 h-8 flex items-center justify-center font-black">{{
                     row[col.field] }}</div>
                 }
+                @case('status') {
+                <div appStatusBadge="{{ row[col.field] }}"></div>
+                }
                 @case('role') {
                 <div appRoleBadge="{{ row[col.field] }}"></div>
                 }
+                @case('rating') {
+                <div appRatingBadge="{{ row[col.field] }}"></div>
+                }
+                @case('processStatus') {
+                <div appProcessStatusBadge="{{ row[col.field] }}"></div>
+                }
+                @case('employeeName') {
+                <div class="flex flex-row pr-4 items-center gap-3">
+                    <img src="{{ row.avatarUrl }}" alt="{{ row.employeeName }}" class="w-10 h-10 rounded-full">
+                    <div class="flex flex-col items-start">
+                        <p class="text-[#191C19] text-base font-medium">{{ row.employeeName }}</p>
+                        <p class="text-[#424940] text-xs font-medium">{{ row.jobTitle }}</p>
+                    </div>
+                </div>
+                }
+                @case('paymentMethod') {
+                <div class="flex flex-col justify-center items-center gap-2">
+                    <img src="assets/icons/global/credit_card.svg" alt="credit_card" class="w">
+                    <p class="text-[#43493E] text-xs font-medium">{{ row.paymentMethod }}</p>
+                </div>
+                }
+                @case('startTime') {
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-text-secondary text-sm font-medium">{{ row.startTime }}</span>
+                    <span class="text-text-secondary text-sm font-medium">{{ row.startDate }}</span>
+                </div>
+                }
+                @case('endTime') {
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-text-secondary text-sm font-medium">{{ row.endTime }}</span>
+                    <span class="text-text-secondary text-sm font-medium">{{ row.endDate }}</span>
+                </div>
+                }
+                @case('amount') {
+                <p class="text-[#1A1C18] text-base font-bold"> <span
+                        class="text-primary text-[10px] font-medium">EGP</span> {{ row[col.field] }}</p>
+                }
                 @case('actions') {
                 <div class="flex flex-row items-center gap-3">
-                    <p-button icon="pi pi-eye" [rounded]="true" [text]="true"
-                        [style]="{'color': 'var(--color-primary)'}"
-                        (click)="$event.stopPropagation(); onActionClick('view', row)" />
-                    <p-button icon="pi pi-ban" [rounded]="true" [text]="true" severity="help"
-                        (click)="$event.stopPropagation(); onActionClick('ban', row)" />
-                    <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
-                        (click)="$event.stopPropagation(); onActionClick('delete', row)" />
+                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                        <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                    </button>
                 </div>
-                } @default {
+                }
+                @case('paymentActions') {
+                <div class="flex flex-row justify-center items-center gap-3">
+                    <button type="button"
+                        class="px-5 py-1 bg-primary text-white text-sm rounded-xl cursor-pointer w-fit">إضافه</button>
+                    <button type="button"
+                        class="px-5 py-1 bg-white text-text-success text-sm  rounded-xl cursor-pointer w-fit border border-text-success">سداد</button>
+                </div>
+                }
+                @default {
                 <p>{{ row[col.field] }}</p>
                 } }
             </td>

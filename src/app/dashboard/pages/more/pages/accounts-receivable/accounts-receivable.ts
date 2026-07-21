@@ -25,8 +25,8 @@ export class AccountsReceivable {
   }
   columns = [
     { field: 'amount', header: 'المبلغ' },
-    { field: 'account', header: 'اسم الحساب' },
-    { field: '', header: '' },
+    { field: 'account', header: 'اسم الحساب', style: { fontSize: '16px', color: '#1A1C18' } },
+    { field: 'paymentActions', header: '' },
   ];
 
   users = [
@@ -54,7 +54,6 @@ export class AccountsReceivable {
       amount: 5000,
       account: 'حساب احمد محمد',
     },
-  
   ];
   totalUsers = this.users.length;
 }

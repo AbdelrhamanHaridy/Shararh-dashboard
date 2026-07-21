@@ -6,10 +6,23 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { RoleBadgeDirective } from '../../directives/role-badge.directive';
-
+import { StatusBadgeDirective } from '../../directives/status.directive';
+import { RatingBadgeDirective } from '../../directives/rating-badge.directive';
+import { ProcessStatusBadgeDirective } from '../../directives/proccess-status-badge.directive';
 @Component({
   selector: 'app-shared-table',
-  imports: [CommonModule, FormsModule, TableModule, PaginatorModule, ButtonModule, CheckboxModule, RoleBadgeDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    PaginatorModule,
+    ButtonModule,
+    CheckboxModule,
+    RoleBadgeDirective,
+    StatusBadgeDirective,
+    RatingBadgeDirective,
+    ProcessStatusBadgeDirective,
+  ],
   templateUrl: './shared-table.component.html',
   styleUrl: './shared-table.component.scss',
 })
@@ -40,5 +53,26 @@ export class SharedTableComponent {
 
   onRowClick(row: any) {
     this.rowClick.emit(row);
+  }
+
+  getColumnStyle(col: any): any {
+    return col.style || {};
+  }
+
+  getCellStyle(col: any, row: any): any {
+    // If column has custom style
+    if (col.style) {
+      return col.style;
+    }
+
+    // // Or you can add conditional styling based on the value
+    // if (col.field === 'activity') {
+    //   return {
+    //     color: row[col.field] === 'نشط' ? '#27AE60' : '#E74C3C',
+    //     fontWeight: '600',
+    //   };
+    // }
+
+    return {};
   }
 }
