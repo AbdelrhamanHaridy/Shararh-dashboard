@@ -5,10 +5,11 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
+import { RoleBadgeDirective } from '../../directives/role-badge.directive';
 
 @Component({
   selector: 'app-shared-table',
-  imports: [CommonModule, FormsModule, TableModule, PaginatorModule, ButtonModule, CheckboxModule],
+  imports: [CommonModule, FormsModule, TableModule, PaginatorModule, ButtonModule, CheckboxModule, RoleBadgeDirective],
   templateUrl: './shared-table.component.html',
   styleUrl: './shared-table.component.scss',
 })

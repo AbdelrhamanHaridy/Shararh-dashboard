@@ -29,6 +29,9 @@
                 <div class="bg-[#EEF2FF] rounded-full w-8 h-8 flex items-center justify-center font-black">{{
                     row[col.field] }}</div>
                 }
+                @case('role') {
+                <div appRoleBadge="{{ row[col.field] }}"></div>
+                }
                 @case('actions') {
                 <div class="flex flex-row items-center gap-3">
                     <p-button icon="pi pi-eye" [rounded]="true" [text]="true"
