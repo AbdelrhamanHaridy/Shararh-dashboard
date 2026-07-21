@@ -3,7 +3,7 @@
         <app-page-header title="الرواتب ومؤشرات الاداء" [home]="home"
             [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
-    <section class=" grid grid-cols-5 gap-2.5">
+    <section class=" grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5">
         <app-shared-kpi-card [title]="'العملاء المسجلين'" [type]="'currency'" [number]="120"
             iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#000">
         </app-shared-kpi-card>
@@ -31,7 +31,7 @@
                 <span>120 موظف</span>
             </span>
         </div>
-        <div class="grid grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
             @for (method of paymentMethods; track method.id) {
             <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-5" dir="rtl">
                 <div class="flex flex-row justify-between items-start">
