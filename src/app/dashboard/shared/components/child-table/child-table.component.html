@@ -43,7 +43,7 @@
                         <span class="text-[#94A3B8] text-sm font-medium">{{ row.to_time }}</span>
                     </div>
                     }
-                    @case('status') {
+                    @case('session_status') {
                     <div appStatusBadge="{{ row[col.field] }}"></div>
                     }
                     @case('role') {

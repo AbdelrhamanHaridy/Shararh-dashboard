@@ -22,6 +22,11 @@ export class RoleBadgeDirective implements OnChanges {
 
     console.log(value);
     switch (value) {
+      case 'admin':
+        color = '#7C3AED'; // Purple
+        bgColor = '#7C3AED1A'; // Purple with opacity
+        label = 'مشرف'; // Admin in Arabic
+        break;
       case 'تاجر':
         color = '#10A922';
         bgColor = '#10A92233';

@@ -28,6 +28,10 @@ export class StatusBadgeDirective implements OnChanges {
         color = '#F44336';
         label = 'غير نشط';
         break;
+      case 'offline':
+        color = '#F44336';
+        label = 'غير نشط';
+        break;
       default:
         color = '#9E9E9E';
         label = 'آخر';
