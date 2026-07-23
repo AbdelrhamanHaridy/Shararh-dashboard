@@ -1,19 +1,21 @@
 <section class="px-6">
     <app-page-header title="إدارة الاشتراكات" [home]="home" [breadcrumbItems]="breadcrumbItems"
-        [showActionButton]="true" actionButtonLabel="تفعيل اشتراك جديد" (actionButtonClick)="showAddNewSubscriberDialog()"></app-page-header>
+        [showActionButton]="true" actionButtonLabel="تفعيل اشتراك جديد"
+        (actionButtonClick)="showAddNewSubscriberDialog()"></app-page-header>
 </section>
 <section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
-    <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#137FEC" navigateLink="/user-database">
+    <app-shared-kpi-card [title]="'إجمالي المتاجر المسجلة'" [number]="statistics()?.registered_stores || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#137FEC"
+        navigateLink="/user-database">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'المستخدمون النشطون'" [number]="165" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#10A922">
+    <app-shared-kpi-card [title]="'الاشتراكات النشطة'" [number]="statistics()?.active_subscriptions || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#10A922">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'المستخدمون غير النشطين'" [number]="15" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#D22F27">
+    <app-shared-kpi-card [title]="'الاشتراكات المنتهية'" [number]="statistics()?.expired_subscriptions || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#D22F27">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الأجهزة المسجلة'" [number]="280" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#FF9500">
+    <app-shared-kpi-card [title]="'المتاجر المعلقة'" [number]="statistics()?.suspended_stores || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#FF9500">
     </app-shared-kpi-card>
 </section>
 <section class="p-6">
@@ -50,9 +52,13 @@
 </section>
 <section class="p-6">
     <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
-        @for (subscription of subscriptions; track subscription.id) {
+        @if (subscriptions().length > 0) {
+        @for (subscription of subscriptions(); track subscription.id) {
         <app-subscription-card [subscription]="subscription" (copyPhone)="copyToClipboard($event)"
             (viewDetails)="onViewDetails($event)" />
+        }
+        } @else {
+        <p class="text-text-secondary text-center py-8">لا توجد متاجر مسجلة</p>
         }
     </div>
 </section>
