@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { ChildTableComponent } from '../../shared/components/child-table/child-table.component';
 import { SliderModule } from 'primeng/slider';
 import { DonutChartComponent } from '../../shared/charts/donut-chart/donut-chart.component';
 import { NotificationComponent } from '../../shared/components/notification/notification';
+import { BaseComponent } from '../../shared/services/base.component';
+import { HomeService } from './services/home.service';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +20,24 @@ import { NotificationComponent } from '../../shared/components/notification/noti
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home {
+export class Home extends BaseComponent implements OnInit {
+  constructor(private homeService: HomeService) {
+    super();
+  }
+  ngOnInit(): void {
+    this.homeService
+      .getDashboard()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+          
+        },
+        error: (err) => {
+          console.error('Error fetching dashboard data:', err);
+        },
+      });
+  }
   sessionColumns: any[] = [
     { field: 'name', header: 'اسم الموظف' },
     { field: 'role', header: 'الدور' },
