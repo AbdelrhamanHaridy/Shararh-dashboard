@@ -24,6 +24,7 @@ export class BranchDetailsDialog {
   constructor(private readonly dialogService: DialogService) {}
 
   branch = {
+    id: 1,
     name: 'محل الحرمين',
     subtitle: 'فرع وسط المدينة (الرئيسي)',
     avatarUrl: 'assets/testing/shop.jpg',
@@ -94,8 +95,7 @@ export class BranchDetailsDialog {
         '640px': '90vw',
       },
       data: {
-        userId: 123,
-        context: 'subscription',
+        storeId: this.branch.id,
       },
     });
   }

@@ -13,17 +13,20 @@
 
     <!-- Filters -->
     <div class="flex flex-row items-center justify-center gap-2 px-6 py-4">
-        <button *ngFor="let filter of filters" type="button" (click)="selectFilter(filter.key)"
-            class="px-[30px] py-2 rounded-full text-xs font-medium transition-colors cursor-pointer" [ngClass]="selectedFilter === filter.key
+        @for (filter of filters; track filter.key) {
+        <button type="button" (click)="selectFilter(filter.key)"
+            class="px-7.5 py-2 rounded-full text-xs font-medium transition-colors cursor-pointer" [ngClass]="selectedFilter() === filter.key
                 ? 'bg-[#10A9221A] text-primary border border-primary'
                 : 'bg-white text-[#2E3139] border border-[#E2E8F0]'">
             {{ filter.label }}
         </button>
+        }
     </div>
 
     <!-- Timeline -->
     <div class="pb-6 max-h-[65vh] overflow-y-auto">
-        <div *ngFor="let event of filteredEvents; let last = last" class="flex flex-row gap-4">
+        @for (event of filteredEvents(); track event.id; let last = $last) {
+        <div class="flex flex-row gap-4">
 
             <!-- Icon + connecting line -->
             <div class="flex flex-col items-center">
@@ -31,7 +34,9 @@
                     [style.border-color]="event.borderColor">
                     <img [src]="event.icon" alt="" class="w-5 h-5" />
                 </div>
-                <div *ngIf="!last" class="w-px flex-1 bg-gray-200 my-1"></div>
+                @if (!last) {
+                <div class="w-px flex-1 bg-gray-200 my-1"></div>
+                }
             </div>
 
             <!-- Content card -->
@@ -47,43 +52,60 @@
                 </div>
 
                 <!-- Optional secondary title -->
-                <h4 *ngIf="event.title" class="text-[#191D17] text-xl font-medium">{{ event.title }}</h4>
+                @if (event.title) {
+                <h4 class="text-[#191D17] text-xl font-medium">{{ event.title }}</h4>
+                }
 
                 <!-- Simple description with optional highlighted segment -->
-                <p *ngIf="event.description" class="text-[#42493F] text-sm leading-relaxed flex flex-row items-start justify-between gap-2">
+                @if (event.description) {
+                <p class="text-[#42493F] text-sm leading-relaxed flex flex-row items-start justify-between gap-2">
                     <span class="text-lg text-[#191D17] font-medium">
                         {{ event.description }}
-                        <span *ngIf="event.descriptionHighlight" class="pr-6"
-                            [style.color]="event.descriptionHighlightColor">
+                        @if (event.descriptionHighlight) {
+                        <span class="pr-6" [style.color]="event.descriptionHighlightColor">
                             {{ event.descriptionHighlight }}
                         </span>
+                        }
                     </span>
-                    <i *ngIf="event.descriptionIcon" [class]="event.descriptionIcon"
-                        [style.color]="event.descriptionIconColor" class="text-base shrink-0 mt-0.5"></i>
+                    @if (event.descriptionIcon) {
+                    <i [class]="event.descriptionIcon" [style.color]="event.descriptionIconColor"
+                        class="text-base shrink-0 mt-0.5"></i>
+                    }
                 </p>
+                }
 
                 <!-- Composed inline sentence (e.g. subscription activation) -->
-                <p *ngIf="event.sentence" class="text-[#42493F] text-base font-medium leading-relaxed">
-                    <ng-container *ngFor="let part of event.sentence">
-                        <span  [style.color]="part.color || null">{{ part.text }}</span>
-                    </ng-container>
+                @if (event.sentence) {
+                <p class="text-[#42493F] text-base font-medium leading-relaxed">
+                    @for (part of event.sentence; track $index) {
+                    <span [style.color]="part.color || null">{{ part.text }}</span>
+                    }
                 </p>
+                }
 
                 <!-- Two details shown side by side -->
-                <div *ngIf="event.detailsInline" class="flex flex-row items-center justify-between gap-3 flex-wrap">
-                    <div *ngFor="let detail of event.detailsInline" class="flex flex-row items-center gap-1.5 text-sm text-[#191D17]">
+                @if (event.detailsInline) {
+                <div class="flex flex-row items-center justify-between gap-3 flex-wrap">
+                    @for (detail of event.detailsInline; track $index) {
+                    <div class="flex flex-row items-center gap-1.5 text-sm text-[#191D17]">
                         <span>{{ detail.label }}: {{ detail.value }}</span>
-                        <i *ngIf="detail.icon" [class]="detail.icon" class="text-[#94A3B8] text-xs"></i>
-                    </div>  
+                        @if (detail.icon) {
+                        <i [class]="detail.icon" class="text-[#94A3B8] text-xs"></i>
+                        }
+                    </div>
+                    }
                 </div>
+                }
 
                 <!-- Quote note -->
-                <div *ngIf="event.quote"
-                    class="flex flex-row border-r-4 bg-white border border-gray-100 rounded-md px-4 py-3"
+                @if (event.quote) {
+                <div class="flex flex-row border-r-4 bg-white border border-gray-100 rounded-md px-4 py-3"
                     [style.border-right-color]="event.borderColor">
                     <p class="text-[#191D17] text-base font-medium">{{ event.quote }}</p>
                 </div>
+                }
             </div>
         </div>
+        }
     </div>
 </div>

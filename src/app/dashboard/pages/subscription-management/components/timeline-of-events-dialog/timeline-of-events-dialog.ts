@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { TimelineService, TimelineEventResponse } from '../../services/timeline.service';
+import { BaseComponent } from '../../../../shared/services/base.component';
+import { takeUntil } from 'rxjs';
 
 type EventCategory = 'account' | 'subscriptions' | 'communication' | 'complaints' | 'suggestions';
 type FilterKey = 'all' | 'communication' | 'subscriptions' | 'complaints';
@@ -59,7 +63,11 @@ interface TimelineEvent {
   templateUrl: './timeline-of-events-dialog.html',
   styleUrl: './timeline-of-events-dialog.scss',
 })
-export class TimelineOfEventsDialog {
+export class TimelineOfEventsDialog extends BaseComponent implements OnInit {
+  private timelineService = inject(TimelineService);
+  private dialogRef = inject(DynamicDialogRef);
+  private dialogConfig = inject(DynamicDialogConfig);
+
   filters: { key: FilterKey; label: string }[] = [
     { key: 'all', label: 'الكل' },
     { key: 'communication', label: 'تواصل' },
@@ -67,103 +75,135 @@ export class TimelineOfEventsDialog {
     { key: 'complaints', label: 'شكاوي' },
   ];
 
-  selectedFilter: FilterKey = 'all';
+  selectedFilter = signal<FilterKey>('all');
+  events = signal<TimelineEvent[]>([]);
+  isLoading = signal(false);
 
-  events: TimelineEvent[] = [
-    {
-      id: 1,
-      category: 'account',
-      icon: 'assets/icons/global/green_add_user.svg',
-      iconBg: 'bg-[#DCFCE7]',
-      borderColor: '#10A922',
-      badgeLabel: 'تسجيل الحساب',
-      badgeBg: 'bg-[#DCFCE7]',
-      badgeColor: 'text-[#15803D]',
-      date: '12 يناير 2023 - 10:30 ص',
-      description: 'تم تسجيل الحساب عبر رابط الاحالة للموظف',
-      descriptionHighlight: 'محمد أحمد',
-      descriptionHighlightColor: '#16A34A',
-    },
-    {
-      id: 2,
-      category: 'subscriptions',
-      icon: 'assets/icons/global/green_check.svg',
-      iconBg: 'bg-[#DCFCE7]',
-      borderColor: '#0D7F1A',
-      badgeLabel: 'تفعيل باقة',
-      badgeBg: 'bg-[#FEF3C7]',
-      badgeColor: 'text-[#B45309]',
-      date: '15 فبراير 2023 - 02:15 م',
-      title: 'تفعيل باقة بريميوم - سنة كاملة',
-      sentence: [
-        { text: 'تم التفعيل لـ ' },
-        { text: 'صيدلية الشفاء', color: '#191D17' },
-        { text: ' مقابل مبلغ ' },
-        { text: 'EGP 500', color: '#0D7F1A' },
-        { text: ' ، طريقة الدفع ' },
-        { text: 'محفظة إلكترونية', color: '#191D17' },
-      ],
-    },
-    {
-      id: 3,
-      category: 'communication',
-      icon: 'assets/icons/global/grey_chat.svg',
-      iconBg: 'bg-[#DBEAFE]',
-      borderColor: '#72796E',
-      badgeLabel: 'تواصل خدمة العملاء',
-      badgeBg: 'bg-[#F1F5F4]',
-      badgeColor: 'text-[#5A6355]',
-      date: '20 مارس 2023 - 09:45 ص',
-      detailsInline: [
-        { label: 'نوع التواصل', value: 'صادر (واتساب)', icon: 'pi pi-arrow-up-right' },
-        { label: 'السبب', value: 'استفسار عن مديونية', icon: 'pi pi-info-circle' },
-      ],
-      quote: 'ملاحظة: العميل يحتاج رد سريع',
-    },
-    {
-      id: 4,
-      category: 'complaints',
-      icon: 'assets/icons/global/warning.svg',
-      iconBg: 'bg-[#FEE2E2]',
-      borderColor: '#BA1A1A',
-      badgeLabel: 'تقديم شكوى',
-      badgeBg: 'bg-[#FEE2E2]',
-      badgeColor: 'text-[#DC2626]',
-      date: '05 يوليو 2023 - 11:20 ص',
-      title: 'تفاصيل الشكوى:',
-      description: 'تأخير في معالجة طلب تحويل لتغيير الراتب لشهر يناير.',
-      descriptionIcon: 'pi pi-exclamation-triangle',
-      descriptionIconColor: '#DC2626',
-    },
-    {
-      id: 5,
-      category: 'suggestions',
-      icon: 'assets/icons/global/lamp.svg',
-      iconBg: 'bg-[#FCE7F3]',
-      borderColor: '#8E495F',
-      badgeLabel: 'تقديم مقترح',
-      badgeBg: 'bg-[#FCE7F3]',
-      badgeColor: 'text-[#DB2777]',
-      date: '12 أغسطس 2023 - 04:50 م',
-      title: 'تفاصيل المقترح:',
-      description: 'إضافة خيار الدفع عبر خدمة انستاباي لتسهيل العمليات.',
-      descriptionIcon: 'pi pi-lightbulb',
-      descriptionIconColor: '#DB2777',
-    },
-  ];
-
-  get filteredEvents(): TimelineEvent[] {
-    if (this.selectedFilter === 'all') {
-      return this.events;
+  filteredEvents = computed(() => {
+    const selectedKey = this.selectedFilter();
+    const allEvents = this.events();
+    if (selectedKey === 'all') {
+      return allEvents;
     }
-    return this.events.filter((event) => event.category === this.selectedFilter);
+    return allEvents.filter((event) => event.category === selectedKey);
+  });
+
+  constructor() {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.loadTimeline();
+  }
+
+  private loadTimeline(): void {
+    const storeId = this.dialogConfig.data?.storeId;
+    if (!storeId) {
+      console.warn('No storeId provided to timeline dialog');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.timelineService
+      .getStoreTimeline(storeId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          const mappedEvents = res.data.map((event) => this.mapApiEventToTimelineEvent(event));
+          this.events.set(mappedEvents);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Error fetching timeline:', err);
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  private mapApiEventToTimelineEvent(event: TimelineEventResponse): TimelineEvent {
+    const colorMap: Record<string, { bg: string; border: string; text: string }> = {
+      green: {
+        bg: 'bg-[#DCFCE7]',
+        border: '#10A922',
+        text: 'text-[#15803D]',
+      },
+      orange: {
+        bg: 'bg-[#FEF3C7]',
+        border: '#F59E0B',
+        text: 'text-[#B45309]',
+      },
+      red: {
+        bg: 'bg-[#FEE2E2]',
+        border: '#EF4444',
+        text: 'text-[#DC2626]',
+      },
+      blue: {
+        bg: 'bg-[#DBEAFE]',
+        border: '#3B82F6',
+        text: 'text-[#1E40AF]',
+      },
+      purple: {
+        bg: 'bg-[#FCE7F3]',
+        border: '#EC4899',
+        text: 'text-[#DB2777]',
+      },
+    };
+
+    const iconMap: Record<string, string> = {
+      upload: 'assets/icons/global/green_wallet.svg',
+      download: 'assets/icons/global/download.svg',
+      check: 'assets/icons/global/green_check.svg',
+      warning: 'assets/icons/global/warning.svg',
+      info: 'assets/icons/global/info.svg',
+      payment: 'assets/icons/global/payment.svg',
+      chat: 'assets/icons/global/grey_chat.svg',
+      lamp: 'assets/icons/global/lamp.svg',
+    };
+
+    const colors = colorMap[event.color] || colorMap['blue'];
+    const iconPath = iconMap[event.icon] || 'assets/icons/global/info.svg';
+
+    // Map event type to category
+    const categoryMap: Record<string, EventCategory> = {
+      payment_submitted: 'subscriptions',
+      payment_confirmed: 'subscriptions',
+      subscription_activated: 'subscriptions',
+      subscription_expired: 'subscriptions',
+      communication: 'communication',
+      complaint: 'complaints',
+      suggestion: 'suggestions',
+      account_created: 'account',
+    };
+
+    const category: EventCategory = categoryMap[event.type] || 'account';
+
+    return {
+      id: event.id,
+      category,
+      icon: iconPath,
+      iconBg: colors.bg,
+      borderColor: colors.border,
+      badgeLabel: event.title,
+      badgeBg: colors.bg,
+      badgeColor: colors.text,
+      date: new Date(event.created_at).toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      description: event.description,
+      descriptionHighlight: event.performed_by?.name || undefined,
+      descriptionHighlightColor: colors.border,
+    };
   }
 
   selectFilter(key: FilterKey): void {
-    this.selectedFilter = key;
+    this.selectedFilter.set(key);
   }
 
   onClose(): void {
-    // TODO: close dialog
+    this.dialogRef.close();
   }
 }
