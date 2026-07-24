@@ -4,14 +4,14 @@
             [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
     <section class=" grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-        <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
-            iconBgColor="#C3E1FF" numberColor="#137FEC" >
+        <app-shared-kpi-card [title]="'إجمالي الكوبونات'" [number]="stats()?.total_coupons ?? 0"
+            iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#137FEC">
         </app-shared-kpi-card>
-        <app-shared-kpi-card [title]="'المستخدمون النشطون'" [number]="165" iconPath="assets/icons/cards/people.svg"
-            iconBgColor="#C3E1FF" numberColor="#10A922">
+        <app-shared-kpi-card [title]="'مرات الاستخدام'" [number]="stats()?.total_usage_count ?? 0"
+            iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#10A922">
         </app-shared-kpi-card>
-        <app-shared-kpi-card [title]="'المستخدمون غير النشطين'" [number]="15" iconPath="assets/icons/cards/people.svg"
-            iconBgColor="#C3E1FF" numberColor="#D22F27">
+        <app-shared-kpi-card [title]="'إجمالي الخصومات'" [type]="'currency'" [number]="stats()?.total_discount_amount ?? 0"
+            iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#D22F27">
         </app-shared-kpi-card>
     </section>
 
@@ -27,6 +27,7 @@
     </div>
 
     <section class="">
-        <app-shared-table [tableData]="coupons" [columns]="columns" [totalRecords]="totalCoupons"></app-shared-table>
+        <app-shared-table [tableData]="coupons()" [columns]="columns"
+            [totalRecords]="totalCoupons()"></app-shared-table>
     </section>
 </main>

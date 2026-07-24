@@ -9,6 +9,7 @@ import { RoleBadgeDirective } from '../../directives/role-badge.directive';
 import { StatusBadgeDirective } from '../../directives/status.directive';
 import { RatingBadgeDirective } from '../../directives/rating-badge.directive';
 import { ProcessStatusBadgeDirective } from '../../directives/proccess-status-badge.directive';
+import { CouponStatusBadgeDirective } from '../../directives/coupon-status-badge.directive';
 @Component({
   selector: 'app-shared-table',
   imports: [
@@ -22,6 +23,7 @@ import { ProcessStatusBadgeDirective } from '../../directives/proccess-status-ba
     StatusBadgeDirective,
     RatingBadgeDirective,
     ProcessStatusBadgeDirective,
+    CouponStatusBadgeDirective,
   ],
   templateUrl: './shared-table.component.html',
   styleUrl: './shared-table.component.scss',

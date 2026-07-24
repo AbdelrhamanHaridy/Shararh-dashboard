@@ -39,6 +39,9 @@
                 @case('rating') {
                 <div appRatingBadge="{{ row[col.field] }}"></div>
                 }
+                @case('coupon_status') {
+                <div appCouponStatusBadge="{{ row[col.field] }}"></div>
+                }
                 @case('processStatus') {
                 <div appProcessStatusBadge="{{ row[col.field] }}"></div>
                 }
@@ -72,6 +75,9 @@
                 @case('amount') {
                 <p class="text-[#1A1C18] text-base font-bold"> <span
                         class="text-primary text-[10px] font-medium">EGP</span> {{ row[col.field] }}</p>
+                }
+                @case('discount_value') {
+                <p class="text-[#1A1C18] text-base font-bold"> {{ row[col.field] }}%</p>
                 }
                 @case('actions') {
                 <div class="flex flex-row items-center gap-3">
