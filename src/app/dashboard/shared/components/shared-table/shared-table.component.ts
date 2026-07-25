@@ -5,6 +5,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
+import { MenuModule } from 'primeng/menu';
 import { RoleBadgeDirective } from '../../directives/role-badge.directive';
 import { StatusBadgeDirective } from '../../directives/status.directive';
 import { RatingBadgeDirective } from '../../directives/rating-badge.directive';
@@ -19,6 +20,7 @@ import { CouponStatusBadgeDirective } from '../../directives/coupon-status-badge
     PaginatorModule,
     ButtonModule,
     CheckboxModule,
+    MenuModule,
     RoleBadgeDirective,
     StatusBadgeDirective,
     RatingBadgeDirective,
@@ -77,4 +79,30 @@ export class SharedTableComponent {
 
     return {};
   }
+
+getContextMenu(row: any): any[] {
+  const isActive = row.coupon_status === 'active';
+  
+  return [
+    {
+      label: 'تعديل الكوبون',
+      command: () => this.actionClick.emit({ action: 'edit', row }),
+    },
+    {
+      label: 'تعديل العملاء المستهدفين',
+      command: () => this.actionClick.emit({ action: 'editTargetCustomers', row }),
+    },
+    {
+      label: 'تعيين مسئول',
+      command: () => this.actionClick.emit({ action: 'assignManager', row }),
+    },
+    {
+      label: isActive ? 'ايقاف الكوبون' : 'تنشيط الكوبون',
+      style: { color: isActive ? '#DC2626' : '#16A34A' }, // Red for deactivate, Green for activate
+      // OR use styleClass
+      // styleClass: isActive ? 'text-red-600' : 'text-green-600',
+      command: () => this.actionClick.emit({ action: 'toggleStatus', row }),
+    },
+  ];
+}
 }

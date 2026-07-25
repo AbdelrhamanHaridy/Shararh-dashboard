@@ -47,7 +47,7 @@ export class CouponsAndDiscountCodes extends BaseComponent {
     { field: 'lastUsed', header: 'آخر استخدام' },
     { field: 'discount_value', header: 'الخصومات', style: { color: '#1A1C18' } },
     { field: 'coupon_status', header: 'الحالة' },
-    { field: 'actions', header: '' },
+    { field: 'coupon_actions', header: '' },
   ];
 
   coupons = signal<Coupon[]>([]);
@@ -100,6 +100,55 @@ export class CouponsAndDiscountCodes extends BaseComponent {
   }
 
   onRowClick(row: any): void {
-    this.router.navigate(['/coupons/coupon-details', row.couponCode]);
+    this.router.navigate(['/coupons/coupon-details', row.code]);
+  }
+
+  onActionClick(event: { action: string; row: any }): void {
+    const { action, row } = event;
+
+    switch (action) {
+      case 'edit':
+        this.editCoupon(row);
+        break;
+      case 'editTargetCustomers':
+        this.editTargetCustomers(row);
+        break;
+      case 'assignManager':
+        this.assignManager(row);
+        break;
+      case 'toggleStatus':
+        this.toggleCouponStatus(row);
+        break;
+    }
+  }
+
+  private editCoupon(row: any): void {
+    this.router.navigate(['/coupons/edit', row.id]);
+  }
+
+  private editTargetCustomers(row: any): void {
+    this.router.navigate(['/coupons/edit-target-customers', row.id]);
+  }
+
+  private assignManager(row: any): void {
+    this.router.navigate(['/coupons/assign-manager', row.id]);
+  }
+
+  private toggleCouponStatus(row: any): void {
+    const newStatus = row.coupon_status === 'active' ? 'inactive' : 'active';
+    this.couponsService
+      .toggleCouponStatus(row.id, newStatus)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Update the row status
+          row.coupon_status = newStatus;
+          // Reload stats
+          this.loadStats();
+        },
+        error: () => {
+          // Handle error
+        },
+      });
   }
 }
