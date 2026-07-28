@@ -1,9 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SharedTextInputComponent } from '../../../../shared/components/shared-text-input/shared-text-input.component';
 import { SharedSelectComponent } from '../../../../shared/components/shared-select/shared-select.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CommonModule } from '@angular/common';
+import { takeUntil } from 'rxjs';
+import { RolesService } from '../../services/roles.service';
+import { BaseComponent } from '../../../../shared/services/base.component';
+import { PermissionsService } from '../../services/permissions.service';
+import { PermissionCategory } from '../../models/permissions.model';
 
 @Component({
   selector: 'app-add-new-user-to-existing-merchant',
@@ -11,13 +22,14 @@ import { CommonModule } from '@angular/common';
     SharedTextInputComponent,
     SharedSelectComponent,
     ReactiveFormsModule,
+    FormsModule,
     ToggleSwitchModule,
     CommonModule,
   ],
   templateUrl: './add-new-user-to-existing-merchant.html',
   styleUrl: './add-new-user-to-existing-merchant.scss',
 })
-export class AddNewUserToExistingMerchant implements OnInit {
+export class AddNewUserToExistingMerchant extends BaseComponent implements OnInit {
   userForm!: FormGroup;
   selectedRole: string = '';
 
@@ -27,175 +39,126 @@ export class AddNewUserToExistingMerchant implements OnInit {
     { label: 'admin@example.com', value: 'admin@example.com' },
   ];
 
-  
-  roleOptions = [
-    { label: 'مندوب', value: 'مندوب' },
-    { label: 'كاشير', value: 'كاشير' },
-    { label: 'شريك', value: 'شريك' },
-    { label: 'محاسب', value: 'محاسب' },
-  ];
+  roleOptions: any = [];
 
-  // Permission groups based on role
-  permissions: any = {
-    'كاشير': {
-      'مديونيات': [
-        'تسجيل تسليم أموال',
-        'إضافة مديونيه او تسجيل تحصيل لحساب المديونيه',
-        'تعديل رصيد حساب مديونيه',
-        'تعديل عمليه داخل او خارج الورديه',
-        'حذف عمليه لحساب مديونيه',
-        'حذف حساب مديونيه',
-      ],
-      'ورديات': [
-        'فتح ورديه',
-        'انهاء ورديه',
-        'التعديل علي وردية قديمة',
-        'تعديل عمليه داخل او خارج الورديه',
-        'حذف عملية داخل او خارج الوردية',
-      ],
-      'محافظ': [
-        'اجراء تحويلات', 
-        'اضافة محفظة جديدة لاول مرة', 
-        'حذف محفظة من الوردية'
-      ],
-    },
-    'مندوب': {
-      'مديونيات': [
-        'الوصول لعملاء المديونية',
-        'إضافة مديونيه او تسجيل تحصيل لحساب المديونيه',
-        'تعديل رصيد حساب مديونيه',
-        'تعديل بيانات عميل',
-        'حذف عمليه لحساب مديونيه',
-        'حذف حساب مديونيه',
-      ],
-    },
-    'شريك': {
-      'الاشعارات': [
-        'عرض الإشعارات المالية',
-        'عرض التنبيهات'
-      ],
-      'الورديات ودوريات التحصيل': [
-        'الوصول لبيانات الورديات ودوريات التحصيل',
-        'تعديل بيانات الوردية',
-        'تعديل بيانات دورية تحصيل',
-        'حذف وردية مغلقة',
-        'الوصول لعملاء المديونية',
-        'انشاء مجموعة',
-        'إضافة مديونيه او تسجيل تحصيل لحساب المديونيه',
-        'تعديل رصيد حساب مديونيه',
-        'تعديل بيانات عميل',
-        'حذف عمليه لحساب مديونيه',
-        'حذف حساب مديونيه'
-      ],
-      'المديونيات': [
-        'الوصول لعملاء المديونية',
-        'انشاء مجموعة',
-        'إضافة مديونيه او تسجيل تحصيل لحساب المديونيه',
-        'تعديل رصيد حساب مديونيه',
-        'تعديل بيانات عميل',
-        'حذف عمليه لحساب مديونيه',
-        'حذف حساب مديونيه'
-      ],
-      'المحافظ': [
-        'الوصول لقائمة المحافظ',
-        'اضافة محفظة',
-        'تعديل بيانات محفظة',
-        'تعديل رصيد محفظة',
-        'حذف محفظة'
-      ],
-      'التقفيل والمراجعه': [
-        'الوصول لصفحة التقفيل والمراجعة',
-        'مراجعة كل الاوعية',
-        'اعتماد الرصيد',
-        'ادخال رصيد مختلف',
-        'اعتماد التقفيل',
-        'حذف تقفيل قديم'
-      ]
-    },
-    'محاسب': {
-      'الاشعارات': [
-        'عرض الإشعارات المالية',
-        'عرض التنبيهات'
-      ],
-      'الورديات ودوريات التحصيل': [
-        'الوصول لبيانات الورديات ودوريات التحصيل',
-        'تعديل بيانات الوردية',
-        'تعديل بيانات دورية تحصيل',
-        'حذف وردية مغلقة',
-        'الوصول لعملاء المديونية',
-        'انشاء مجموعة',
-        'إضافة مديونيه او تسجيل تحصيل لحساب المديونيه',
-        'تعديل رصيد حساب مديونيه',
-        'تعديل بيانات عميل',
-        'حذف عمليه لحساب مديونيه',
-        'حذف حساب مديونيه'
-      ],
-      'المديونيات': [
-        'الوصول لعملاء المديونية',
-        'انشاء مجموعة',
-        'إضافة مديونيه او تسجيل تحصيل لحساب المديونيه',
-        'تعديل رصيد حساب مديونيه',
-        'تعديل بيانات عميل',
-        'حذف عمليه لحساب مديونيه',
-        'حذف حساب مديونيه'
-      ],
-      'المحافظ': [
-        'الوصول لقائمة المحافظ',
-        'اضافة محفظة',
-        'تعديل بيانات محفظة',
-        'تعديل رصيد محفظة',
-        'حذف محفظة'
-      ],
-      'التقفيل والمراجعه': [
-        'الوصول لصفحة التقفيل والمراجعة',
-        'مراجعة كل الاوعية',
-        'اعتماد الرصيد',
-        'ادخال رصيد مختلف',
-        'اعتماد التقفيل',
-        'حذف تقفيل قديم'
-      ]
-    }
-  };
-  constructor(private fb: FormBuilder) {}
+  // Real permissions, loaded from the API
+  permissionCategories: PermissionCategory[] = [];
+  // Currently selected permission ids (kept in sync with the form control)
+  selectedPermissionIds = new Set<number>();
+
+  constructor(
+    private fb: FormBuilder,
+    private roleService: RolesService,
+    private permissionsService: PermissionsService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    super();
+  }
 
   ngOnInit() {
+    this.onGetRoles();
+    this.onGetPermissions();
+
     this.userForm = this.fb.group({
-      fullName: ['', Validators.required],
-      branch: ['', Validators.required],
-      phone: [''],
+      store_id: ['', Validators.required],
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       role: ['', Validators.required],
+      is_custom_permissions: [0], // 0 = false, 1 = true
+      permission_ids: [[] as number[]], // flat array of permission IDs
     });
 
-    // Listen to role changes
     this.userForm.get('role')?.valueChanges.subscribe((role) => {
       this.selectedRole = role;
     });
   }
 
-  // Helper method to get permission categories for selected role
-  getPermissionCategories(): string[] {
-    if (!this.selectedRole || !this.permissions[this.selectedRole]) {
-      return [];
-    }
-    return Object.keys(this.permissions[this.selectedRole]);
+  onGetRoles() {
+    this.roleService
+      .getRoles()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          const flatRoles = res.data.flat();
+          this.roleOptions = flatRoles.map((role) => ({
+            label: role.name,
+            value: role.id,
+          }));
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error fetching roles:', err);
+        },
+      });
   }
 
-  // Helper method to get permissions for a specific category
-  getPermissionsForCategory(category: string): string[] {
-    if (!this.selectedRole || !this.permissions[this.selectedRole]) {
-      return [];
-    }
-    return this.permissions[this.selectedRole][category] || [];
+  onGetPermissions() {
+    this.permissionsService
+      .getPermissions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.permissionCategories = res.data.permissions ?? [];
+          console.log(res);
+          console.log(this.permissionCategories);
+
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error fetching permissions:', err);
+        },
+      });
   }
 
-  // Check if a role has any permissions
-  hasPermissions(): string | boolean {
-    return this.selectedRole && !!this.permissions[this.selectedRole];
+  isPermissionSelected(id: number): boolean {
+    return this.selectedPermissionIds.has(id);
+  }
+
+  togglePermission(id: number, checked: boolean) {
+    if (checked) {
+      this.selectedPermissionIds.add(id);
+    } else {
+      this.selectedPermissionIds.delete(id);
+    }
+
+    const ids = Array.from(this.selectedPermissionIds);
+    this.userForm.patchValue({
+      permission_ids: ids,
+      is_custom_permissions: ids.length > 0 ? 1 : 0,
+    });
   }
 
   onSubmit() {
-    if (this.userForm.valid) {
-      console.log(this.userForm.value);
+    console.log(this.userForm.value);
+    
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      return;
     }
+    const formValue = this.userForm.value;
+    
+    const payload = {
+      store_id: Number(formValue.store_id),
+      name: formValue.name,
+      email: formValue.email,
+      phone: formValue.phone,
+      password: formValue.password,
+      role: formValue.role,
+      is_custom_permissions: formValue.is_custom_permissions,
+      permission_ids: formValue.permission_ids,
+    };
+
+    console.log('Submitting payload:', payload);
+
+    // this.userService.createUser(payload).subscribe({
+    //   next: (res) => {
+    //     console.log('User created:', res);
+    //   },
+    //   error: (err) => {
+    //     console.error('Error creating user:', err);
+    //   },
+    // });
   }
 }

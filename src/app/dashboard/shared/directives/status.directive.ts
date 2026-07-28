@@ -20,11 +20,11 @@ export class StatusBadgeDirective implements OnChanges {
     let label = this.status;
 
     switch (value) {
-      case 'نشط':
+      case 'active':
         color = '#46EC13';
         label = 'نشط';
         break;
-      case 'غير نشط':
+      case 'inactive':
         color = '#F44336';
         label = 'غير نشط';
         break;

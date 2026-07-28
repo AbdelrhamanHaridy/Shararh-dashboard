@@ -1,22 +1,8 @@
+<p-confirmdialog></p-confirmdialog>
+
 <section class="px-4 sm:px-6">
     <app-page-header title="الاسئله الشائعه" [home]="home" [breadcrumbItems]="breadcrumbItems" [showActionButton]="true"
-        actionButtonLabel="إضافة جديد"></app-page-header>
-</section>
-<h2 class="text-black text-lg sm:text-xl font-medium font-tajawal px-4 sm:px-6 mt-6 sm:mt-8">الأسئلة المثبتة</h2>
-
-<section class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
-    <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="120" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#137FEC">
-    </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الاشتراكات المنتهيه'" [number]="5" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#D22F27">
-    </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="15" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#10A922">
-    </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="20" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#000">
-    </app-shared-kpi-card>
+        actionButtonLabel="إضافة جديد" (actionButtonClick)="showAddFaqDialog()"></app-page-header>
 </section>
 
 <section class="px-4 sm:px-6">
@@ -24,219 +10,113 @@
         <!-- Search Bar -->
         <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]" style="height: 52px;">
             <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
-            <input type="text" placeholder="بحث عن سؤال ,كلمه دلاليه , ....."
+            <input type="text" placeholder="بحث عن سؤال ,كلمه دلاليه , ....." [ngModel]="searchTerm"
+                (ngModelChange)="onSearchInput($event)"
                 class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
                 style="color: #6B7280;" />
         </div>
 
         <!-- Filter Buttons -->
         <div class="flex flex-wrap gap-3 sm:gap-5">
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30">
-                <span>الكل</span>
-            </button>
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                <span>مسجل</span>
-            </button>
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                <span>مشترك</span>
-            </button>
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                <span>مرفوض</span>
+            <button *ngFor="let filter of targetTypeFilters" type="button" (click)="onSelectTargetType(filter.value)"
+                [ngClass]="isActiveTargetType(filter.value)
+                    ? 'bg-primary-op-10 text-primary border-primary'
+                    : 'bg-white text-text-primary border-[#E2E8F0] hover:bg-primary-op-10'"
+                class="inline-flex items-center gap-2 rounded-2xl cursor-pointer px-7 py-2 text-sm font-medium border transition-colors">
+                <span>{{ filter.label }}</span>
             </button>
         </div>
     </div>
 </section>
 
-<section class="p-4 sm:p-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-        <div
-            class="bg-white rounded-3xl p-4 sm:p-6 border border-[#3D4B361A] col-span-1 md:col-span-2 lg:col-span-2 flex flex-col gap-4 relative">
-            <img class="absolute top-5 left-5" src="assets/icons/global/pin_filled.svg" alt="">
-            <span
-                class="px-5 py-2 rounded-full text-xs font-medium font-tajawal shrink-0 w-fit text-white bg-[#137FEC]">
-                عام
-            </span>
-            <p class="text-xl sm:text-2xl font-medium">كيف يمكنني البدء في استخدام محفظة كينيتيك؟</p>
-            <p class="text-sm sm:text-base text-text-secondary leading-6">يمكنك البدء عن طريق تحميل التطبيق وتوثيق
-                هويتك، ثم ربط حسابك
-                البنكي لشحن الرصيد مباشرة...</p>
-        </div>
-        <div class="bg-white rounded-3xl p-4 sm:p-6 border border-[#3D4B361A] col-span-1 flex flex-col gap-4 relative">
-            <img class="absolute top-5 left-5" src="assets/icons/global/pin_filled.svg" alt="">
-            <span
-                class="px-5 py-2 rounded-full text-xs font-medium font-tajawal shrink-0 w-fit text-white bg-[#F1B31C]">
-                التاجر
-            </span>
-            <p class="text-base sm:text-lg font-medium">طرق تسوية المدفوعات اليومية</p>
-            <p class="text-sm text-text-secondary leading-6">تتم التسوية تلقائياً في تمام
-                منتصف الليل...12الساعة</p>
-        </div>
-        <div class="bg-white rounded-3xl p-4 sm:p-6 border border-[#3D4B361A] col-span-1 flex flex-col gap-4 relative">
-            <img class="absolute top-5 left-5" src="assets/icons/global/pin_filled.svg" alt="">
-            <span class="px-5 py-2 rounded-full text-xs font-medium font-tajawal shrink-0 w-fit text-white bg-primary">
-                الكاشير
-            </span>
-            <p class="text-base sm:text-lg font-medium">استرجاع المبالغ للعملاء</p>
-            <p class="text-sm text-text-secondary leading-6">يتطلب استرجاع المبلغ موافقة
-                المدير المباشر...</p>
-
-        </div>
-        <div class="bg-white rounded-3xl p-4 sm:p-6 border border-[#3D4B361A] col-span-1 flex flex-col gap-4 relative">
-            <img class="absolute top-5 left-5" src="assets/icons/global/pin_filled.svg" alt="">
-            <span
-                class="px-5 py-2 rounded-full text-xs font-medium font-tajawal shrink-0 w-fit text-white bg-[#137FEC]">
-                عام
-            </span>
-            <p class="text-base sm:text-lg font-medium">نسيان كلمة مرور الحساب</p>
-            <p class="text-sm text-text-secondary leading-6">استخدم ميزة "نسيت كلمة المرور" في
-                شاشة تسجيل الدخول...</p>
-        </div>
-        <div class="bg-white rounded-3xl p-4 sm:p-6 border border-[#3D4B361A] col-span-1 flex flex-col gap-4 relative">
-            <img class="absolute top-5 left-5" src="assets/icons/global/pin_filled.svg" alt="">
-            <span
-                class="px-5 py-2 rounded-full text-xs font-medium font-tajawal shrink-0 w-fit text-white bg-[#C293FF]">
-                المندوب
-            </span>
-            <p class="text-base sm:text-lg font-medium">تحديث حالة التوصيل في التطبيق</p>
-            <p class="text-sm text-text-secondary leading-6">يجب مسح الرمز الشريطي عند وصولك
-                لموقع العميل...</p>
-
-        </div>
-    </div>
+<!-- Loading / Error states -->
+<section class="px-4 sm:px-6 mt-6" *ngIf="isLoading">
+    <p class="text-text-secondary text-sm">جاري التحميل...</p>
 </section>
 
-<h2 class="text-black text-lg sm:text-xl font-medium font-tajawal px-4 sm:px-6 mt-2">جميع الاسئله</h2>
-
-<section class="p-4 sm:p-6">
-    <div class="flex justify-center w-full">
-        <p-accordion class="w-full ">
-            <p-accordion-panel value="0">
-                <p-accordion-header>
-                    <span class="inline-flex items-start sm:items-center gap-2 min-w-0 flex-1">
-                        <ng-template #toggleicon let-active="active">
-                            @if (active) {
-                            <div class="order-first p-2 rounded-[5px] bg-[#9F9F9F]">
-                                <img src="assets/icons/global/white_up_arrow.svg" alt="">
-                            </div>
-                            } @else {
-                            <div class="order-first p-2 rounded-[5px] bg-[#64748B]">
-                                <img src="assets/icons/global/white_down_arrow.svg" alt="">
-                            </div>
-                            }
-                        </ng-template>
-                        <p
-                            class="text-base sm:text-lg text-black font-medium flex flex-wrap gap-2 sm:gap-3 items-center">
-                            ما هي مدة صلاحية نقاط
-                            المكافآت؟
-                            <span
-                                class="px-2 py-0.5 rounded-sm text-[10px] font-medium font-tajawal shrink-0 w-fit text-white bg-[#137FEC]">
-                                عام
-                            </span>
-                        </p>
-                    </span>
-                    <div class="flex flex-row flex-wrap items-center justify-end gap-1 sm:gap-2 shrink-0">
-                        <img class="p-2" src="assets/icons/global/pin.svg" alt="">
-                        <img class="p-2" src="assets/icons/global/edit.svg" alt="">
-                        <img class="p-2" src="assets/icons/global/delete.svg" alt="">
-                    </div>
-                </p-accordion-header>
-                <p-accordion-content>
-                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
-                        <p class="m-0 text-sm sm:text-base text-[#37393E] leading-6">لتحديث السجل التجاري، انتقل إلى
-                            "إعدادات المتجر" >
-                            "البيانات
-                            القانونية" وقم
-                            برفع النسخة المحدثة بصيغة PDF.
-                            سيتم مراجعة الطلب خلال 24 ساعة عمل.</p>
-                        <img class="cursor-pointer" src="assets/icons/global/green_clipboard.svg" alt="">
-                    </div>
-                </p-accordion-content>
-            </p-accordion-panel>
-            <p-accordion-panel value="1">
-                <p-accordion-header>
-                    <span class="inline-flex items-start sm:items-center gap-2 min-w-0 flex-1">
-                        <ng-template #toggleicon let-active="active">
-                            @if (active) {
-                            <div class="order-first p-2 rounded-[5px] bg-[#9F9F9F]">
-                                <img src="assets/icons/global/white_up_arrow.svg" alt="">
-                            </div>
-                            } @else {
-                            <div class="order-first p-2 rounded-[5px] bg-[#64748B]">
-                                <img src="assets/icons/global/white_down_arrow.svg" alt="">
-                            </div>
-                            }
-                        </ng-template>
-                        <p
-                            class="text-base sm:text-lg text-black font-medium flex flex-wrap gap-2 sm:gap-3 items-center">
-                            كيفية تحديث السجل
-                            التجاري للمتجر؟
-                            <span
-                                class="px-2 py-0.5 rounded-sm text-[10px] font-medium font-tajawal shrink-0 w-fit text-white bg-[#F1B31C]">
-                                التاجر
-                            </span>
-                        </p>
-                    </span>
-                    <div class="flex flex-row flex-wrap items-center justify-end gap-1 sm:gap-2 shrink-0">
-                        <img class="p-2" src="assets/icons/global/pin.svg" alt="">
-                        <img class="p-2" src="assets/icons/global/edit.svg" alt="">
-                        <img class="p-2" src="assets/icons/global/delete.svg" alt="">
-                    </div>
-                </p-accordion-header>
-                <p-accordion-content>
-                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
-                        <p class="m-0 text-sm sm:text-base text-[#37393E] leading-6">لتحديث السجل التجاري، انتقل إلى
-                            "إعدادات المتجر" >
-                            "البيانات
-                            القانونية" وقم
-                            برفع النسخة المحدثة بصيغة PDF.
-                            سيتم مراجعة الطلب خلال 24 ساعة عمل.</p>
-                        <img class="cursor-pointer" src="assets/icons/global/green_clipboard.svg" alt="">
-                    </div>
-                </p-accordion-content>
-            </p-accordion-panel>
-            <p-accordion-panel value="2">
-                <p-accordion-header>
-                    <span class="inline-flex items-start sm:items-center gap-2 min-w-0 flex-1">
-                        <ng-template #toggleicon let-active="active">
-                            @if (active) {
-                            <div class="order-first p-2 rounded-[5px] bg-[#9F9F9F]">
-                                <img src="assets/icons/global/white_up_arrow.svg" alt="">
-                            </div>
-                            } @else {
-                            <div class="order-first p-2 rounded-[5px] bg-[#64748B]">
-                                <img src="assets/icons/global/white_down_arrow.svg" alt="">
-                            </div>
-                            }
-                        </ng-template>
-                        <p
-                            class="text-base sm:text-lg text-black font-medium flex flex-wrap gap-2 sm:gap-3 items-center">
-                            حل مشكلة عدم ظهور الباركود عند الدفع
-                            <span
-                                class="px-2 py-0.5 rounded-sm text-[10px] font-medium font-tajawal shrink-0 w-fit text-white bg-[#10A922]">
-                                الكاشير
-                            </span>
-                        </p>
-                    </span>
-                    <div class="flex flex-row flex-wrap items-center justify-end gap-1 sm:gap-2 shrink-0">
-                        <img class="p-2" src="assets/icons/global/pin.svg" alt="">
-                        <img class="p-2" src="assets/icons/global/edit.svg" alt="">
-                        <img class="p-2" src="assets/icons/global/delete.svg" alt="">
-                    </div>
-                </p-accordion-header>
-                <p-accordion-content>
-                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
-                        <p class="m-0 text-sm sm:text-base text-[#37393E] leading-6">5+ years of experience with Angular
-                            and TypeScript,
-                            strong understanding of
-                            modern CSS, and a passion for building accessible, performant user interfaces at scale.</p>
-                        <img class="cursor-pointer" src="assets/icons/global/green_clipboard.svg" alt="">
-                    </div>
-                </p-accordion-content>
-            </p-accordion-panel>
-        </p-accordion>
-    </div>
+<section class="px-4 sm:px-6 mt-6" *ngIf="!isLoading && errorMessage">
+    <p class="text-red-500 text-sm">{{ errorMessage }}</p>
 </section>
+
+<ng-container *ngIf="!isLoading && !errorMessage">
+
+    <!-- Pinned FAQs -->
+    <ng-container *ngIf="pinnedFaqs.length > 0">
+        <h2 class="text-black text-lg sm:text-xl font-medium font-tajawal px-4 sm:px-6 mt-6 sm:mt-8">الأسئلة المثبتة
+        </h2>
+
+        <section class="p-4 sm:p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <div *ngFor="let faq of pinnedFaqs; let i = index; trackBy: trackByFaqId"
+                    [ngClass]="i === 0 ? 'md:col-span-2' : 'col-span-1'"
+                    class="bg-white rounded-3xl p-4 sm:p-6 border border-[#3D4B361A] flex flex-col gap-4 relative cursor-pointer"
+                    (click)="onTogglePin(faq, $event)">
+                    <img class="absolute top-5 left-5" src="assets/icons/global/pin_filled.svg" alt="unpin">
+                    <span class="px-5 py-2 rounded-full text-xs font-medium font-tajawal shrink-0 w-fit text-white"
+                        [style.background-color]="getBadgeMeta(faq.target_type).color">
+                        {{ getBadgeMeta(faq.target_type).label }}
+                    </span>
+                    <p [ngClass]="i === 0 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'" class="font-medium">
+                        {{ faq.question }}
+                    </p>
+                    <p class="text-sm sm:text-base text-text-secondary leading-6 line-clamp-3">{{ faq.answer }}</p>
+                </div>
+            </div>
+        </section>
+    </ng-container>
+
+    <h2 class="text-black text-lg sm:text-xl font-medium font-tajawal px-4 sm:px-6 mt-2">جميع الاسئله</h2>
+
+    <section class="p-4 sm:p-6">
+        <div class="flex justify-center w-full" *ngIf="unpinnedFaqs.length > 0; else noFaqs">
+            <p-accordion class="w-full">
+                <p-accordion-panel *ngFor="let faq of unpinnedFaqs; trackBy: trackByFaqId" [value]="faq.id.toString()">
+                    <p-accordion-header>
+                        <span class="inline-flex items-start sm:items-center gap-2 min-w-0 flex-1">
+                            <ng-template #toggleicon let-active="active">
+                                @if (active) {
+                                <div class="order-first p-2 rounded-[5px] bg-[#9F9F9F]">
+                                    <img src="assets/icons/global/white_up_arrow.svg" alt="">
+                                </div>
+                                } @else {
+                                <div class="order-first p-2 rounded-[5px] bg-[#64748B]">
+                                    <img src="assets/icons/global/white_down_arrow.svg" alt="">
+                                </div>
+                                }
+                            </ng-template>
+                            <p
+                                class="text-base sm:text-lg text-black font-medium flex flex-wrap gap-2 sm:gap-3 items-center">
+                                {{ faq.question }}
+                                <span
+                                    class="px-2 py-0.5 rounded-sm text-[10px] font-medium font-tajawal shrink-0 w-fit text-white"
+                                    [style.background-color]="getBadgeMeta(faq.target_type).color">
+                                    {{ getBadgeMeta(faq.target_type).label }}
+                                </span>
+                            </p>
+                        </span>
+                        <div class="flex flex-row flex-wrap items-center justify-end gap-1 sm:gap-2 shrink-0">
+                            <img class="p-2 cursor-pointer" src="assets/icons/global/pin.svg" alt="pin"
+                                (click)="onTogglePin(faq, $event)">
+                            <img class="p-2 cursor-pointer" src="assets/icons/global/edit.svg" alt="edit"
+                                (click)="onEdit(faq, $event)">
+                            <img class="p-2 cursor-pointer" src="assets/icons/global/delete.svg" alt="delete"
+                                (click)="onDelete(faq, $event)">
+                        </div>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
+                            <p class="m-0 text-sm sm:text-base text-[#37393E] leading-6">{{ faq.answer }}</p>
+                            <img class="cursor-pointer" src="assets/icons/global/green_clipboard.svg" alt="copy"
+                                (click)="onCopyAnswer(faq, $event)">
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+        </div>
+
+        <ng-template #noFaqs>
+            <p class="text-text-secondary text-sm text-center w-full">لا توجد أسئلة متاحة حالياً</p>
+        </ng-template>
+    </section>
+
+</ng-container>

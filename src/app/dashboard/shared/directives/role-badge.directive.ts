@@ -27,17 +27,37 @@ export class RoleBadgeDirective implements OnChanges {
         bgColor = '#7C3AED1A'; // Purple with opacity
         label = 'مشرف'; // Admin in Arabic
         break;
-      case 'تاجر':
+      case 'owner':
+        color = '#10B981'; // Emerald Green
+        bgColor = '#10B9811A'; // Emerald Green with opacity
+        label = 'مالك'; // Owner in Arabic
+        break;
+      case 'partner':
+        color = '#3B82F6'; // Blue
+        bgColor = '#3B82F61A'; // Blue with opacity
+        label = 'شريك'; // Partner in Arabic
+        break;
+      case 'collector':
+        color = '#F59E0B'; // Amber/Yellow
+        bgColor = '#F59E0B1A'; // Amber with opacity
+        label = 'محصل'; // Collector in Arabic
+        break;
+      case 'cashier':
+        color = '#EF4444'; // Red
+        bgColor = '#EF44441A'; // Red with opacity
+        label = 'كاشير'; // Cashier in Arabic
+        break;
+      case 'تاجر': // Merchant
         color = '#10A922';
         bgColor = '#10A92233';
         label = 'تاجر';
         break;
-      case 'مندوب':
+      case 'مندوب': // Representative
         color = '#3B82F6';
         bgColor = '#3B82F61A';
         label = 'مندوب';
         break;
-      case 'كاشير':
+      case 'كاشير': // Cashier (Arabic)
         color = '#F59E0B';
         bgColor = '#F59E0B1A';
         label = 'كاشير';
