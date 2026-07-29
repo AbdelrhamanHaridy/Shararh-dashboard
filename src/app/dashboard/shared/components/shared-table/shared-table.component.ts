@@ -5,7 +5,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
-import { MenuModule } from 'primeng/menu';
+import { Menu, MenuModule } from 'primeng/menu';
 import { RoleBadgeDirective } from '../../directives/role-badge.directive';
 import { StatusBadgeDirective } from '../../directives/status.directive';
 import { RatingBadgeDirective } from '../../directives/rating-badge.directive';
@@ -64,45 +64,42 @@ export class SharedTableComponent {
   }
 
   getCellStyle(col: any, row: any): any {
-    // If column has custom style
     if (col.style) {
       return col.style;
     }
-
-    // // Or you can add conditional styling based on the value
-    // if (col.field === 'activity') {
-    //   return {
-    //     color: row[col.field] === 'نشط' ? '#27AE60' : '#E74C3C',
-    //     fontWeight: '600',
-    //   };
-    // }
-
     return {};
   }
 
-getContextMenu(row: any): any[] {
-  const isActive = row.coupon_status === 'active';
-  
-  return [
-    {
-      label: 'تعديل الكوبون',
-      command: () => this.actionClick.emit({ action: 'edit', row }),
-    },
-    {
-      label: 'تعديل العملاء المستهدفين',
-      command: () => this.actionClick.emit({ action: 'editTargetCustomers', row }),
-    },
-    {
-      label: 'تعيين مسئول',
-      command: () => this.actionClick.emit({ action: 'assignManager', row }),
-    },
-    {
-      label: isActive ? 'ايقاف الكوبون' : 'تنشيط الكوبون',
-      style: { color: isActive ? '#DC2626' : '#16A34A' }, // Red for deactivate, Green for activate
-      // OR use styleClass
-      // styleClass: isActive ? 'text-red-600' : 'text-green-600',
-      command: () => this.actionClick.emit({ action: 'toggleStatus', row }),
-    },
-  ];
-}
+  // Set the menu's model imperatively, right before opening it —
+  // NOT via a reactive [model] binding, which was rebuilding the
+  // overlay on every CD cycle and eating the first click.
+  onCouponMenuClick(menu: Menu, row: any, event: Event) {
+    event.stopPropagation();
+    menu.model = this.getContextMenu(row);
+    menu.toggle(event);
+  }
+
+  getContextMenu(row: any): any[] {
+    const isActive = row.coupon_status === 'active';
+
+    return [
+      {
+        label: 'تعديل الكوبون',
+        command: () => this.actionClick.emit({ action: 'edit', row }),
+      },
+      {
+        label: 'تعديل العملاء المستهدفين',
+        command: () => this.actionClick.emit({ action: 'editTargetCustomers', row }),
+      },
+      {
+        label: 'تعيين مسئول',
+        command: () => this.actionClick.emit({ action: 'assignManager', row }),
+      },
+      {
+        label: isActive ? 'ايقاف الكوبون' : 'تنشيط الكوبون',
+        style: { color: isActive ? '#DC2626' : '#16A34A' },
+        command: () => this.actionClick.emit({ action: 'toggleStatus', row }),
+      },
+    ];
+  }
 }

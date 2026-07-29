@@ -32,6 +32,11 @@ export class CouponStatusBadgeDirective implements OnChanges {
         bgColor = '#FFCDD2';
         label = 'غير نشط';
         break;
+      case 'expired':
+        color = '#B71C1C';
+        bgColor = '#FFCDD2';
+        label = 'منتهي';
+        break;
       default:
         color = '#9E9E9E';
         bgColor = '#9E9E9E33';

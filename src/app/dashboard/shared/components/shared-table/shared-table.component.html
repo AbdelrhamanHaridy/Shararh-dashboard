@@ -91,12 +91,11 @@
                 }
                 @case('coupon_actions') {
                 <div class="card flex justify-center">
-                    <p-menu #menu [model]="getContextMenu(row)" [popup]="true" appendTo="body"
-                        [style]="{ minWidth: '160px' }">
+                    <p-menu #menu [popup]="true" appendTo="body" [style]="{ minWidth: '160px' }">
                     </p-menu>
                     <button type="button" #menuButton
                         class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        (click)="menu.toggle($event); $event.stopPropagation()">
+                        (click)="onCouponMenuClick(menu, row, $event)">
                         <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
                     </button>
                 </div>

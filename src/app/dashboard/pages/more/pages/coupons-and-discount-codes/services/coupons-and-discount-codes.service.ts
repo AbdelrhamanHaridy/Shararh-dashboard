@@ -7,6 +7,7 @@ import {
   CouponListResponse,
   Coupon,
   CouponStatsResponse,
+  CouponDetailResponse,
 } from '../models/coupons-and-discount-codes.model';
 
 @Injectable({
@@ -81,12 +82,8 @@ export class CouponsAndDiscountCodesService {
   /**
    * Get a single coupon by ID
    */
-  getCouponById(
-    id: number,
-  ): Observable<{ success: boolean; status: number; message: string; data: Coupon }> {
-    return this.http.get<{ success: boolean; status: number; message: string; data: Coupon }>(
-      `${this.couponApiUrl}/${id}`,
-    );
+  getCouponById(id: number): Observable<CouponDetailResponse> {
+    return this.http.get<CouponDetailResponse>(`${this.couponApiUrl}/${id}`);
   }
 
   /**
@@ -95,6 +92,8 @@ export class CouponsAndDiscountCodesService {
   createCoupon(
     couponData: any,
   ): Observable<{ success: boolean; status: number; message: string; data: Coupon }> {
+    console.log(couponData);
+
     return this.http.post<{ success: boolean; status: number; message: string; data: Coupon }>(
       this.couponApiUrl,
       couponData,
@@ -128,12 +127,19 @@ export class CouponsAndDiscountCodesService {
    */
   toggleCouponStatus(
     id: number,
-    status: string,
   ): Observable<{ success: boolean; status: number; message: string; data: Coupon }> {
-    return this.http.patch<{ success: boolean; status: number; message: string; data: Coupon }>(
-      `${this.couponApiUrl}/${id}/status`,
-      { status },
+    return this.http.post<{ success: boolean; status: number; message: string; data: Coupon }>(
+      `${this.couponApiUrl}/${id}/toggle-status`,
+      {},
     );
+  }
+
+  getPlans(): Observable<any> {
+    return this.http.get<any>(this.couponApiUrl + '/plans');
+  }
+
+  getUsers(): Observable<any> {
+    return this.http.get<any>(this.couponApiUrl + '/users');
   }
 }
 

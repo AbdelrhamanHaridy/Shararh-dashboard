@@ -1,0 +1,121 @@
+<div *ngIf="errorMessage && !couponId" class="p-6 text-red-500 text-sm">
+    {{ errorMessage }}
+</div>
+
+<form *ngIf="couponForm && (couponId || !errorMessage)" [formGroup]="couponForm" (ngSubmit)="onSubmit()"
+    class="flex flex-col gap-6" dir="rtl">
+    <div class="flex flex-col gap-5 bg-white rounded-lg p-6">
+
+        <!-- Code & Title -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-shared-text-input formControlName="code" label="كود الكوبون" placeholder="مثال: SUMMER2026"
+                inputId="edit_code" [isRequired]="true" type="text">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="title" label="عنوان الكوبون" placeholder="ادخل عنوان الكوبون"
+                inputId="edit_title" [isRequired]="true" type="text">
+            </app-shared-text-input>
+        </div>
+
+        <!-- Description -->
+        <div class="grid grid-cols-1 gap-4">
+            <app-shared-text-input formControlName="description" label="الوصف" placeholder="ادخل وصف الكوبون"
+                inputId="edit_description" [isRequired]="false" type="text">
+            </app-shared-text-input>
+        </div>
+
+        <!-- Discount type & value -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-shared-select formControlName="discount_type" label="نوع الخصم" placeholder="اختر نوع الخصم"
+                inputId="edit_discount_type" [options]="discountTypes" optionLabel="label" optionValue="value"
+                [isRequired]="true">
+            </app-shared-select>
+
+            <app-shared-text-input formControlName="discount_value" label="قيمة الخصم" placeholder="ادخل قيمة الخصم"
+                inputId="edit_discount_value" [isRequired]="true" type="number">
+            </app-shared-text-input>
+        </div>
+
+        <!-- Max discount & usage limit -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-shared-text-input formControlName="max_discount_amount" label="أقصى قيمة خصم (اختياري)"
+                placeholder="ادخل أقصى قيمة خصم" inputId="edit_max_discount_amount" [isRequired]="false"
+                type="number">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="usage_limit" label="حد الاستخدام" placeholder="عدد مرات الاستخدام"
+                inputId="edit_usage_limit" [isRequired]="true" type="number">
+            </app-shared-text-input>
+        </div>
+
+        <!-- Target type -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-shared-select formControlName="target_type" label="الفئة المستهدفة" placeholder="اختر الفئة المستهدفة"
+                inputId="edit_target_type" [options]="targetTypes" optionLabel="label" optionValue="value"
+                [isRequired]="true">
+            </app-shared-select>
+
+            <app-shared-select formControlName="status" label="الحالة" placeholder="اختر الحالة" inputId="edit_status"
+                [options]="statusOptions" optionLabel="label" optionValue="value" [isRequired]="true">
+            </app-shared-select>
+        </div>
+
+        <!-- Plans multi-select -->
+        <div *ngIf="isTargetSpecificPlans" class="grid grid-cols-1 gap-4">
+            <label class="text-sm font-medium text-gray-700">الخطط المستهدفة <span
+                    class="text-red-500">*</span></label>
+            <p-multiselect formControlName="plan_ids" [options]="planOptions" optionLabel="label" optionValue="value"
+                placeholder="اختر الخطط" [loading]="isLoadingPlans" display="chip" class="w-full">
+            </p-multiselect>
+        </div>
+
+        <!-- Users multi-select -->
+        <div *ngIf="isTargetSpecificUsers" class="grid grid-cols-1 gap-4">
+            <label class="text-sm font-medium text-gray-700">المستخدمون المستهدفون <span
+                    class="text-red-500">*</span></label>
+            <p-multiselect formControlName="user_ids" [options]="userOptions" optionLabel="label" optionValue="value"
+                placeholder="اختر المستخدمين" [loading]="isLoadingUsers" display="chip" class="w-full">
+            </p-multiselect>
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+                <label for="edit_starts_at" class="text-sm font-medium text-gray-700">تاريخ البداية <span
+                        class="text-red-500">*</span></label>
+                <p-datepicker formControlName="starts_at" inputId="edit_starts_at" dateFormat="yy-mm-dd"
+                    [showIcon]="true" placeholder="اختر تاريخ البداية" class="w-full">
+                </p-datepicker>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="edit_expires_at" class="text-sm font-medium text-gray-700">تاريخ الانتهاء <span
+                        class="text-red-500">*</span></label>
+                <p-datepicker formControlName="expires_at" inputId="edit_expires_at" dateFormat="yy-mm-dd"
+                    [showIcon]="true" placeholder="اختر تاريخ الانتهاء" class="w-full">
+                </p-datepicker>
+            </div>
+        </div>
+
+        <p *ngIf="couponForm.errors?.['dateRangeInvalid'] && couponForm.get('expires_at')?.touched"
+            class="text-red-500 text-sm">
+            تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية
+        </p>
+
+        <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+
+        <!-- Actions -->
+        <div class="dialog-actions flex flex-row gap-4 justify-end border-t pt-4">
+            <button type="button"
+                class="px-12 py-3 bg-gray-200 text-gray-700 rounded-2xl cursor-pointer w-fit hover:bg-gray-300 transition-colors"
+                (click)="onCancel()">
+                إلغاء
+            </button>
+            <button type="submit"
+                class="px-12 py-3 bg-primary text-white rounded-2xl cursor-pointer w-fit hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="couponForm.invalid || isSubmitting">
+                {{ isSubmitting ? 'جاري الحفظ...' : 'حفظ التعديلات' }}
+            </button>
+        </div>
+    </div>
+</form>

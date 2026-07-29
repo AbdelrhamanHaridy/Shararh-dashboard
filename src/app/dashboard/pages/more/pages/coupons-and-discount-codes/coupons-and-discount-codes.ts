@@ -6,6 +6,7 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { DialogService } from 'primeng/dynamicdialog';
 import { CouponsAndDiscountCodesService } from './services/coupons-and-discount-codes.service';
 import { takeUntil } from 'rxjs';
 import { MenuItem } from 'primeng/api';
@@ -15,16 +16,20 @@ import { SharedKpiCard } from '../../../../shared/components/shared-kpi-card/sha
 import { Router } from '@angular/router';
 import { BaseComponent } from '../../../../shared/services/base.component';
 import { Coupon, CouponStats } from './models/coupons-and-discount-codes.model';
+import { AddCouponDialog } from './components/add-coupon-dialog/add-coupon-dialog';
+import { EditCouponDialog } from './components/edit-coupon-dialog/edit-coupon-dialog';
 
 @Component({
   selector: 'app-coupons-and-discount-codes',
   imports: [PageHeaderComponent, SharedTableComponent, SharedKpiCard],
+  providers: [DialogService],
   templateUrl: './coupons-and-discount-codes.html',
   styleUrl: './coupons-and-discount-codes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CouponsAndDiscountCodes extends BaseComponent {
   private router = inject(Router);
+  private dialogService = inject(DialogService);
   private couponsService = inject(CouponsAndDiscountCodesService);
 
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
@@ -99,12 +104,10 @@ export class CouponsAndDiscountCodes extends BaseComponent {
     this.router.navigate(['/coupons/add-new-coupon']);
   }
 
-  onRowClick(row: any): void {
-    this.router.navigate(['/coupons/coupon-details', row.code]);
-  }
 
   onActionClick(event: { action: string; row: any }): void {
     const { action, row } = event;
+    console.log(action, row);
 
     switch (action) {
       case 'edit':
@@ -122,8 +125,54 @@ export class CouponsAndDiscountCodes extends BaseComponent {
     }
   }
 
+  showAddCouponDialog() {
+    const ref = this.dialogService.open(AddCouponDialog, {
+      header: 'إضافة كوبون جديد',
+      width: '650px',
+      modal: true,
+      closable: true,
+      breakpoints: { '960px': '75vw', '640px': '90vw' },
+    });
+    if (ref) {
+      ref.onClose.pipe(takeUntil(this.destroy$)).subscribe((created) => {
+        if (created) {
+          // console.log(created);
+          this.loadCoupons();
+          // this.coupons.update((coupons) => [created, ...coupons]);
+        }
+      });
+    }
+  }
+  openEditCouponDialog(row: any) {
+    this.couponsService
+      .getCouponById(row.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          // console.log(res.data.coupon);
+
+          const ref = this.dialogService.open(EditCouponDialog, {
+            header: 'تعديل الكوبون',
+            width: '650px',
+            modal: true,
+            closable: true,
+            breakpoints: { '960px': '75vw', '640px': '90vw' },
+            data: { coupon: res.data.coupon },
+          });
+          if (ref) {
+            ref.onClose.pipe(takeUntil(this.destroy$)).subscribe((updated) => {
+              if (updated) {
+                // replace the row immutably, same pattern as the FAQ list
+                this.loadCoupons();
+              }
+            });
+          }
+        },
+        error: (err) => console.error('Error fetching coupon:', err),
+      });
+  }
   private editCoupon(row: any): void {
-    this.router.navigate(['/coupons/edit', row.id]);
+    this.openEditCouponDialog(row);
   }
 
   private editTargetCustomers(row: any): void {
@@ -137,7 +186,7 @@ export class CouponsAndDiscountCodes extends BaseComponent {
   private toggleCouponStatus(row: any): void {
     const newStatus = row.coupon_status === 'active' ? 'inactive' : 'active';
     this.couponsService
-      .toggleCouponStatus(row.id, newStatus)
+      .toggleCouponStatus(row.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
