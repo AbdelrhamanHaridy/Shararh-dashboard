@@ -26,9 +26,7 @@ export class UserDatabaseService {
   /**
    * Get user database stores (stores list)
    */
-  //   getStores(page: number = 1): Observable<any> {
-  //     return this.http.get<any>(`${this.apiUrl}/admin/user-database/stores`, {
-  //       params: { page },
-  //     });
-  //   }
+  createNewUser(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/admin/users`, payload);
+  }
 }

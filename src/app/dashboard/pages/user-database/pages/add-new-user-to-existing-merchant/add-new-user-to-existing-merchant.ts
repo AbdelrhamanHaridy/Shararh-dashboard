@@ -10,11 +10,13 @@ import {
 } from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CommonModule } from '@angular/common';
-import { takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { RolesService } from '../../services/roles.service';
 import { BaseComponent } from '../../../../shared/services/base.component';
 import { PermissionsService } from '../../services/permissions.service';
 import { PermissionCategory } from '../../models/permissions.model';
+import { StoresService } from '../../services/stores.service';
+import { UserDatabaseService } from '../../services/user-database.service';
 
 @Component({
   selector: 'app-add-new-user-to-existing-merchant',
@@ -33,23 +35,21 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
   userForm!: FormGroup;
   selectedRole: string = '';
 
-  emailOptions = [
-    { label: 'john.doe@example.com', value: 'john.doe@example.com' },
-    { label: 'jane.smith@example.com', value: 'jane.smith@example.com' },
-    { label: 'admin@example.com', value: 'admin@example.com' },
-  ];
-
   roleOptions: any = [];
 
-  // Real permissions, loaded from the API
+  storeOptions: { label: string; value: number }[] = [];
+  isLoadingStores = false;
+  storesErrorMessage = '';
+
   permissionCategories: PermissionCategory[] = [];
-  // Currently selected permission ids (kept in sync with the form control)
   selectedPermissionIds = new Set<number>();
 
   constructor(
     private fb: FormBuilder,
     private roleService: RolesService,
     private permissionsService: PermissionsService,
+    private storesService: StoresService,
+    private userService: UserDatabaseService,
     private cdr: ChangeDetectorRef,
   ) {
     super();
@@ -60,19 +60,71 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
     this.onGetPermissions();
 
     this.userForm = this.fb.group({
-      store_id: ['', Validators.required],
+      organization_code: ['', Validators.required],
+      store_id: [{ value: '', disabled: true }, Validators.required],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       role: ['', Validators.required],
-      is_custom_permissions: [0], // 0 = false, 1 = true
-      permission_ids: [[] as number[]], // flat array of permission IDs
+      is_custom_permissions: [0],
+      permission_ids: [[] as number[]],
     });
 
     this.userForm.get('role')?.valueChanges.subscribe((role) => {
       this.selectedRole = role;
     });
+
+    // Fetch stores as the user types the organization code, debounced
+    this.userForm
+      .get('organization_code')
+      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((code: string) => {
+        this.onOrganizationCodeChange(code);
+      });
+  }
+
+  onOrganizationCodeChange(code: string) {
+    const storeControl = this.userForm.get('store_id');
+
+    // Reset store selection whenever the org code changes
+    storeControl?.setValue('');
+    this.storeOptions = [];
+    this.storesErrorMessage = '';
+
+    const trimmed = (code || '').trim();
+    if (!trimmed) {
+      storeControl?.disable();
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.isLoadingStores = true;
+    this.storesService
+      .getStores(trimmed)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          const stores = res.data ?? [];
+          this.storeOptions = stores.map((s) => ({ label: s.name, value: s.id }));
+          this.isLoadingStores = false;
+
+          if (this.storeOptions.length > 0) {
+            storeControl?.enable();
+          } else {
+            storeControl?.disable();
+            this.storesErrorMessage = 'لا توجد فروع مرتبطة بهذا الكود';
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error fetching stores:', err);
+          this.isLoadingStores = false;
+          this.storesErrorMessage = 'حدث خطأ أثناء جلب الفروع، تأكد من صحة الكود';
+          storeControl?.disable();
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   onGetRoles() {
@@ -84,7 +136,8 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
           const flatRoles = res.data.flat();
           this.roleOptions = flatRoles.map((role) => ({
             label: role.name,
-            value: role.id,
+            value: role.name,
+            // value: role.id,
           }));
           this.cdr.detectChanges();
         },
@@ -101,9 +154,6 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
       .subscribe({
         next: (res) => {
           this.permissionCategories = res.data.permissions ?? [];
-          console.log(res);
-          console.log(this.permissionCategories);
-
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -131,14 +181,12 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
   }
 
   onSubmit() {
-    console.log(this.userForm.value);
-    
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
     }
-    const formValue = this.userForm.value;
-    
+    const formValue = this.userForm.getRawValue(); // include disabled store_id if any edge case
+
     const payload = {
       store_id: Number(formValue.store_id),
       name: formValue.name,
@@ -152,13 +200,16 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
 
     console.log('Submitting payload:', payload);
 
-    // this.userService.createUser(payload).subscribe({
-    //   next: (res) => {
-    //     console.log('User created:', res);
-    //   },
-    //   error: (err) => {
-    //     console.error('Error creating user:', err);
-    //   },
-    // });
+    this.userService
+      .createNewUser(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          console.log('User created:', res);
+        },
+        error: (err) => {
+          console.error('Error creating user:', err);
+        },
+      });
   }
 }
