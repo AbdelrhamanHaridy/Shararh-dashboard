@@ -20,6 +20,11 @@ export const dashboardRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'employee-dashboard',
+    loadComponent: () => import('./pages/employee-dashboard/employee-dashboard').then((m) => m.EmployeeDashboard),
+    canActivate: [authGuard],
+  },
+  {
     path: 'user-database',
     children: userDatabaseRoutes,
     canActivate: [authGuard],

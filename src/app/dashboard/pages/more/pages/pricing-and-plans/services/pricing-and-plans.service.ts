@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   PlanDetailResponse,
   PlanListResponse,
+  PlanMutationResponse,
   PlanPayload,
 } from '../models/pricing-and-plans.model';
 import { environment } from '../../../../../../../environments/environment';
@@ -20,16 +21,17 @@ export class PricingAndPlansService {
     return this.http.get<PlanListResponse>(this.apiUrl);
   }
 
-  getPlanById(id: number): Observable<PlanDetailResponse> {
-    return this.http.get<PlanDetailResponse>(`${this.apiUrl}/${id}`);
+  // Note: response is nested as { data: { plan: Plan } }
+  getPlanById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  createPlan(payload: PlanPayload): Observable<PlanDetailResponse> {
-    return this.http.post<PlanDetailResponse>(this.apiUrl, payload);
+  createPlan(payload: PlanPayload): Observable<PlanMutationResponse> {
+    return this.http.post<PlanMutationResponse>(this.apiUrl, payload);
   }
 
-  updatePlan(id: number, payload: PlanPayload): Observable<PlanDetailResponse> {
-    return this.http.put<PlanDetailResponse>(`${this.apiUrl}/${id}`, payload);
+  updatePlan(id: number, payload: PlanPayload): Observable<PlanMutationResponse> {
+    return this.http.put<PlanMutationResponse>(`${this.apiUrl}/${id}`, payload);
   }
 
   deletePlan(id: number): Observable<{ success: boolean; status: number; message: string }> {

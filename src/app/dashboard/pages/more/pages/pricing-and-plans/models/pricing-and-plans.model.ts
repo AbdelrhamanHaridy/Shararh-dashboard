@@ -58,3 +58,10 @@ export interface PlanPayload {
   yearly_price: number;
   is_active: 0 | 1;
 }
+
+export interface PlanMutationResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: Plan; // flat, for POST/PUT
+}

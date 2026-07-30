@@ -159,20 +159,22 @@ export class PricingAndPlans extends BaseComponent implements OnInit {
       });
     }
   }
-
   onEdit(plan: Plan) {
     this.plansService
       .getPlanById(plan.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
+          const fetchedPlan = res.data.plan; // <-- fixed: unwrap the nested "plan" key
+          console.log(fetchedPlan);
+
           const ref = this.dialogService.open(PlanDialog, {
             header: 'تعديل الباقة',
             width: '600px',
             modal: true,
             closable: true,
             breakpoints: { '960px': '75vw', '640px': '90vw' },
-            data: { plan: res.data },
+            data: { plan: fetchedPlan },
           });
 
           if (ref) {
@@ -209,7 +211,7 @@ export class PricingAndPlans extends BaseComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          this.plans = this.plans.map((p) => (p.id === plan.id ? res.data : p));
+          this.onGetPlans();
           this.cdr.detectChanges();
         },
         error: (err) => console.error('Error toggling plan status:', err),

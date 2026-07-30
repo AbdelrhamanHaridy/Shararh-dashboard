@@ -1,0 +1,92 @@
+<section *ngIf="isLoading()" class="p-6">
+    <p class="text-text-secondary text-sm">جاري تحميل لوحة التحكم...</p>
+</section>
+
+<section *ngIf="!isLoading() && errorMessage()" class="p-6">
+    <p class="text-red-500 text-sm">{{ errorMessage() }}</p>
+</section>
+
+<ng-container *ngIf="!isLoading() && !errorMessage()">
+
+    <!-- KPIs: all 4 match summary{} exactly -->
+    <section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
+
+        <app-shared-kpi-card [title]="'عملاء تحت التنفيذ'" [number]="summary()?.clients_in_progress || 0"
+            iconPath="assets/icons/cards/timer_off.svg" iconBgColor="#FFF3C4" numberColor="#B8860B">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'عملائي المسجلين'" [number]="summary()?.registered_clients || 0"
+            iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#137FEC"
+            navigateLink="/subscriptions">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'المهام المقترحة'" [number]="summary()?.suggested_tasks || 0"
+            iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'الاشتراكات الفعّالة'" [number]="summary()?.active_subscriptions || 0"
+            iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">
+        </app-shared-kpi-card>
+    </section>
+    <section class="p-6 grid grid-cols-10 gap-5">
+        <div class="col-span-10 bg-white rounded-2xl p-5 shadow-md flex flex-col gap-3">
+            <h2 class="text-text-secondary text-lg font-tajawal font-bold">رابط الإحالة الخاص بك</h2>
+            <p class="text-xs text-text-secondary">@{{ referral()?.username }}</p>
+            <div class="flex flex-row items-center gap-2 bg-[#F8FAFC] rounded-xl px-3 py-2">
+                <span class="text-sm text-primary truncate flex-1">{{ referral()?.url }}</span>
+                <button type="button" (click)="copyReferralLink()"
+                    class="text-text-secondary hover:text-primary cursor-pointer shrink-0">
+                    <i class="pi pi-copy"></i>
+                </button>
+            </div>
+            <p class="text-sm text-text-secondary">
+                عدد التسجيلات عبر الرابط:
+                <span class="font-bold text-[#137FEC]">{{ referral()?.registered_from_link || 0 }}</span>
+            </p>
+        </div>
+
+        <!-- Left column: two small stacked tables -->
+        <div class="col-span-10 md:col-span-6 flex flex-col gap-2.5">
+            <app-child-table [tableData]="employees()" [columns]="employeeColumns"
+                [title]="'متابعة الزيارات والتسجيلات'" [showAllButton]="true" [showAllButtonLabel]="'عرض الكل'">
+            </app-child-table>
+
+            <!-- expiring_subscriptions is always [] in the API sample — shape unknown.
+                 Table is wired but will render empty until a populated response is available. -->
+            <app-child-table [tableData]="expiringSubscriptions()" [columns]="[]" [title]="'قائمة الاشتراكات المنتهية'"
+                [showAllButton]="true" [showAllButtonLabel]="'عرض الكل'">
+            </app-child-table>
+        </div>
+
+
+        <!-- Right column: referral link + customer statistics (2 donuts) -->
+        <div class="col-span-10 md:col-span-4 flex flex-col gap-2.5">
+
+
+            <div class="bg-white rounded-2xl p-5 shadow-md">
+                <div class="flex flex-row gap-2">
+                    <img src="assets/icons/global/partition.svg" alt="Navigate">
+                    <h2 class="text-text-secondary text-lg font-tajawal font-bold">إحصائيات العملاء</h2>
+                </div>
+
+                <h2 class="text-[#303136] text-sm font-tajawal font-medium p-4 pb-0">عملائي المشتركين</h2>
+                <app-donut-chart [chartData]="subscribedClientsChartData()" [padAngle]="0">
+                </app-donut-chart>
+
+                <h2 class="text-[#303136] text-sm font-tajawal font-medium p-4 pb-0">
+                    عملائي المسجلين
+                    <span class="text-xs text-text-secondary font-normal">(بيانات جزئية — راجع الملاحظات)</span>
+                </h2>
+                <app-donut-chart [chartData]="registeredClientsChartData()" [padAngle]="0">
+                </app-donut-chart>
+            </div>
+
+        </div>
+
+        <!-- Full-width coupons table -->
+        <div class="col-span-10 flex flex-col gap-2.5">
+            <app-child-table [tableData]="coupons()" [columns]="couponColumns" [title]="'كوبونات الخصم الخاصة بي'"
+                [showAllButton]="true" [showAllButtonLabel]="'عرض الكل'">
+            </app-child-table>
+        </div>
+
+    </section>
+
+</ng-container>
