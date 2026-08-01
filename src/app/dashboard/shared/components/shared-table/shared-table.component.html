@@ -100,12 +100,20 @@
                     </button>
                 </div>
                 }
-                @case('paymentActions') {
+                <!-- @case('paymentActions') {
                 <div class="flex flex-row justify-center items-center gap-3">
                     <button type="button"
                         class="px-5 py-1 bg-primary text-white text-sm rounded-xl cursor-pointer w-fit">إضافه</button>
                     <button type="button"
                         class="px-5 py-1 bg-white text-text-success text-sm  rounded-xl cursor-pointer w-fit border border-text-success">سداد</button>
+                </div>
+                } -->
+                @case('paymentActions') {
+                <div class="flex flex-row justify-center items-center gap-3">
+                    <button type="button" (click)="onActionClick('add', row); $event.stopPropagation()"
+                        class="px-5 py-1 bg-primary text-white text-sm rounded-xl cursor-pointer w-fit">إضافه</button>
+                    <button type="button" (click)="onActionClick('payment', row); $event.stopPropagation()"
+                        class="px-5 py-1 bg-white text-text-success text-sm rounded-xl cursor-pointer w-fit border border-text-success">سداد</button>
                 </div>
                 }
                 @default {
