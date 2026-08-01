@@ -1,151 +1,197 @@
+<p-confirmdialog></p-confirmdialog>
+
 <section class="px-4 sm:px-6">
     <app-page-header title="الشكاوى والاقتراحات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
 </section>
+
+<!-- Real stats — GET admin/customer-requests/stats, affected by the same filters as the list -->
 <section class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
-    <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="120" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#137FEC">
+    <app-shared-kpi-card [title]="'إجمالي الطلبات'" [number]="stats?.total_requests || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#000">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الاشتراكات المنتهيه'" [number]="5" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#D22F27">
+    <app-shared-kpi-card [title]="'قيد المراجعة'" [number]="stats?.reviewing_requests || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#DBEAFE" numberColor="#2563EB">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="15" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#10A922">
+    <app-shared-kpi-card [title]="'قيد الانتظار'" [number]="stats?.pending_requests || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#FFF3C4" numberColor="#F97316">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="20" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#000">
+    <app-shared-kpi-card [title]="'تم الحل'" [number]="stats?.resolved_requests || 0"
+        iconPath="assets/icons/cards/people.svg" iconBgColor="#D1FAE5" numberColor="#059669">
     </app-shared-kpi-card>
 </section>
+
+<!-- Inline add form — unchanged from before -->
 <section class="p-4 sm:p-6">
-    <h2 class="text-text-primary text-sm sm:text-base font-tajawal font-medium mb-5 sm:mb-7">إدارة ومتابعة طلبات العملاء
-        لتحسين جودة
-        الخدمة</h2>
-    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()"
+    <h2 class="text-text-primary text-sm sm:text-base font-tajawal font-medium mb-5 sm:mb-7">
+        إدارة ومتابعة طلبات العملاء لتحسين جودة الخدمة
+    </h2>
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()"
         class="flex flex-col gap-6 sm:gap-8 px-4 sm:px-5 py-6 sm:py-8 col-span-2 rounded-3xl bg-white border border-[#C2C8BD]">
 
-        <section class="">
+        <section>
             <h2 class="text-[#191C18] text-xl sm:text-2xl font-medium mb-6 sm:mb-8">تسجيل شكوى جديدة أو اقتراح</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-end">
-                <app-shared-text-input formControlName="customerName" label="اسم العميل" placeholder="ادخل اسم العميل"
-                    inputId="customerName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
-                <app-shared-text-input formControlName="customerNumber" label="رقم العميل" placeholder="ادخل رقم العميل"
-                    inputId="customerNumber" primeNgIcon="pi pi-hashtag" [isRequired]="true"></app-shared-text-input>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+                <app-shared-text-input formControlName="customer_name" label="اسم العميل" placeholder="ادخل اسم العميل"
+                    inputId="customer_name" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+                <app-shared-text-input formControlName="phone" label="رقم الهاتف" placeholder="ادخل رقم الهاتف"
+                    inputId="phone" primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-text-input>
+
                 <div class="flex flex-col gap-2 h-fit">
                     <p class="text-sm text-[#44483F] font-medium">نوع الطلب</p>
                     <div class="flex flex-wrap gap-3 sm:gap-5">
-                        <button type="button"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-white cursor-pointer px-6 sm:px-9 py-2.5 text-sm font-medium text-primary border-2 border-primary transition-colors hover:bg-primary-op-30 w-full sm:w-auto">
+                        <button type="button" (click)="selectType('suggestion')" [ngClass]="requestForm.get('type')?.value === 'suggestion'
+                                ? 'bg-primary-op-10 text-primary border-primary'
+                                : 'bg-white text-text-primary border-[#E0E4DA]'"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl cursor-pointer px-6 sm:px-9 py-2.5 text-sm font-medium border-2 transition-colors w-full sm:w-auto">
                             <span>اقتراح</span>
                         </button>
-                        <button type="button"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-white cursor-pointer px-6 sm:px-9 py-2.5 text-sm font-medium text-text-primary border border-[#E0E4DA] transition-colors w-full sm:w-auto">
+                        <button type="button" (click)="selectType('complaint')" [ngClass]="requestForm.get('type')?.value === 'complaint'
+                                ? 'bg-primary-op-10 text-primary border-primary'
+                                : 'bg-white text-text-primary border-[#E0E4DA]'"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl cursor-pointer px-6 sm:px-9 py-2.5 text-sm font-medium border-2 transition-colors w-full sm:w-auto">
                             <span>شكوى</span>
                         </button>
                     </div>
                 </div>
-                <app-shared-select formControlName="contactType" label="نوع التواصل" placeholder="اختر نوع التواصل"
-                    inputId="contactType" [options]="contactTypeOptions" optionLabel="label" optionValue="value"
+
+                <app-shared-select formControlName="status" label="الحالة" placeholder="اختر الحالة" inputId="status"
+                    [options]="statusOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-flag"
+                    [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="category" label="التصنيف" placeholder="اختر التصنيف"
+                    inputId="category" [options]="categoryOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-tag" [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="source" label="مصدر التواصل" placeholder="اختر مصدر التواصل"
+                    inputId="source" [options]="sourceOptions" optionLabel="label" optionValue="value"
                     primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
 
-                <app-shared-select formControlName="contactVia" label="التواصل عبر" placeholder="اختر طريقة التواصل"
-                    inputId="contactVia" [options]="contactViaOptions" optionLabel="label" optionValue="value"
-                    primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-select>
+                <app-shared-select formControlName="department" label="القسم المختص" placeholder="اختر القسم"
+                    inputId="department" [options]="departmentOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-building" [isRequired]="true"></app-shared-select>
 
-                <app-shared-select formControlName="contactReason" label="سبب التواصل"
-                    class="col-span-1 md:col-span-2 lg:col-span-1" placeholder="اختر سبب التواصل"
-                    inputId="contactReason" [options]="contactReasonOptions" optionLabel="label" optionValue="value"
-                    primeNgIcon="pi pi-question-circle" [isRequired]="true"></app-shared-select>
+                <app-shared-text-input formControlName="branch_id" label="رقم الفرع" placeholder="ادخل رقم الفرع"
+                    inputId="branch_id" primeNgIcon="pi pi-map-marker" [isRequired]="true"
+                    type="number"></app-shared-text-input>
+
+                <app-shared-text-input formControlName="assigned_user_id" label="معرف الموظف المسؤول (اختياري)"
+                    placeholder="ادخل معرف الموظف" inputId="assigned_user_id" primeNgIcon="pi pi-user"
+                    [isRequired]="false" type="number"></app-shared-text-input>
 
                 <div class="flex flex-col gap-2 col-span-1 md:col-span-2 lg:col-span-3">
-                    <label for="notes" class="text-sm font-medium text-text-primary font-tajawal">تفاصيل الطلب</label>
-                    <textarea id="notes" formControlName="notes" placeholder="اكتب هنا ..."
+                    <label for="details" class="text-sm font-medium text-text-primary font-tajawal">تفاصيل
+                        الطلب</label>
+                    <textarea id="details" formControlName="details" placeholder="اكتب هنا ..."
                         class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm"
                         rows="3"></textarea>
+                </div>
+
+                <div class="flex flex-col gap-2 col-span-1 md:col-span-2 lg:col-span-3">
+                    <label for="admin_notes" class="text-sm font-medium text-text-primary font-tajawal">ملاحظات
+                        الإدارة (اختياري)</label>
+                    <textarea id="admin_notes" formControlName="admin_notes" placeholder="اكتب هنا ..."
+                        class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm"
+                        rows="2"></textarea>
                 </div>
             </div>
         </section>
 
+        <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-8 justify-end">
-            <button type="submit" [disabled]="contactForm.invalid"
-                class="px-6 sm:px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-full sm:w-fit font-tajawal font-medium">إرسال
-                الطلب</button>
+            <button type="submit" [disabled]="requestForm.invalid || isSubmitting"
+                class="px-6 sm:px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-full sm:w-fit font-tajawal font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                {{ isSubmitting ? 'جاري الحفظ...' : 'إرسال الطلب' }}
+            </button>
         </div>
     </form>
 </section>
 
-<section class="p-4 sm:p-6">
+<section class="p-4 sm:p-6 mb-18">
     <div class="flex flex-col gap-8">
         <div class="p-4 sm:p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5">
             <!-- Search Bar -->
             <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
                 style="height: 52px;">
                 <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
-                <input type="text" placeholder="ابحث..."
+                <input type="text" placeholder="ابحث..." [ngModel]="searchTerm" (ngModelChange)="onSearchInput($event)"
                     class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
                     style="color: #6B7280;" />
             </div>
 
             <!-- Filter Buttons -->
             <div class="flex flex-wrap gap-3 sm:gap-5">
-                <button type="button"
-                    class="inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30">
-                    <span>الكل</span>
-                </button>
-                <button type="button"
-                    class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                    <span>مسجل</span>
-                </button>
-                <button type="button"
-                    class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                    <span>مشترك</span>
-                </button>
-                <button type="button"
-                    class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                    <span>مرفوض</span>
+                <button *ngFor="let filter of statusFilters" type="button" (click)="onSelectStatusFilter(filter.value)"
+                    [ngClass]="isActiveStatusFilter(filter.value)
+                        ? 'bg-primary-op-10 text-primary border-primary'
+                        : 'bg-white text-text-primary border-[#E2E8F0] hover:bg-primary-op-10'"
+                    class="inline-flex items-center gap-2 rounded-2xl cursor-pointer px-7 py-2 text-sm font-medium border transition-colors">
+                    <span>{{ filter.label }}</span>
                 </button>
             </div>
         </div>
+
         <h2 class="text-black text-xl sm:text-2xl font-medium font-tajawal">سجل الشكاوى والاقتراحات</h2>
+
+        @if (!isLoading) {
+        @if (listErrorMessage) {
+        <div class="text-red-500 text-sm">{{ listErrorMessage }}</div>
+        }
+        @if (!listErrorMessage && requests.length === 0) {
+        <div class="text-text-secondary text-sm text-center">
+            لا توجد طلبات متاحة حالياً
+        </div>
+        }
+
+        @for (request of requests; track request.id) {
         <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col justify-between items-start gap-6">
             <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
                 <div
                     class="rounded-full p-2 bg-[#FEE2E2] w-12 h-12 sm:w-14 sm:h-14 flex justify-center items-center shrink-0">
-                    <img class="w-6" src="assets/icons/global/timer.svg" alt="Notifications">
+                    <img class="w-6" src="assets/icons/global/timer.svg" alt="">
                 </div>
                 <div class="flex flex-col lg:flex-row justify-between gap-4 flex-1 w-full min-w-0">
                     <div class="flex flex-col gap-1">
-                        <h2 class="text-[#2E3139] text-base sm:text-lg font-tajawal font-medium"> فيصل العتيبي
-                            <!-- <span class="text-[#D22F27]">24 ساعة</span> -->
+                        <h2 class="text-[#2E3139] text-base sm:text-lg font-tajawal font-medium">
+                            {{ request.customer_name }}
                         </h2>
                         <div class="flex flex-wrap gap-3">
                             <p class="flex flex-row items-center gap-1 text-sm text-[#44483F] font-normal" dir="ltr">
-                                +966 54 221 0987
+                                {{ request.phone }}
                                 <img src="assets/icons/global/black_phone.svg" alt="details" class="w-2.5 h-2.5" />
                             </p>
                             <p class="flex flex-row items-center gap-1 text-sm text-[#44483F] font-normal" dir="ltr">
-                                اليوم، 10:30 ص
+                                {{ request.created_at }}
                                 <img src="assets/icons/global/black_clock.svg" alt="details" class="w-2.5 h-2.5" />
                             </p>
+                            <p class="text-sm text-[#44483F] font-normal">#{{ request.request_number }}</p>
                         </div>
-                        <!-- <p class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">تم بنجاح
-                        </p> -->
                     </div>
                     <div class="flex flex-wrap gap-3 items-center">
                         <div class="flex flex-col gap-1">
                             <p class="text-[#44483F] text-xs font-medium leading-4">النوع</p>
                             <span
                                 class="px-3 py-1 rounded-full text-xs font-medium font-tajawal shrink-0 text-primary bg-[#F0F4EB]">
-                                شكوى
+                                {{ request.type_label }}
                             </span>
                         </div>
                         <div class="flex flex-col gap-1">
                             <p class="text-[#44483F] text-xs font-medium leading-4">الحالة</p>
                             <span
-                                class="px-3 py-1 rounded-full text-xs font-medium font-tajawal shrink-0 flex items-center gap-2 text-[#F97316] bg-[#F973161A]">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#F97316] shrink-0"></span>
-                                <span>قيد الانتظار</span>
+                                class="px-3 py-1 rounded-full text-xs font-medium font-tajawal shrink-0 flex items-center gap-2"
+                                [style.color]="getStatusMeta(request.status).color"
+                                [style.background-color]="getStatusMeta(request.status).bg">
+                                <span class="w-1.5 h-1.5 rounded-full shrink-0"
+                                    [style.background-color]="getStatusMeta(request.status).color"></span>
+                                <span>{{ request.status_label }}</span>
                             </span>
                         </div>
-                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+
+                        <p-tieredMenu #menu [popup]="true" appendTo="body"
+                            [style]="{ minWidth: '180px' }"></p-tieredMenu>
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            (click)="onMenuClick(menu, request, $event)">
                             <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
                         </button>
                     </div>
@@ -153,62 +199,72 @@
             </div>
             <p
                 class="text-text-primary px-2.5 py-4 sm:py-5 text-base sm:text-lg font-medium bg-[#FAFDFF] w-full border border-[#E2E8F0] rounded-[10px]">
-                اقتراح إضافة ميزه جديده في صفحة التحويلات</p>
+                {{ request.details }}
+            </p>
         </div>
-        <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col justify-between items-start gap-6">
-            <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
-                <div
-                    class="rounded-full p-2 bg-[#FEE2E2] w-12 h-12 sm:w-14 sm:h-14 flex justify-center items-center shrink-0">
-                    <img class="w-6" src="assets/icons/global/timer.svg" alt="Notifications">
-                </div>
-                <div class="flex flex-col lg:flex-row justify-between gap-4 flex-1 w-full min-w-0">
-                    <div class="flex flex-col gap-1">
-                        <h2 class="text-[#2E3139] text-base sm:text-lg font-tajawal font-medium"> فيصل العتيبي
-                            <!-- <span class="text-[#D22F27]">24 ساعة</span> -->
-                        </h2>
-                        <div class="flex flex-wrap gap-3">
-                            <p class="flex flex-row items-center gap-1 text-sm text-[#44483F] font-normal" dir="ltr">
-                                +966 54 221 0987
-                                <img src="assets/icons/global/black_phone.svg" alt="details" class="w-2.5 h-2.5" />
-                            </p>
-                            <p class="flex flex-row items-center gap-1 text-sm text-[#44483F] font-normal" dir="ltr">
-                                اليوم، 10:30 ص
-                                <img src="assets/icons/global/black_clock.svg" alt="details" class="w-2.5 h-2.5" />
-                            </p>
-                        </div>
-                        <!-- <p class="text-[12px] font-medium text-primary bg-primary-op-10 rounded-4xl px-2 py-1">تم بنجاح
-                        </p> -->
-                    </div>
-                    <div class="flex flex-wrap gap-3 items-center">
-                        <div class="flex flex-col gap-1">
-                            <p class="text-[#44483F] text-xs font-medium leading-4">النوع</p>
-                            <span
-                                class="px-3 py-1 rounded-full text-xs font-medium font-tajawal shrink-0 text-primary bg-[#F0F4EB]">
-                                اقتراح
-                            </span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="text-[#44483F] text-xs font-medium leading-4">الحالة</p>
+        }
+        } @else {
+        <div class="space-y-5">
+            @for (_ of [1,2,3]; track $index) {
+            <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col justify-between gap-6">
 
-                            <span
-                                class="px-3 py-1 rounded-full text-xs font-medium font-tajawal shrink-0 flex items-center gap-2 text-[#2563EB] bg-[#3B82F61A]">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#2563EB] shrink-0"></span>
-                                <span> قيد المراجعة</span>
-                            </span>
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
+
+                    <!-- Avatar -->
+                    <p-skeleton shape="circle" size="3.5rem">
+                    </p-skeleton>
+
+                    <div class="flex flex-col lg:flex-row justify-between gap-4 flex-1 w-full">
+
+                        <!-- Customer Info -->
+                        <div class="flex flex-col gap-3 flex-1">
+
+                            <p-skeleton width="180px" height="20px"></p-skeleton>
+
+                            <div class="flex flex-wrap gap-3 items-center">
+                                <p-skeleton width="120px" height="14px"></p-skeleton>
+                                <p-skeleton width="90px" height="14px"></p-skeleton>
+                                <p-skeleton width="70px" height="14px"></p-skeleton>
+                            </div>
+
                         </div>
-                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-                            <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
-                        </button>
+
+                        <!-- Status -->
+                        <div class="flex flex-wrap gap-4 items-center">
+
+                            <div class="flex flex-col gap-2">
+                                <p-skeleton width="40px" height="12px"></p-skeleton>
+                                <p-skeleton width="70px" height="28px" borderRadius="9999px">
+                                </p-skeleton>
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <p-skeleton width="40px" height="12px"></p-skeleton>
+                                <p-skeleton width="95px" height="28px" borderRadius="9999px">
+                                </p-skeleton>
+                            </div>
+
+                            <!-- Menu -->
+                            <p-skeleton shape="circle" size="2rem">
+                            </p-skeleton>
+
+                        </div>
+
                     </div>
                 </div>
+
+                <!-- Details -->
+                <div class="border border-[#E2E8F0] rounded-[10px] bg-[#FAFDFF] p-5 flex flex-col gap-3">
+
+                    <p-skeleton width="100%" height="18px"></p-skeleton>
+                    <p-skeleton width="85%" height="18px"></p-skeleton>
+
+                </div>
+
             </div>
-            <p
-                class="text-text-primary px-2.5 py-4 sm:py-5 text-base sm:text-lg font-medium bg-[#FAFDFF] w-full border border-[#E2E8F0] rounded-[10px]">
-                اقتراح إضافة ميزه جديده في صفحة التحويلات</p>
+            }
         </div>
-
-
-
-
+        }
     </div>
 </section>
