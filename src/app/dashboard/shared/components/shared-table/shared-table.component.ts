@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
+import { SkeletonModule } from 'primeng/skeleton';
 import { FormsModule } from '@angular/forms';
 import { Menu, MenuModule } from 'primeng/menu';
 import { RoleBadgeDirective } from '../../directives/role-badge.directive';
@@ -20,6 +21,7 @@ import { CouponStatusBadgeDirective } from '../../directives/coupon-status-badge
     PaginatorModule,
     ButtonModule,
     CheckboxModule,
+    SkeletonModule,
     MenuModule,
     RoleBadgeDirective,
     StatusBadgeDirective,
@@ -36,6 +38,7 @@ export class SharedTableComponent {
   @Input() rowsPerPage: number = 10;
   @Input() totalRecords: number = 0;
   @Input() itemLabel: string = 'items';
+  @Input() isLoading: boolean = false;
   @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
   @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() actionClick: EventEmitter<{ action: string; row: any }> = new EventEmitter();

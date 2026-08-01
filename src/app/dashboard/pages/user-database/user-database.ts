@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { SharedTableComponent } from '../../shared/components/shared-table/shared-table.component';
@@ -14,6 +20,7 @@ import { User } from './models/user-database.model';
   imports: [SharedKpiCard, SharedTableComponent, PageHeaderComponent],
   templateUrl: './user-database.html',
   styleUrl: './user-database.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserDatabase extends BaseComponent implements OnInit {
   private router = inject(Router);
@@ -23,7 +30,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
-
+  isLoading: boolean = true;
   onAddUser(): void {
     this.router.navigate(['/user-database/add-new-user/add-merchant-for-first-time']);
   }
@@ -68,6 +75,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
     this.onGetUsers();
   }
   onGetUsers() {
+    this.isLoading = true;
     this.usersService
       .getUsers()
       .pipe(takeUntil(this.destroy$))
@@ -76,14 +84,15 @@ export class UserDatabase extends BaseComponent implements OnInit {
           this.users = res.data.map((user) => ({
             ...user,
             status: user.account_status,
-            // role: user.roles?.[0] || '',
-
           }));
           this.totalUsers = this.users.length;
-          this.cdr.detectChanges();
+          this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error fetching data:', err);
+          this.isLoading = false;
+          this.cdr.markForCheck();
         },
       });
   }

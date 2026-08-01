@@ -28,7 +28,7 @@
     </div>
 
     <section class="">
-        <app-shared-table [tableData]="coupons()" [columns]="columns" [totalRecords]="totalCoupons()"
-            (actionClick)="onActionClick($event)"></app-shared-table>
+        <app-shared-table [isLoading]="isLoading" [tableData]="coupons()" [columns]="columns"
+            [totalRecords]="totalCoupons()" (actionClick)="onActionClick($event)"></app-shared-table>
     </section>
 </main>

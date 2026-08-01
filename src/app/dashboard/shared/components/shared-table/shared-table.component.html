@@ -1,4 +1,5 @@
 <!-- Table -->
+@if (!isLoading) {
 <p-table #dt [value]="tableData" [responsiveLayout]="'scroll'" class="w-full text-sm">
     <ng-template pTemplate="header">
         <tr class="text-[12px] font-medium leading-[120%] p-datatable-sortable-column text-nowrap">
@@ -100,14 +101,6 @@
                     </button>
                 </div>
                 }
-                <!-- @case('paymentActions') {
-                <div class="flex flex-row justify-center items-center gap-3">
-                    <button type="button"
-                        class="px-5 py-1 bg-primary text-white text-sm rounded-xl cursor-pointer w-fit">إضافه</button>
-                    <button type="button"
-                        class="px-5 py-1 bg-white text-text-success text-sm  rounded-xl cursor-pointer w-fit border border-text-success">سداد</button>
-                </div>
-                } -->
                 @case('paymentActions') {
                 <div class="flex flex-row justify-center items-center gap-3">
                     <button type="button" (click)="onActionClick('add', row); $event.stopPropagation()"
@@ -123,15 +116,30 @@
         </tr>
     </ng-template>
 </p-table>
-<!-- 
-<p-paginator [rows]="rowsPerPage" [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)" styleClass="mt-4"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="Showing {{showingCount}} of {totalRecords} {{ itemLabel }}"></p-paginator> -->
+} @else {
+<!-- Skeleton Loading -->
+<table class="w-full text-sm">
+    <tbody>
+        @for (_ of [1,2,3,4,5]; track $index) {
+        <tr class="border-b">
+            <td class="px-4 py-3">
+                <p-skeleton shape="circle" size="2rem"></p-skeleton>
+            </td>
+            @for (_ of columns; track $index) {
+            <td class="px-4 py-3">
+                <p-skeleton width="120px" height="16px"></p-skeleton>
+            </td>
+            }
+        </tr>
+        }
+    </tbody>
+</table>
+}
 
-
-<!-- <div class="flex flex-row items-center justify-between mt-4">
-    <p class="text-sm text-secondary-text font-manrope">
+<!-- Pagination -->
+<div class="flex flex-row items-center justify-between mt-4 px-4">
+    <p class="text-sm text-secondary-text font-tajawal">
         Showing {{ showingCount }} of {{ totalRecords }} {{ itemLabel }}
     </p>
     <p-paginator [rows]="rowsPerPage" [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)"></p-paginator>
-</div> -->
+</div>

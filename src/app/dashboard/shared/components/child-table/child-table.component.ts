@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
 import { FormsModule } from '@angular/forms';
 import { RoleBadgeDirective } from '../../directives/role-badge.directive';
 import { StatusBadgeDirective } from '../../directives/status.directive';
@@ -13,6 +14,7 @@ import { StatusBadgeDirective } from '../../directives/status.directive';
     FormsModule,
     TableModule,
     ButtonModule,
+    SkeletonModule,
     RoleBadgeDirective,
     StatusBadgeDirective,
   ],
@@ -26,6 +28,7 @@ export class ChildTableComponent {
   @Input() title?: string;
   @Input() showAllButton: boolean = false;
   @Input() showAllButtonLabel: string = 'Show All';
+  @Input() isLoading: boolean = false;
 
   @Output() actionClick: EventEmitter<{ action: string; row: any }> = new EventEmitter();
   @Output() showAll: EventEmitter<void> = new EventEmitter();

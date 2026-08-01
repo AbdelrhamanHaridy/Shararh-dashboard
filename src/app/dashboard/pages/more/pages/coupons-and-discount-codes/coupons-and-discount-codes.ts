@@ -58,14 +58,14 @@ export class CouponsAndDiscountCodes extends BaseComponent {
   coupons = signal<Coupon[]>([]);
   totalCoupons = computed(() => this.coupons().length);
   stats = signal<CouponStats | null>(null);
-
+  isLoading: boolean = false;
   ngOnInit(): void {
     this.loadCoupons();
     this.loadStats();
   }
 
   private loadCoupons(): void {
-    // this.isLoading.set(true);
+    this.isLoading = true;
     this.couponsService
       .getCoupons()
       .pipe(takeUntil(this.destroy$))
@@ -78,10 +78,10 @@ export class CouponsAndDiscountCodes extends BaseComponent {
               coupon_status: coupon.status,
             })),
           );
-          // this.isLoading.set(false);
+          this.isLoading = false;
         },
         error: () => {
-          // this.isLoading.set(false);
+          this.isLoading = false;
         },
       });
   }
