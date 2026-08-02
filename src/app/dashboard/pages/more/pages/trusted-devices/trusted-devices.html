@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <main class="p-4 sm:p-6 flex flex-col gap-5 sm:gap-7">
     <section class="">
         <app-page-header title="الأجهزة الموثوقة" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
@@ -6,23 +8,36 @@
     <h2 class="text-text-primary text-sm sm:text-base font-tajawal font-medium">
         إدارة طلبات الوصول والأجهزة المرتبطة بحسابك بكل أمان.
     </h2>
+
+    @if (isLoading()) {
+    <div class="flex items-center justify-center py-10">
+        <p class="text-text-secondary">جاري تحميل البيانات...</p>
+    </div>
+    } @else {
+
+    <!-- New access requests -->
+    @if (pendingDevices().length > 0) {
     <section class="px-4 sm:px-5 py-5 sm:py-7 border border-[#E2E8F0] rounded-[20px] bg-white">
         <div class="flex flex-row items-center gap-3 mb-5 sm:mb-6">
             <h2 class="text-text-primary text-base sm:text-lg font-tajawal font-medium">
                 طلبات الوصول الجديدة
             </h2>
-            <div class="rounded-full text-xs font-medium bg-[#196D001A] px-3 py-1">1 طلب معلق</div>
+            <div class="rounded-full text-xs font-medium bg-[#196D001A] px-3 py-1">{{ pendingDevices().length }} طلب
+                معلق</div>
         </div>
 
-        <div class="rounded-3xl flex flex-col gap-5 sm:gap-7 border border-[#E2E8F0] p-4 sm:p-8 bg-white">
+        @for (device of pendingDevices(); track device.id) {
+        <div
+            class="rounded-3xl flex flex-col gap-5 sm:gap-7 border border-[#E2E8F0] p-4 sm:p-8 bg-white mb-4 last:mb-0">
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                <div class="rounded-2xl w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-[#EEF3F7] shrink-0">
-                    <img src="assets/icons/global/laptop.svg" alt="building">
+                <div
+                    class="rounded-2xl w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-[#EEF3F7] shrink-0">
+                    <img [src]="getDeviceIcon(device.platform)" alt="device">
                 </div>
                 <div class="flex flex-col gap-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-2 sm:gap-10">
                         <h3 class="text-lg sm:text-xl font-medium text-[#0F172A] font-tajawal">
-                            كمبيوتر (MacBook Pro)
+                            {{ device.name }}
                         </h3>
                         <span class="rounded-sm text-xs font-medium text-primary bg-[#10A92233] px-3 py-1 shrink-0">طلب
                             جديد</span>
@@ -31,17 +46,17 @@
                         <h4
                             class="text-xs sm:text-sm font-medium text-text-secondary font-tajawal flex flex-row items-center gap-1">
                             <img src="assets/icons/global/global.svg" alt="details" class="w-3.5 h-3.5" />
-                            طنطا , الغربيه , مصر
+                            {{ device.location }}
                         </h4>
                         <h4
                             class="text-xs sm:text-sm font-medium text-text-secondary font-tajawal flex flex-row items-center gap-1">
                             <img src="assets/icons/global/lang.svg" alt="details" class="w-3.5 h-3.5" />
-                            Chrome Browser
+                            {{ device.browserLabel }}
                         </h4>
                         <h4
                             class="text-xs sm:text-sm font-medium text-text-secondary font-tajawal flex flex-row items-center gap-1">
                             <img src="assets/icons/global/grey_clock.svg" alt="details" class="w-3.5 h-3.5" />
-                            منذ دقيقتين
+                            {{ device.lastSeenLabel }}
                         </h4>
                     </div>
                 </div>
@@ -50,82 +65,126 @@
                 <h5 class="text-xs font-medium text-[#94A3B8] font-tajawal">معرف الجهاز</h5>
                 <p
                     class="rounded-2xl flex flex-col bg-[#F8FAFC] border border-[#E2E8F0] px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base font-medium text-[#334155]">
-                    ID-99283-XK-2024</p>
+                    {{ device.uuid }}</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
-                <button type="submit"
-                    class="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-xl cursor-pointer w-full sm:w-fit">توثيق
-                    الجهاز</button>
-                <button type="button"
-                    class="px-5 py-2.5 bg-[#ED4C5C] text-white text-sm font-medium rounded-xl cursor-pointer w-full sm:w-fit">حظر
-                    الوصول</button>
+                <button type="button" [disabled]="actionInProgressId() === device.id" (click)="trustDevice(device)"
+                    class="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-xl cursor-pointer w-full sm:w-fit disabled:opacity-50">
+                    توثيق الجهاز
+                </button>
+                <button type="button" [disabled]="actionInProgressId() === device.id" (click)="blockDevice(device)"
+                    class="px-5 py-2.5 bg-[#ED4C5C] text-white text-sm font-medium rounded-xl cursor-pointer w-full sm:w-fit disabled:opacity-50">
+                    حظر الوصول
+                </button>
             </div>
         </div>
+        }
     </section>
+    }
+
+    <!-- Device list -->
     <section class="border border-[#E2E8F0] rounded-[20px] bg-white overflow-hidden">
         <div class="flex flex-wrap gap-2 sm:gap-4 justify-start border-b border-[#E2E8F0] bg-[#F8FAFC80] p-2">
-            <button type="submit"
-                class="px-4 sm:px-8 py-2 sm:py-4 bg-white border border-[#E2E8F080] text-primary text-sm font-medium rounded-2xl cursor-pointer w-full sm:w-fit">توثيق
-                الجهاز</button>
-            <button type="button"
-                class="px-4 sm:px-8 py-2 sm:py-4 text-[#94A3B8] text-sm font-medium rounded-2xl cursor-pointer w-full sm:w-fit">حظر
-                الوصول</button>
+            <button type="button" (click)="setActiveTab('trust')" [class.text-primary]="activeTab() === 'trust'"
+                [class.bg-white]="activeTab() === 'trust'" [class.border]="activeTab() === 'trust'"
+                [class.border-[#E2E8F080]]="activeTab() === 'trust'" [class.text-[#94A3B8]]="activeTab() !== 'trust'"
+                class="px-4 sm:px-8 py-2 sm:py-4 text-sm font-medium rounded-2xl cursor-pointer w-full sm:w-fit">
+                الأجهزة الموثوقة
+            </button>
+            <button type="button" (click)="setActiveTab('block')" [class.text-primary]="activeTab() === 'block'"
+                [class.bg-white]="activeTab() === 'block'" [class.border]="activeTab() === 'block'"
+                [class.border-[#E2E8F080]]="activeTab() === 'block'" [class.text-[#94A3B8]]="activeTab() !== 'block'"
+                class="px-4 sm:px-8 py-2 sm:py-4 text-sm font-medium rounded-2xl cursor-pointer w-full sm:w-fit">
+                حظر الوصول
+            </button>
         </div>
-        <div class="flex flex-col sm:flex-row gap-4 sm:justify-between border-b border-[#E2E8F0] p-4 sm:p-6 bg-white">
+
+        @if (filteredDevices().length === 0) {
+        <div class="flex items-center justify-center p-8">
+            <p class="text-sm text-text-secondary font-tajawal">لا توجد أجهزة في هذا القسم</p>
+        </div>
+        } @else {
+        @for (device of visibleDevices(); track device.id) {
+        <div
+            class="flex flex-col sm:flex-row gap-4 sm:justify-between border-b border-[#E2E8F0] p-4 sm:p-6 bg-white last:border-b-0">
             <div class="flex flex-row gap-4 sm:gap-6 min-w-0">
-                <div class="rounded-2xl w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-[#EEF3F7] shrink-0">
-                    <img src="assets/icons/global/green_phone.svg" alt="phone">
+                <div
+                    class="rounded-2xl w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-[#EEF3F7] shrink-0">
+                    <img [src]="getDeviceIcon(device.platform)" alt="device">
                 </div>
                 <div class="flex flex-col gap-1 min-w-0">
                     <h3 class="text-sm sm:text-base font-medium text-[#0F172A] font-tajawal">
-                        iPhone 15 Pro
+                        {{ device.name }}
                     </h3>
                     <div class="flex flex-wrap gap-2 sm:gap-3">
-                        <h4
-                            class="text-xs font-medium text-primary font-tajawal flex flex-row items-center gap-1">
+                        @if (device.isBlocked) {
+                        <h4 class="text-xs font-medium text-[#ED4C5C] font-tajawal flex flex-row items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#ED4C5C] shrink-0"></span>
+                            محظور
+                        </h4>
+                        } @else if (device.isOnline) {
+                        <h4 class="text-xs font-medium text-primary font-tajawal flex flex-row items-center gap-1">
                             <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
                             نشط الآن
                         </h4>
-                        <h4
-                            class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1">
-                            • Safari on iOS
+                        } @else {
+                        <h4 class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1">
+                            آخر نشاط: {{ device.lastSeenLabel }}
                         </h4>
+                        }
+                        <h4 class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1">
+                            • {{ device.browserLabel }}
+                        </h4>
+                        <div class="flex items-center gap-2">
+                            @if (device.isTrusted) {
+                            <span class="rounded-sm text-xs font-medium text-white bg-primary px-3 py-1">موثّق</span>
+                            }
+                            @if (device.isBlocked) {
+                            <span class="rounded-sm text-xs font-medium text-white bg-[#ED4C5C] px-3 py-1">محظور</span>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-row items-center justify-end gap-1 sm:gap-2 shrink-0">
-                <img class="p-1.5 sm:p-2" src="assets/icons/global/block.svg" alt="">
-                <img class="p-1.5 sm:p-2" src="assets/icons/global/light_grey_delete.svg" alt="">
+            <div class="flex flex-row items-center justify-end gap-2 sm:gap-3 shrink-0">
+                @if (device.isTrusted) {
+                <button type="button" [disabled]="actionInProgressId() === device.id" (click)="untrustDevice(device)"
+                    class="px-3 py-1.5 text-xs font-medium text-[#94A3B8] border border-[#E2E8F0] rounded-lg cursor-pointer disabled:opacity-50">
+                    إلغاء التوثيق
+                </button>
+                } @else {
+                <button type="button" [disabled]="actionInProgressId() === device.id" (click)="trustDevice(device)"
+                    class="px-3 py-1.5 text-xs font-medium text-primary border border-primary-op-30 rounded-lg cursor-pointer disabled:opacity-50">
+                    توثيق
+                </button>
+                }
+
+                @if (device.isBlocked) {
+                <button type="button" [disabled]="actionInProgressId() === device.id" (click)="unblockDevice(device)"
+                    class="px-3 py-1.5 text-xs font-medium text-primary border border-primary-op-30 rounded-lg cursor-pointer disabled:opacity-50">
+                    رفع الحظر
+                </button>
+                } @else {
+                <button type="button" [disabled]="actionInProgressId() === device.id" (click)="blockDevice(device)"
+                    class="p-1.5 sm:p-2 cursor-pointer disabled:opacity-50">
+                    <img src="assets/icons/global/block.svg" alt="block">
+                </button>
+                }
             </div>
         </div>
-        <div class="flex flex-col sm:flex-row gap-4 sm:justify-between border-b border-[#E2E8F0] p-4 sm:p-6 bg-white">
-            <div class="flex flex-row gap-4 sm:gap-6 min-w-0">
-                <div class="rounded-2xl w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-[#EEF3F7] shrink-0">
-                    <img src="assets/icons/global/green_tablet.svg" alt="tablet">
-                </div>
-                <div class="flex flex-col gap-1 min-w-0">
-                    <h3 class="text-sm sm:text-base font-medium text-[#0F172A] font-tajawal">
-                        Samsung Tab S9
-                    </h3>
-                    <div class="flex flex-wrap gap-2 sm:gap-3">
-                        <!-- <h4
-                            class="text-xs font-medium text-primary font-tajawal flex flex-row items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
-                            نشط الآن
-                        </h4> -->
-                        <h4
-                            class="text-xs font-medium text-[#94A3B8] font-tajawal flex flex-row items-center gap-1">
-                            آخر نشاط: أمس الساعة 9:30 م • Microsoft Edge
-                        </h4>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-row items-center justify-end gap-1 sm:gap-2 shrink-0">
-                <img class="p-1.5 sm:p-2" src="assets/icons/global/block.svg" alt="">
-                <img class="p-1.5 sm:p-2" src="assets/icons/global/light_grey_delete.svg" alt="">
-            </div>
+        }
+        }
+
+        <div class="flex items-center justify-center bg-[#F8FAFC] p-6">
+            @if (filteredDevices().length > 2) {
+            <button type="button" (click)="toggleShowAll()"
+                class="px-4 py-2 text-sm font-medium text-primary rounded-lg border border-primary-op-30 bg-white">
+                @if (!showAll()) { عرض المزيد ({{ filteredDevices().length }}) } @else { عرض أقل }
+            </button>
+            } @else {
+            <p class="text-sm font-medium text-primary">إجمالي الأجهزة المرتبطة ({{ filteredDevices().length }})</p>
+            }
         </div>
-        <p class=" flex items-center justify-center bg-[#F8FAFC] p-6 text-sm font-medium text-primary cursor-pointer">
-            عرض جميع الأجهزة المرتبطة (12)</p>
     </section>
+    }
 </main>
