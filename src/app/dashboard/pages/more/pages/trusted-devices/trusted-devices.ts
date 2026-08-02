@@ -39,7 +39,7 @@ export class TrustedDevices implements OnInit {
   filteredDevices = computed(() => {
     const all = this.devices();
     return this.activeTab() === 'trust'
-      ? all.filter((d) => d.isTrusted)
+      ? all.filter((d) => d.isTrusted && !d.isBlocked)
       : all.filter((d) => d.isBlocked);
   });
 
