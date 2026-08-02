@@ -1,0 +1,63 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5 p-1" dir="rtl">
+    <!-- Payment method type -->
+    <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-text-primary font-tajawal">نوع وسيلة الدفع</label>
+        <p-select formControlName="paymentMethodType" [options]="typeOptions" optionLabel="label" optionValue="value"
+            styleClass="w-full" appendTo="body">
+        </p-select>
+    </div>
+
+    <!-- Name -->
+    <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-text-primary font-tajawal">اسم وسيلة الدفع</label>
+        <input pInputText formControlName="paymentMethodName" placeholder="مثال: فوري" class="w-full" />
+        @if (form.get('paymentMethodName')?.invalid && form.get('paymentMethodName')?.touched) {
+        <span class="text-xs text-red-500 font-tajawal">هذا الحقل مطلوب</span>
+        }
+    </div>
+
+    <!-- Description -->
+    <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-text-primary font-tajawal">الوصف</label>
+        <input pInputText formControlName="description" placeholder="وصف مختصر لوسيلة الدفع" class="w-full" />
+    </div>
+
+    <!-- Dynamic config fields based on selected type -->
+    @if (configFields.length > 0) {
+    <div class="flex flex-col gap-4 rounded-xl bg-background p-4" formGroupName="config">
+        @for (field of configFields; track field.key) {
+        <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-text-primary font-tajawal">{{ field.label }}</label>
+            <input pInputText [formControlName]="field.key" [placeholder]="field.placeholder || field.label"
+                class="w-full" />
+        </div>
+        }
+    </div>
+    }
+
+    <!-- Fees -->
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+            <p-checkbox formControlName="applyFees" [binary]="true" inputId="applyFees"></p-checkbox>
+            <label for="applyFees" class="text-sm font-medium text-text-primary font-tajawal">
+                تطبيق رسوم على هذه الوسيلة
+            </label>
+        </div>
+
+        @if (form.get('applyFees')?.value) {
+        <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-text-primary font-tajawal">نسبة الرسوم (%)</label>
+            <p-inputNumber formControlName="feesPercentage" [min]="0" [max]="100" suffix="%" styleClass="w-full">
+            </p-inputNumber>
+        </div>
+        }
+    </div>
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-3 pt-2">
+        <button type="button" pButton label="إلغاء" class="p-button-outlined" (click)="onCancel()">
+        </button>
+        <button type="submit" pButton label="إضافة" [disabled]="form.invalid">
+        </button>
+    </div>
+</form>

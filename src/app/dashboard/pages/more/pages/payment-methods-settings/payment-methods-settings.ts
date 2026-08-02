@@ -1,30 +1,30 @@
-import { Component, Type } from '@angular/core';
+import { Component, Type, OnInit, signal, inject } from '@angular/core';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
 import { MenuModule, Menu } from 'primeng/menu';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { EditPaymentMethodEWalletDialog } from './components/edit-payment-method-e-wallet-dialog/edit-payment-method-e-wallet-dialog';
 import { EditPaymentMethodFawryPayDialog } from './components/edit-payment-method-fawry-pay-dialog/edit-payment-method-fawry-pay-dialog';
 import { EditPaymentMethodInstapayDialog } from './components/edit-payment-method-instapay-dialog/edit-payment-method-instapay-dialog';
-
-type PaymentMethodType = 'default' | 'fawry' | 'eWallet' | 'instapay';
-
-type PaymentMethod = {
-  id: number;
-  type: PaymentMethodType;
-  name: string;
-  time: string;
-  data?: Array<{ name: string; value: string }>;
-};
+import { PaymentMethodsService } from './services/payment-methods-settings.service';
+import { PaymentMethod, PaymentMethodApiResponse } from './models/payment-methods-settings.model';
+import { AddPaymentMethodDialog } from './components/add-payment-method-dialog/add-payment-method-dialog';
 
 @Component({
   selector: 'app-payment-methods-settings',
-  imports: [PageHeaderComponent, MenuModule],
-  providers: [DialogService],
+  imports: [PageHeaderComponent, MenuModule, ConfirmDialogModule],
+  providers: [DialogService, MessageService, ConfirmationService],
   templateUrl: './payment-methods-settings.html',
   styleUrl: './payment-methods-settings.scss',
 })
-export class PaymentMethodsSettings {
+export class PaymentMethodsSettings implements OnInit {
+  private readonly paymentMethodsService = inject(PaymentMethodsService);
+  private readonly dialogService = inject(DialogService);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },
@@ -42,108 +42,72 @@ export class PaymentMethodsSettings {
       icon: 'pi pi-ban',
       command: () => this.disableActiveMethod(),
     },
+    {
+      label: 'حذف',
+      icon: 'pi pi-trash',
+      command: () => this.deleteActiveMethod(),
+    },
   ];
 
   ref: DynamicDialogRef | null = null;
   activeMethod: PaymentMethod | null = null;
+  paymentMethods = signal<PaymentMethod[]>([]);
+  isLoading = signal(false);
 
-  constructor(private readonly dialogService: DialogService) {}
+  ngOnInit(): void {
+    this.fetchPaymentMethods();
+  }
 
-  paymentMethods: PaymentMethod[] = [
-    {
-      id: 99,
-      type: 'default',
-      name: 'تفاصيل الخصم',
-      time: 'تفعيل لحظي',
-    },
-    {
-      id: 100,
-      type: 'fawry',
-      name: 'فوري باي',
-      time: 'تفعيل لحظي',
-    },
-    {
-      id: 101,
-      type: 'eWallet',
-      name: 'محفظه الكترونيه',
-      time: 'تفعيل لحظي',
-      data: [
-        {
-          name: 'رقم المحفظه',
-          value: '01032060389',
-        },
-        {
-          name: 'الاسم',
-          value: 'عبدالله رفعت عبدالحميد',
-        },
-        {
-          name: 'النسبه',
-          value: '% 1',
-        },
-      ],
-    },
-    {
-      id: 102,
-      type: 'instapay',
-      name: 'انستا باي',
-      time: 'تفعيل لحظي',
-      data: [
-        {
-          name: 'المرجع',
-          value: 'abdallahsharara1',
-        },
-        {
-          name: 'رقم الحساب',
-          value: '207112774001',
-        },
-        {
-          name: 'البنك',
-          value: 'بنك الاسكندرية',
-        },
-        {
-          name: 'المستفيد',
-          value: 'عبدالله رفعت عبدالحميد',
-        },
-      ],
-    },
-    // {
-    //   id: 102,
-    //   name: 'صيدلية الشفاء',
-    //   time: 'يستغرق يوم عمل 1 بعد استلام الاموال',
-    //   apps: [
-    //     {
-    //       id: 'm102-a1',
-    //       badgeLabel: 'محدث',
-    //       badgeColor: '#065F46',
-    //       badgeBgColor: '#ECFDF5',
-    //       name: 'النقطة',
-    //       devicesCount: 3,
-    //       version: '2.0.1',
-    //       iconUrl: 'assets/icons/global/blue_check.svg',
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: 103,
-    //   name: 'مطعم الأصالة',
-    //   time: 'المنطقة الصناعية',
-    //   apps: [
-    //     {
-    //       id: 'm103-a1',
-    //       badgeLabel: 'قيد التحديث',
-    //       badgeColor: '#B45309',
-    //       badgeBgColor: '#FFFAEB',
-    //       name: 'خدمة الطلبات',
-    //       devicesCount: 8,
-    //       version: '1.0.0',
-    //       iconUrl: 'assets/icons/global/blue_check.svg',
-    //     },
-    //   ],
-    // },
-  ];
+  fetchPaymentMethods(): void {
+    this.isLoading.set(true);
+    this.paymentMethodsService.getPaymentMethods().subscribe({
+      next: (response) => {
+        const methods = response.data.payment_methods.map((apiMethod) =>
+          this.mapApiMethodToComponent(apiMethod),
+        );
+        this.paymentMethods.set(methods);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching payment methods:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل في تحميل وسائل الدفع',
+        });
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  private mapApiMethodToComponent(apiMethod: PaymentMethodApiResponse): PaymentMethod {
+    const data = apiMethod.configs.map((config) => ({
+      name: config.label,
+      value: config.value?.toString() || '',
+    }));
+
+    return {
+      id: apiMethod.id,
+      type: apiMethod.type,
+      name: apiMethod.name,
+      time: apiMethod.processing_time || 'غير محدد',
+      data: data.length > 0 ? data : undefined,
+      isActive: apiMethod.is_active,
+      hasFees: apiMethod.has_fees,
+      feesPercentage: apiMethod.fees_percentage,
+      apiData: apiMethod,
+    };
+  }
+
+  constructor() {}
 
   onActionButtonClick(event: MouseEvent, menu: Menu, method: PaymentMethod): void {
     this.activeMethod = method;
+    // Update the toggle menu label based on current isActive state
+    const toggleLabel = this.activeMethod.isActive ? 'تعطيل' : 'تفعيل';
+    if (this.actionMenuItems && this.actionMenuItems.length > 1) {
+      this.actionMenuItems[1] = { ...this.actionMenuItems[1], label: toggleLabel };
+    }
     menu.toggle(event);
   }
 
@@ -152,22 +116,21 @@ export class PaymentMethodsSettings {
       return;
     }
 
-    const dialogByType: Record<PaymentMethodType, Type<unknown>> = {
-      default: EditPaymentMethodFawryPayDialog,
+    const dialogByType: Record<string, Type<unknown>> = {
       fawry: EditPaymentMethodFawryPayDialog,
+      wallet: EditPaymentMethodEWalletDialog,
       eWallet: EditPaymentMethodEWalletDialog,
       instapay: EditPaymentMethodInstapayDialog,
+      instapay_handle: EditPaymentMethodInstapayDialog,
+      bank_transfer: EditPaymentMethodInstapayDialog,
+      card: EditPaymentMethodFawryPayDialog,
+      default: EditPaymentMethodFawryPayDialog,
     };
 
-    const headerByType: Record<PaymentMethodType, string> = {
-      default: 'تعديل وسيلة الدفع',
-      fawry: 'تعديل وسيلة الدفع',
-      eWallet: 'تعديل وسيلة الدفع',
-      instapay: 'تعديل وسيلة الدفع',
-    };
+    const Dialog = dialogByType[this.activeMethod.type] || EditPaymentMethodFawryPayDialog;
 
-    this.ref = this.dialogService.open(dialogByType[this.activeMethod.type], {
-      header: headerByType[this.activeMethod.type],
+    this.ref = this.dialogService.open(Dialog, {
+      header: 'تعديل وسيلة الدفع',
       width: '520px',
       modal: true,
       closable: true,
@@ -177,6 +140,52 @@ export class PaymentMethodsSettings {
       },
       data: {
         method: this.activeMethod,
+        apiData: this.activeMethod.apiData,
+      },
+    });
+
+    if (this.ref) {
+      this.ref.onClose.subscribe((result) => {
+        if (result?.success) {
+          this.updatePaymentMethod(result.data);
+        }
+      });
+    }
+  }
+
+  private updatePaymentMethod(formData: any): void {
+    if (!this.activeMethod?.apiData) {
+      return;
+    }
+
+    const payload = {
+      name: formData.paymentMethodName || this.activeMethod.name,
+      type: this.activeMethod.type,
+      is_active: this.activeMethod.isActive ? 1 : 0,
+      has_fees: formData.applyFees ? 1 : 0,
+      fees_percentage: formData.feesPercentage || null,
+      sort_order: this.activeMethod.apiData.sort_order,
+      icon: this.activeMethod.apiData.icon,
+      description: this.activeMethod.apiData.description,
+      config: this.activeMethod.apiData.config,
+    };
+
+    this.paymentMethodsService.updatePaymentMethod(this.activeMethod.id, payload).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجح',
+          detail: 'تم تحديث وسيلة الدفع بنجاح',
+        });
+        this.fetchPaymentMethods();
+      },
+      error: (error) => {
+        console.error('Error updating payment method:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل في تحديث وسيلة الدفع',
+        });
       },
     });
   }
@@ -186,7 +195,115 @@ export class PaymentMethodsSettings {
       return;
     }
 
-    // Placeholder until backend integration for status changes.
-    console.log('Disable payment method:', this.activeMethod);
+    this.paymentMethodsService.togglePaymentMethod(this.activeMethod.id).subscribe({
+      next: () => {
+        const statusText = this.activeMethod!.isActive ? 'تعطيل' : 'تفعيل';
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجح',
+          detail: `تم ${statusText} وسيلة الدفع بنجاح`,
+        });
+        this.fetchPaymentMethods();
+      },
+      error: (error) => {
+        console.error('Error toggling payment method status:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل في تحديث حالة وسيلة الدفع',
+        });
+      },
+    });
+  }
+  // ...
+
+  openAddPaymentMethodDialog(): void {
+    this.ref = this.dialogService.open(AddPaymentMethodDialog, {
+      header: 'إضافة وسيلة دفع جديدة',
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: {
+        paymentMethods: this.paymentMethods(),
+      },
+    });
+
+    if (this.ref) {
+      this.ref.onClose.subscribe((result) => {
+        if (result?.success) {
+          this.createPaymentMethod(result.data);
+        }
+      });
+    }
+  }
+
+  private createPaymentMethod(formData: any): void {
+    const payload = {
+      name: formData.paymentMethodName,
+      type: formData.paymentMethodType,
+      is_active: 1,
+      has_fees: formData.applyFees ? 1 : 0,
+      fees_percentage: formData.applyFees ? formData.feesPercentage : null,
+      sort_order: (this.paymentMethods().length || 0) + 1,
+      icon: null,
+      description: formData.description || '',
+      config: formData.config,
+    };
+
+    this.paymentMethodsService.createPaymentMethod(payload).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجح',
+          detail: 'تم إضافة وسيلة الدفع بنجاح',
+        });
+        this.fetchPaymentMethods();
+      },
+      error: (error) => {
+        console.error('Error creating payment method:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل في إضافة وسيلة الدفع',
+        });
+      },
+    });
+  }
+
+  deleteActiveMethod(): void {
+    if (!this.activeMethod) {
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `هل تأكد من حذف وسيلة الدفع "${this.activeMethod.name}"؟`,
+      header: 'تأكيد الحذف',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.paymentMethodsService.deletePaymentMethod(this.activeMethod!.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'نجح',
+              detail: 'تم حذف وسيلة الدفع بنجاح',
+            });
+            this.fetchPaymentMethods();
+          },
+          error: (error) => {
+            console.error('Error deleting payment method:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'خطأ',
+              detail: 'فشل في حذف وسيلة الدفع',
+            });
+          },
+        });
+      },
+    });
   }
 }
