@@ -1,0 +1,28 @@
+<div class="flex flex-col gap-7 mb-3">
+    <div class="flex flex-col items-center gap-5">
+        <div class="bg-[#E2FFE5] p-2 rounded-full flex justify-center items-center w-17.75 h-17.75">
+            <img src="assets/icons/global/green_spark.svg" alt="">
+        </div>
+        <h2 class="text-[#0F172A] text-base font-bold">تخصيص رسالة التحديث</h2>
+        <p class="text-text-secondary text-xs font-normal">قم بصياغة الرسالة التي ستظهر للمستخدمين عند طلب التحديث</p>
+    </div>
+
+
+    <div class="flex flex-col gap-2 items-center">
+        <label for="updateMessage" class="w-91 max-w-full text-[#334155] text-[10px] font-bold text-right">
+            نص الرسالة التي ستظهر للمستخدم
+        </label>
+        <textarea id="updateMessage" maxlength="200"
+            class="w-91 h-28.25 max-w-full rounded-2xl border-2 border-[#F1F5F9] bg-[#F8FAFC] p-5 text-sm text-[#0F172A] resize-none outline-none"
+            placeholder="اكتب الرسالة هنا..."></textarea>
+        <p class="w-91 max-w-full text-right text-[10px] font-normal text-text-secondary">
+            الحد الأقصى: ٢٠٠ حرف
+        </p>
+    </div>
+
+    <!-- Apply -->
+    <button type="button"
+        class="w-full py-3 rounded-xl bg-primary hover:bg-[#15803D] text-white text-sm font-medium transition-colors cursor-pointer">
+        حفظ الرساله
+    </button>
+</div>

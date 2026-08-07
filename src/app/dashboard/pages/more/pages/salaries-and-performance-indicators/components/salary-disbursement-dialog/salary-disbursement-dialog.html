@@ -1,0 +1,70 @@
+<div class="relative w-full mx-auto bg-white rounded-2xl font-tajawal flex flex-col gap-5">
+
+
+    <!-- Employee + net salary -->
+    <div class="flex flex-row items-center justify-between gap-4 border border-gray-100 rounded-xl p-4">
+
+        <div class="flex flex-row items-center gap-3">
+            <div class="relative shrink-0">
+                <img [src]="employee.avatarUrl" alt="{{ employee.name }}" class="w-14 h-14 rounded-full object-cover" />
+                <span *ngIf="employee.isVerified"
+                    class="absolute bottom-0 right-0 w-4 h-4 bg-[#16A34A] rounded-full border-2 border-white flex items-center justify-center">
+                    <i class="pi pi-check text-white text-[8px]"></i>
+                </span>
+            </div>
+            <div class="flex flex-col items-end gap-0.5">
+                <span class="text-[#0F172A] text-base font-bold">{{ employee.name }}</span>
+                <span class="text-[#94A3B8] text-xs">{{ employee.role }}</span>
+            </div>
+
+        </div>
+
+        <div class="flex flex-col gap-1 bg-[#F8FAFC] rounded-lg p-3">
+            <span class="text-[#94A3B8] text-xs">صافي الراتب المستحق</span>
+            <div class="flex flex-row items-center gap-1.5">
+                <span class="text-[#16A34A] text-xs font-medium">{{ currency }}</span>
+                <span class="text-[#0F172A] text-xl font-bold">{{ netSalary }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment method -->
+    <div class="flex flex-col gap-3">
+        <span class="text-[#0F172A] text-sm font-medium">طريقة الصرف المفضلة</span>
+
+        <div class="grid grid-cols-3 gap-3">
+            <label *ngFor="let method of paymentMethods" (click)="selectPaymentMethod(method.id)"
+                class="flex flex-row items-center justify-between px-4 py-3 rounded-2xl border cursor-pointer transition-colors"
+                [ngClass]="selectedMethodId === method.id
+                    ? 'border-[#16A34A] bg-[#F0FDF4]'
+                    : 'border-gray-200 bg-white'">
+                <span class="text-sm"
+                    [ngClass]="selectedMethodId === method.id ? 'text-[#16A34A] font-medium' : 'text-[#334155]'">
+                    {{ method.label }}
+                </span>
+                <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+                    [ngClass]="selectedMethodId === method.id ? 'border-[#16A34A]' : 'border-gray-300'">
+                    <span *ngIf="selectedMethodId === method.id" class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+                </span>
+            </label>
+        </div>
+    </div>
+
+    <hr class="border-gray-100" />
+
+    <!-- Footer -->
+    <div class="flex flex-row items-center justify-between gap-4">
+        <div class="flex flex-col items-end gap-1">
+            <span class="text-[#94A3B8] text-xs">إجمالي تكلفة العملية</span>
+            <div class="flex flex-row items-center gap-1.5">
+                <span class="text-[#16A34A] text-xs font-medium">{{ currency }}</span>
+                <span class="text-[#0F172A] text-lg font-bold">{{ totalCost }}</span>
+            </div>
+        </div>
+
+        <button type="button" (click)="onDisburseSalary()"
+            class="px-8 py-3 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white text-sm font-medium transition-colors cursor-pointer">
+            صرف الراتب
+        </button>
+    </div>
+</div>

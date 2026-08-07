@@ -30,9 +30,9 @@ export class PageHeaderComponent {
   @Input() actionButtonLabel: string = '';
 
   /** Emitted when the action button is clicked */
-  @Output() actionButtonClick = new EventEmitter<void>();
+  @Output() actionButtonClick = new EventEmitter<MouseEvent>();
 
-  onActionClick(): void {
-    this.actionButtonClick.emit();
+  onActionClick(event: MouseEvent): void {
+    this.actionButtonClick.emit(event);
   }
 }

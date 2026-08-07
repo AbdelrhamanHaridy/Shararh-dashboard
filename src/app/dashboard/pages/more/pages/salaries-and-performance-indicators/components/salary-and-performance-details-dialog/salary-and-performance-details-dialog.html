@@ -1,0 +1,115 @@
+<div class="relative w-full mx-auto bg-[#F1F5F9] rounded-2xl font-tajawal flex flex-col gap-5">
+
+
+
+    <!-- <h2 class="text-center text-[#0F172A] text-base font-bold">تفاصيل الراتب والاداء</h2> -->
+
+    <!-- Employee header -->
+    <div class="bg-text-success rounded-2xl p-4 flex flex-row items-center justify-between gap-4">
+ 
+        <div class="flex flex-row items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0">
+                <i class="pi pi-user text-[#16A34A] text-lg"></i>
+            </div>
+            <div class="flex flex-col gap-0.5">
+                <span class="text-white text-sm font-bold">{{ employee.name }}</span>
+                <span class="text-white/80 text-xs">{{ employee.role }}</span>
+            </div>
+        </div>
+ 
+        <div class="flex flex-row items-center gap-2 border-r border-white/25 pr-4">
+            <div class="flex flex-col items-center gap-2.5 px-4 py-2">
+                <span class="text-white text-xs">ساعات العمل اليوميه</span>
+                <span class="text-[#2563EB] text-sm font-bold  py-2.5 w-full text-center bg-white rounded-lg ">{{ employee.dailyWorkHours }}</span>
+            </div>
+            <div class="flex flex-col items-center gap-2.5 px-4 py-2">
+                <span class="text-white text-xs">ايام العمل الشهريه</span>
+                <span class="text-[#2563EB] text-sm font-bold  py-2.5 w-full text-center bg-white rounded-lg ">{{ employee.monthlyWorkDays }}</span>
+            </div>
+        </div>
+    </div>
+    <!-- Salary + incentives -->
+    <div class="bg-white rounded-2xl p-5 flex flex-col gap-5">
+
+        <!-- Base salary + salary type -->
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+                <span class="text-[#0F172A] text-sm font-medium">الراتب الأساسي</span>
+                <div class="flex flex-row items-center justify-between border border-gray-200 rounded-lg px-4 py-2.5">
+                    <span class="text-[#0F172A] text-base font-bold">{{ baseSalary }}</span>
+                    <span class="text-[#16A34A] text-xs font-medium bg-[#DCFCE7] rounded-md px-2 py-1">{{ currency
+                        }}</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <span class="text-[#0F172A] text-sm font-medium">نوع الراتب</span>
+                <div class="relative">
+                    <select [(ngModel)]="selectedSalaryType"
+                        class="appearance-none w-full border border-gray-200 rounded-lg pr-4 pl-8 py-2.5 text-sm text-[#334155] bg-white focus:outline-none focus:ring-1 focus:ring-[#16A34A]">
+                        <option *ngFor="let option of salaryTypeOptions" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <i
+                        class="pi pi-chevron-down absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-xs pointer-events-none"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Incentives toggle -->
+        <div class="flex flex-row items-center justify-between">
+            <span class="text-[#0F172A] text-sm font-medium">تفعيل الحوافز</span>
+            <button type="button" (click)="toggleIncentives()"
+                class="relative w-11 h-6 rounded-full transition-colors cursor-pointer"
+                [ngClass]="incentivesEnabled ? 'bg-[#16A34A]' : 'bg-gray-300'">
+                <span class="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all"
+                    [ngClass]="incentivesEnabled ? 'left-0.5' : 'right-0.5'"></span>
+            </button>
+        </div>
+
+        <ng-container *ngIf="incentivesEnabled">
+            <!-- Incentive type -->
+            <div class="flex flex-col gap-2">
+                <span class="text-[#0F172A] text-sm font-medium">نوع الحافز</span>
+                <div class="relative">
+                    <select [(ngModel)]="selectedIncentiveType"
+                        class="appearance-none w-full border border-gray-200 rounded-lg bg-[#F8FAFC] pr-4 pl-8 py-2.5 text-sm text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#16A34A]">
+                        <option *ngFor="let option of incentiveTypeOptions" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <i
+                        class="pi pi-chevron-down absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-xs pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Incentive amounts -->
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-row items-center gap-2.5">
+                    <input type="number" [(ngModel)]="attendanceCommitmentBonus"
+                        class="w-16 text-center border border-gray-200 rounded-lg py-1.5 text-sm text-[#0F172A] font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A]" />
+                    <span class="text-[#6B6B6B] text-sm">عند الالتزام بموعد الحضور</span>
+                </div>
+                <div class="flex flex-row items-center gap-2.5">
+                    <input type="number" [(ngModel)]="dailyPointsBonus"
+                        class="w-16 text-center border border-gray-200 rounded-lg py-1.5 text-sm text-[#0F172A] font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A]" />
+                    <span class="text-[#6B6B6B] text-sm">عند تحقيق اعلي نقاط خلال اليوم</span>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- Cashier performance KPIs -->
+    <div class="flex flex-col gap-3">
+        <h3 class="text-[#0F172A] text-sm font-bold">مؤشرات الأداء - الكاشير</h3>
+
+        <div class="grid grid-cols-2 gap-y-3 gap-x-16">
+            <div *ngFor="let kpi of kpis"
+                class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 border-b border-[#E2E8F0]"
+                [ngClass]="kpi.fullWidth ? 'col-span-2' : ''">
+                <img [src]="kpi.iconPath" [alt]="kpi.label" class="w-5" />
+                <span class="text-[#64748B] text-xs">{{ kpi.label }}</span>
+                <span class="text-[#0F172A] text-lg font-bold">{{ kpi.value }}</span>
+            </div>
+        </div>
+    </div>
+</div>

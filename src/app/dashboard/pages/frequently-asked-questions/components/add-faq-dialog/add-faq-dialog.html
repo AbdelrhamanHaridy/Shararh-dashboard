@@ -1,0 +1,98 @@
+<form [formGroup]="addFaqForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6" dir="rtl">
+    <div class="flex flex-col gap-5 bg-white rounded-lg p-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <app-shared-text-input formControlName="question" label="السؤال" placeholder="ادخل السؤال"
+                    inputId="question" [isRequired]="true" type="text">
+                </app-shared-text-input>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <app-shared-text-input formControlName="answer" label="الإجابة" placeholder="ادخل الإجابة"
+                    inputId="answer" [isRequired]="true" type="text">
+                </app-shared-text-input>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-1">
+                <app-shared-select formControlName="target_type" label="المستهدف" placeholder="اختر المستهدف"
+                    inputId="target_type" [options]="targetTypes" optionLabel="label" optionValue="value"
+                    [isRequired]="true">
+                </app-shared-select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <app-shared-chip-list-input
+                    label="الكلمات المفتاحية"
+                    placeholder="أدخل كلمة مفتاحية ثم اضغط Enter"
+                    inputId="tagsInput"
+                    icon="pi pi-tag"
+                    [values]="addFaqForm.get('tags')?.value || []"
+                    (valuesChange)="onTagsChange($event)">
+                </app-shared-chip-list-input>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <app-shared-chip-list-input
+                    label="روابط الصور"
+                    placeholder="أدخل رابط الصورة ثم اضغط Enter"
+                    inputId="imageUrlInput"
+                    inputType="url"
+                    icon="pi pi-image"
+                    [values]="addFaqForm.get('image_urls')?.value || []"
+                    (valuesChange)="onImageUrlsChange($event)">
+                </app-shared-chip-list-input>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <app-shared-chip-list-input
+                    label="روابط يوتيوب"
+                    placeholder="أدخل رابط يوتيوب ثم اضغط Enter"
+                    inputId="youtubeInput"
+                    inputType="url"
+                    icon="pi pi-youtube"
+                    [values]="addFaqForm.get('youtube_links')?.value || []"
+                    (valuesChange)="onYoutubeLinksChange($event)">
+                </app-shared-chip-list-input>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-1">
+                <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <label class="font-medium text-gray-700">الحالة</label>
+                    <p-toggleswitch formControlName="is_active" />
+                    <span class="text-sm font-medium" [class.text-green-600]="addFaqForm.get('is_active')?.value"
+                        [class.text-red-600]="!addFaqForm.get('is_active')?.value">
+                        {{ addFaqForm.get('is_active')?.value ? 'نشط' : 'غير نشط' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+
+        <div class="dialog-actions flex flex-row gap-4 justify-end border-t pt-4">
+            <button type="button"
+                class="px-12 py-3 bg-gray-200 text-gray-700 rounded-2xl cursor-pointer w-fit hover:bg-gray-300 transition-colors"
+                (click)="onCancel()">
+                إلغاء
+            </button>
+            <button type="submit"
+                class="px-12 py-3 bg-primary text-white rounded-2xl cursor-pointer w-fit hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="addFaqForm.invalid || isSubmitting">
+                {{ isSubmitting ? 'جاري الحفظ...' : 'حفظ التغييرات' }}
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,35 @@
+<div class="flex flex-col gap-2">
+  <label *ngIf="label" [for]="inputId" class="text-sm font-medium text-gray-700">
+    {{ label }} <span *ngIf="isRequired" class="text-red-500">*</span>
+  </label>
+
+  <div class="flex items-center gap-2">
+    <input
+      [id]="inputId"
+      [type]="inputType"
+      [placeholder]="placeholder"
+      [(ngModel)]="newValue"
+      (keydown.enter)="add($event)"
+      class="flex-1 px-4 py-2.5 rounded-xl border border-[#DDE1E4] text-sm outline-none focus:border-primary transition-colors"
+    />
+    <button
+      type="button"
+      (click)="add($event)"
+      class="px-5 py-2.5 rounded-xl bg-primary-op-10 text-primary text-sm font-medium hover:bg-primary-op-30 transition-colors shrink-0 cursor-pointer"
+    >
+      إضافة
+    </button>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mt-1" *ngIf="values.length > 0">
+    <p-chip
+      *ngFor="let value of values; let i = index; trackBy: trackByIndex"
+      [label]="value"
+      [icon]="icon"
+      [removable]="true"
+      (onRemove)="remove(i)"
+      styleClass="!bg-[#F8FAFC] !text-[#334155] !border !border-[#E2E8F0] !rounded-full !px-3 !py-1.5"
+    >
+    </p-chip>
+  </div>
+</div>

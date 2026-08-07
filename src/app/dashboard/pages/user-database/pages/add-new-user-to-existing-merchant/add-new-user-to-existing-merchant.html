@@ -1,27 +1,31 @@
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
     <section class="p-5 bg-white rounded-3xl grid grid-cols-2 gap-6">
-        <app-shared-text-input formControlName="fullName" label="المؤسسه" placeholder="ادخل اسم او كود المؤسسه"
-            inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+        <app-shared-text-input formControlName="organization_code" label="كود المؤسسة"
+            placeholder="ادخل كود المؤسسة" inputId="organization_code" primeNgIcon="pi pi-hashtag"
+            [isRequired]="true"></app-shared-text-input>
 
-        <app-shared-select formControlName="branch" label="الفرع" placeholder="اختر الفرع" inputId="branch"
-            [options]="emailOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-envelope"
-            [isRequired]="true"></app-shared-select>
+        <div class="flex flex-col gap-1">
+            <app-shared-select formControlName="store_id" label="الفرع" placeholder="اختر الفرع" inputId="store_id"
+                [options]="storeOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-envelope"
+                [isRequired]="true"></app-shared-select>
+            <p *ngIf="isLoadingStores" class="text-xs text-text-secondary">جاري البحث عن الفروع...</p>
+            <p *ngIf="!isLoadingStores && storesErrorMessage" class="text-xs text-red-500">{{ storesErrorMessage }}</p>
+        </div>
     </section>
 
     <section class="p-5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">المعلومات الأساسية</h2>
 
         <div class="grid grid-cols-2 gap-6">
-            <app-shared-text-input formControlName="fullName" label="ادخل الاسم بالكامل"
-                placeholder="الاسم الاول بالكامل" inputId="fullName" primeNgIcon="pi pi-user"
+            <app-shared-text-input formControlName="name" label="ادخل الاسم بالكامل" placeholder="الاسم الاول بالكامل"
+                inputId="name" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+            <app-shared-text-input formControlName="email" label="البريد الالكتروني"
+                placeholder="ادخل البريد الالكتروني" inputId="email" primeNgIcon="pi pi-user"
                 [isRequired]="true"></app-shared-text-input>
-            <app-shared-text-input formControlName="fullName" label="البريد الالكتروني"
-                placeholder="ادخل البريد الالكتروني" inputId="fullName" primeNgIcon="pi pi-user"
-                [isRequired]="true"></app-shared-text-input>
-            <app-shared-text-input formControlName="fullName" label="رقم الهاتف" placeholder="ادخل رقم الهاتف"
-                inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
-            <app-shared-text-input formControlName="fullName" label="كلمة المرور" placeholder="ادخل كلمة المرور"
-                inputId="fullName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+            <app-shared-text-input formControlName="phone" label="رقم الهاتف" placeholder="ادخل رقم الهاتف"
+                inputId="phone" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+            <app-shared-text-input formControlName="password" label="كلمة المرور" placeholder="ادخل كلمة المرور"
+                inputId="password" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
 
             <app-shared-select formControlName="role" label="الدور الوظيفي" placeholder="اختر الدور الوظيفي"
                 inputId="role" [options]="roleOptions" optionLabel="label" optionValue="value"
@@ -29,38 +33,37 @@
         </div>
     </section>
 
-    <!-- Permissions Section - Only show when role is selected -->
-    <section *ngIf="selectedRole && hasPermissions()" class="py-5 px-2.5 bg-white rounded-3xl">
+    <!-- Permissions Section - driven by the real permissions API -->
+    <section *ngIf="permissionCategories.length > 0" class="py-5 px-2.5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">الصلاحيات</h2>
 
-        <!-- Loop through each permission category -->
-        <div *ngFor="let category of getPermissionCategories()" class="mb-6">
-            <h3 class="text-lg font-medium mb-4 text-text-primary">{{ category }}</h3>
+        <div *ngFor="let category of permissionCategories" class="mb-6">
+            <h3 class="text-lg font-medium mb-4 text-text-primary">{{ category.label }}</h3>
 
-            <!-- Loop through each permission in the category -->
-            <div *ngFor="let permission of getPermissionsForCategory(category)"
+            <div *ngFor="let permission of category.permissions"
                 class="px-4 py-2.5 bg-white rounded-2xl border border-[#DDE1E4] flex flex-row justify-between items-center mb-3">
                 <div class="flex flex-row items-center gap-4">
                     <div class="rounded-2xl p-3.5 bg-[#F0FDF4]">
                         <img class="w-6 h-6" src="assets/icons/global/check.svg" alt="Notifications">
                     </div>
-                    <p class="text-[#334155] text-sm font-medium">{{ permission }}</p>
+                    <p class="text-[#334155] text-sm font-medium">{{ permission.label }}</p>
                 </div>
                 <div dir="ltr">
-                    <p-toggleswitch />
+                    <p-toggleswitch [ngModel]="isPermissionSelected(permission.id)"
+                        [ngModelOptions]="{ standalone: true }"
+                        (onChange)="togglePermission(permission.id, $event.checked)" />
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Message when no role is selected -->
-    <section *ngIf="!selectedRole" class="py-5 px-2.5 bg-white rounded-3xl text-center">
-        <p class="text-text-secondary text-sm">يرجى اختيار الدور الوظيفي لعرض الصلاحيات</p>
+    <section *ngIf="permissionCategories.length === 0" class="py-5 px-2.5 bg-white rounded-3xl text-center">
+        <p class="text-text-secondary text-sm">جاري تحميل الصلاحيات...</p>
     </section>
 
     <div class="flex flex-row gap-8 justify-end">
-        <button type="button" class=" px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
+        <button type="button" class="px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
         <button type="submit" [disabled]="userForm.invalid"
-            class=" px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">إضافة</button>
+            class="px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">إضافة</button>
     </div>
 </form>

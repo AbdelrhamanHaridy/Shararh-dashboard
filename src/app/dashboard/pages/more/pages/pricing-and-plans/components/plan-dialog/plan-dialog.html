@@ -1,0 +1,104 @@
+<form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6" dir="rtl">
+    <div class="flex flex-col gap-5 bg-white rounded-lg p-6">
+
+        <app-shared-text-input formControlName="name" label="اسم الباقة" placeholder="ادخل اسم الباقة" inputId="name"
+            [isRequired]="true" type="text">
+        </app-shared-text-input>
+
+        <!-- Limits -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="flex flex-col gap-2 p-3 bg-[#F8FAFC] rounded-xl">
+                <div class="flex flex-row justify-between items-center">
+                    <label class="text-sm font-medium text-gray-700">عدد المكاتب</label>
+                    <div dir="ltr" class="flex items-center gap-2">
+                        <span class="text-xs text-text-secondary">غير محدود</span>
+                        <p-toggleswitch formControlName="is_unlimited_offices" />
+                    </div>
+                </div>
+                <app-shared-text-input formControlName="offices_limit" placeholder="عدد المكاتب" inputId="offices_limit"
+                    [isRequired]="false" type="number">
+                </app-shared-text-input>
+            </div>
+
+            <div class="flex flex-col gap-2 p-3 bg-[#F8FAFC] rounded-xl">
+                <div class="flex flex-row justify-between items-center">
+                    <label class="text-sm font-medium text-gray-700">عدد المستخدمين</label>
+                    <div dir="ltr" class="flex items-center gap-2">
+                        <span class="text-xs text-text-secondary">غير محدود</span>
+                        <p-toggleswitch formControlName="is_unlimited_users" />
+                    </div>
+                </div>
+                <app-shared-text-input formControlName="users_limit" placeholder="عدد المستخدمين" inputId="users_limit"
+                    [isRequired]="false" type="number">
+                </app-shared-text-input>
+            </div>
+
+            <div class="flex flex-col gap-2 p-3 bg-[#F8FAFC] rounded-xl">
+                <div class="flex flex-row justify-between items-center">
+                    <label class="text-sm font-medium text-gray-700">عدد المحافظ</label>
+                    <div dir="ltr" class="flex items-center gap-2">
+                        <span class="text-xs text-text-secondary">غير محدود</span>
+                        <p-toggleswitch formControlName="is_unlimited_wallets" />
+                    </div>
+                </div>
+                <app-shared-text-input formControlName="wallets_limit" placeholder="عدد المحافظ" inputId="wallets_limit"
+                    [isRequired]="false" type="number">
+                </app-shared-text-input>
+            </div>
+
+            <div class="flex flex-col gap-2 p-3 bg-[#F8FAFC] rounded-xl">
+                <div class="flex flex-row justify-between items-center">
+                    <label class="text-sm font-medium text-gray-700">عدد الأجهزة</label>
+                    <div dir="ltr" class="flex items-center gap-2">
+                        <span class="text-xs text-text-secondary">غير محدود</span>
+                        <p-toggleswitch formControlName="is_unlimited_devices" />
+                    </div>
+                </div>
+                <app-shared-text-input formControlName="devices_limit" placeholder="عدد الأجهزة" inputId="devices_limit"
+                    [isRequired]="false" type="number">
+                </app-shared-text-input>
+            </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <app-shared-text-input formControlName="monthly_price" label="السعر الشهري" placeholder="0"
+                inputId="monthly_price" [isRequired]="true" type="number">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="semi_annual_price" label="السعر نصف السنوي" placeholder="0"
+                inputId="semi_annual_price" [isRequired]="true" type="number">
+            </app-shared-text-input>
+
+            <app-shared-text-input formControlName="yearly_price" label="السعر السنوي" placeholder="0"
+                inputId="yearly_price" [isRequired]="true" type="number">
+            </app-shared-text-input>
+        </div>
+
+        <!-- Active status -->
+        <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+            <label class="font-medium text-gray-700">الحالة</label>
+            <p-toggleswitch formControlName="is_active" />
+            <span class="text-sm font-medium" [class.text-green-600]="planForm.get('is_active')?.value"
+                [class.text-red-600]="!planForm.get('is_active')?.value">
+                {{ planForm.get('is_active')?.value ? 'نشطة' : 'غير نشطة' }}
+            </span>
+        </div>
+
+        <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+
+        <div class="dialog-actions flex flex-row gap-4 justify-end border-t pt-4">
+            <button type="button"
+                class="px-12 py-3 bg-gray-200 text-gray-700 rounded-2xl cursor-pointer w-fit hover:bg-gray-300 transition-colors"
+                (click)="onCancel()">
+                إلغاء
+            </button>
+            <button type="submit"
+                class="px-12 py-3 bg-primary text-white rounded-2xl cursor-pointer w-fit hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="planForm.invalid || isSubmitting">
+                {{ isSubmitting ? 'جاري الحفظ...' : (isEditMode ? 'حفظ التعديلات' : 'إضافة الباقة') }}
+            </button>
+        </div>
+    </div>
+</form>

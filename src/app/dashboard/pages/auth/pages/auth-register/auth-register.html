@@ -1,0 +1,106 @@
+<!-- Logo -->
+<div class="flex items-center justify-center gap-2">
+    <img src="assets/images/logo.svg" alt="Sharara" />
+</div>
+<div class="flex flex-col items-center gap-3 mb-4">
+    <h1 class="text-black text-[32px] font-bold">أنشئ حسابك على sharara</h1>
+    <p class="text-text-secondary text-base font-normal">انضم إلى منصتنا وابدأ رحلتك</p>
+</div>
+
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+
+    @if (errorMessage()) {
+    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-red-700 text-sm">{{ errorMessage() }}</p>
+    </div>
+    }
+
+    <!-- Personal Information -->
+    <div class="flex flex-col gap-4">
+        <h2 class="text-black text-2xl font-medium">البيانات الشخصية</h2>
+        <div class="grid grid-cols-2 gap-y-2 gap-x-12">
+            <app-shared-text-input formControlName="first_name" label="الاسم الأول" placeholder="ادخل اسمك الأول"
+                inputId="first_name" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="last_name" label="اسم العائلة" placeholder="ادخل اسم عائلتك"
+                inputId="last_name" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="email" label="البريد الإلكتروني" placeholder="ادخل بريدك الإلكتروني"
+                inputId="email" primeNgIcon="pi pi-envelope" [isRequired]="true"
+                class="col-span-2"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="phone" label="رقم الموبايل" placeholder="رقم موبايلك"
+                inputId="phone" primeNgIcon="pi pi-phone" [isRequired]="true"
+                class="col-span-2"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="password" label="كلمة المرور" placeholder="ادخل كلمة المرور"
+                inputId="password" type="password" primeNgIcon="pi pi-lock" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="confirmPassword" label="تأكيد كلمة المرور"
+                placeholder="اعد ادخال كلمة المرور" inputId="confirmPassword" type="password" primeNgIcon="pi pi-lock"
+                [isRequired]="true"></app-shared-text-input>
+        </div>
+    </div>
+
+    <!-- Store Information -->
+    <div class="flex flex-col gap-4">
+        <h2 class="text-black text-2xl font-medium">بيانات المتجر</h2>
+        <div class="grid grid-cols-2 gap-y-2 gap-x-12">
+            <app-shared-text-input formControlName="store_name" label="اسم المتجر" placeholder="ادخل اسم متجرك"
+                inputId="store_name" primeNgIcon="pi pi-shop" [isRequired]="true"
+                class="col-span-2"></app-shared-text-input>
+
+            <app-shared-select formControlName="role" label="الدور الوظيفي" placeholder="اختر دورك" inputId="role"
+                [options]="roleOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-briefcase"
+                [isRequired]="true"></app-shared-select>
+
+            <app-shared-text-input formControlName="store_code" label="كود المتجر" placeholder="ادخل كود المتجر"
+                inputId="store_code" primeNgIcon="pi pi-hashtag" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-select formControlName="governorate" label="المحافظة" placeholder="اختر المحافظة"
+                inputId="governorate" [options]="governorateOptions" optionLabel="label" optionValue="value"
+                primeNgIcon="pi pi-map-marker" [isRequired]="true"></app-shared-select>
+
+            <app-shared-text-input formControlName="city" label="المدينة" placeholder="ادخل المدينة" inputId="city"
+                primeNgIcon="pi pi-map" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="address" label="العنوان" placeholder="ادخل عنوان المتجر"
+                inputId="address" primeNgIcon="pi pi-home" [isRequired]="true"
+                class="col-span-2"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="store_phone" label="هاتف المتجر" placeholder="رقم هاتف المتجر"
+                inputId="store_phone" primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="employees_count" label="عدد الموظفين" placeholder="عدد الموظفين"
+                inputId="employees_count" primeNgIcon="pi pi-users" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="lat" label="خط العرض (Latitude)" placeholder="30.0444" inputId="lat"
+                primeNgIcon="pi pi-compass" [isRequired]="true"></app-shared-text-input>
+
+            <app-shared-text-input formControlName="long" label="خط الطول (Longitude)" placeholder="31.2357"
+                inputId="long" primeNgIcon="pi pi-compass" [isRequired]="true"></app-shared-text-input>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions -->
+    <label class="flex flex-row items-center gap-2 cursor-pointer">
+        <input type="checkbox" formControlName="acceptTerms" class="w-4 h-4 accent-primary rounded" />
+        <span class="text-[#64748B] text-base">
+            أوافق على <a class="text-primary font-medium">الشروط والخدمات</a>
+        </span>
+    </label>
+
+    <button type="submit" [disabled]="userForm.invalid || isLoading()"
+        class="w-full py-3 bg-primary hover:bg-[#16A34A] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
+        @if (isLoading()) {
+        <span>جاري المعالجة...</span>
+        } @else {
+        <span>إنشاء حساب</span>
+        }
+    </button>
+
+    <p class="text-center text-[#64748B] text-sm">
+        لدي حساب بالفعل؟
+        <a routerLink="../login" class="text-primary font-semibold cursor-pointer">تسجيل الدخول</a>
+    </p>
+</form>

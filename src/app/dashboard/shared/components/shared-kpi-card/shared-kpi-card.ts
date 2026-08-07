@@ -8,6 +8,7 @@ import { Component, input } from '@angular/core';
 })
 export class SharedKpiCard {
   title = input<string>('');
+  type = input<string>('');
   number = input<string | number>('');
   iconPath = input<string>('');
   iconBgColor = input<string>('#C3E1FF');

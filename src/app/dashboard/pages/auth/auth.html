@@ -1,0 +1,26 @@
+<div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 font-tajawal bg-white">
+    <!-- Left: form -->
+    <div class="hidden lg:block relative overflow-hidden bg-gradient-to-b from-[#0A0F0C] via-[#0D1B12] to-[#123B1F]">
+        <img src="assets/images/login_hero.jpg" alt="Sharara dashboard"
+            class="absolute inset-0 w-full h-full object-cover opacity-90" />
+
+        <!-- New gradient overlay from bottom to top -->
+        <div class="absolute inset-0" style="background: linear-gradient(360deg, rgb(0 58 30 / 70%) 15.56%, #1717172b 97.61%);"></div>
+
+        <!-- Centered content at bottom -->
+        <div class="absolute inset-0 flex flex-col items-center justify-end p-10 text-center">
+            <p class="text-white text-xl font-medium mb-4">نظام مالي إدارة متطور</p>
+            <h3 class="text-[#F4F4F4] text-[30px] font-bold mb-4 leading-snug">
+                إدارة عملياتك المالية من مكان واحد
+            </h3>
+            <p class="text-[#F2F2F2] font-medium text-base leading-relaxed max-w-md">
+                نظام متكامل لإدارة الشحن، الفواتير، المدفوعات والكاشير، مع تقارير دقيقة تساعدك على
+                متابعة الأداء واتخاذ القرارات بثقة
+            </p>
+        </div>
+    </div>
+    <!-- Right: hero image -->
+    <div class="flex flex-col justify-center px-8 sm:px-10 py-5 w-full mx-auto relative">
+        <router-outlet></router-outlet>
+    </div>
+</div>

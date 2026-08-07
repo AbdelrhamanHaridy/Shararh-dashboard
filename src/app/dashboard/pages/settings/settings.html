@@ -1,0 +1,76 @@
+<main class="p-6 flex flex-col gap-6">
+    <section class="">
+        <app-page-header title="الإعدادات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    </section>
+    <div class="flex flex-col gap-1">
+        <h2 class="text-[#1E293B] text-2xl font-medium">بيانات الملف الشخصي</h2>
+    </div>
+    <section class="p-2.5 bg-white rounded-3xl">
+        <!-- Static permission item 1 -->
+        <div class="p-4 bg-white rounded-2xl border border-[#F8FAFC] flex flex-row justify-between items-center mb-3">
+            <div class="flex flex-row items-center gap-4">
+                <div class="rounded-full w-[88px] h-[88px] overflow-hidden">
+                    <img class="w-full" src="assets/testing/avatar-2.jpg" alt="Notifications">
+                </div>
+                <div class="flex flex-col gap-2.5">
+                    <p class="text-black text-xl font-medium">اشرف عبد الله</p>
+                    <div class="flex flex-row items-center gap-2.5">
+                        <button type="button"
+                            class=" px-9 py-2.5 text-base font-medium bg-primary text-white rounded-xl cursor-pointer w-fit">تغيير
+                            الصوره</button>
+                        <button type="button"
+                            class=" px-9 py-2.5 text-base font-medium text-[#D22F27] rounded-xl cursor-pointer w-fit flex flex-row items-center gap-2.5">
+                            <img class="w-6" src="assets/icons/global/red_delete.svg" alt="Delete">
+                            حذف الحساب
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <section class="">
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+            <div class="grid grid-cols-2 gap-6 p-5 bg-white rounded-3xl">
+                <h2 class="text-[#1E293B] text-base font-medium col-span-2">المعلومات الشخصيه والعمل</h2>
+
+                <app-shared-text-input formControlName="fullName" label="ادخل الاسم بالكامل"
+                    placeholder="الاسم الاول بالكامل" inputId="fullName" primeNgIcon="pi pi-user"
+                    [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="email" label="البريد الالكتروني"
+                    placeholder="ادخل البريد الالكتروني" inputId="email" primeNgIcon="pi pi-user"
+                    [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="phone" label="رقم الهاتف" placeholder="ادخل رقم الهاتف"
+                    inputId="phone" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+                <app-shared-text-input formControlName="branch" label="الفرع" placeholder="ادخل الفرع" inputId="branch"
+                    primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+
+                <app-shared-select formControlName="role" label="الدور الوظيفي" placeholder="اختر الدور الوظيفي"
+                    inputId="role" [options]="roleOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
+            </div>
+            <div class="p-2.5 bg-white rounded-3xl">
+                <h2 class="text-[#1E293B] text-base font-medium mb-4 px-6 py-1.5">الموقع والعنوان</h2>
+
+                <div class="grid grid-cols-2 gap-6 p-5 bg-white rounded-3xl">
+                    <app-shared-select formControlName="governorate" label="المحافظه" placeholder="اختر المحافظه"
+                        inputId="governorate" [options]="roleOptions" optionLabel="label" optionValue="value"
+                        primeNgIcon="pi pi-envelope" [isRequired]="true"></app-shared-select>
+                    <app-shared-text-input formControlName="city" label="المدينه / المركز" placeholder="ادخل المدينه / المركز"
+                        inputId="city" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+                    <app-shared-text-input formControlName="postalCode" label="الرمز البريدي" placeholder="ادخل الرمز البريدي"
+                        inputId="postalCode" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
+                </div>
+            </div>
+
+
+            <div class="flex flex-row gap-8 justify-end">
+                <button type="button"
+                    class=" px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit">إلغاء</button>
+                <button type="submit" [disabled]="userForm.invalid"
+                    class=" px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit">حفظ التعديلات</button>
+            </div>
+        </form>
+    </section>
+</main>

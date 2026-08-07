@@ -1,5 +1,30 @@
-<main class="p-4 bg-white font-bold text-amber-100">
-    <h1 class="text-2xl text-black">
-        header works!
-    </h1>
+<main class="p-4 bg-white font-bold text-amber-100 flex items-center gap-10">
+    <!-- Search Bar -->
+
+    <div class="flex items-center gap-2 px-5 py-4 flex-1 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
+        style="height: 52px;">
+        <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
+        <input type="text" placeholder="ابحث..."
+            class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
+            style="color: #6B7280;" />
+    </div>
+    <div class="relative">
+        <button type="button" (click)="toggleMenu()"
+            class="rounded-full overflow-hidden w-11 h-11 border border-[#E2E8F0] bg-white cursor-pointer">
+            <img [src]="avatarSrc()" alt="avatar" class="w-full h-full object-cover" />
+        </button>
+
+        @if (openMenu()) {
+        <div class="absolute left-0  w-44 bg-white border border-[#E2E8F0] rounded-lg shadow-lg z-50">
+            <div class="p-2">
+                <div class="text-sm text-right text-[#0F172A] font-medium px-2 py-1">
+                    {{ user()?.full_name || user()?.email || 'الحساب' }}
+                </div>
+                <hr class="my-2" />
+                <button type="button" (click)="logout()"
+                    class="w-full text-right px-3 py-2 text-sm text-[#ED4C5C] cursor-pointer">تسجيل الخروج</button>
+            </div>
+        </div>
+        }
+    </div>
 </main>

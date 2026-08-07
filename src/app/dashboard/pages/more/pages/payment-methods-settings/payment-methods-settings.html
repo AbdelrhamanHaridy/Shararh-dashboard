@@ -1,0 +1,75 @@
+<main class="p-6 flex flex-col gap-7">
+    <section class="">
+        <app-page-header title="إعدادات وسائل الدفع" [home]="home" [breadcrumbItems]="breadcrumbItems"
+            [showActionButton]="true" (actionButtonClick)="openAddPaymentMethodDialog()"
+            [actionButtonLabel]="'إضافة وسيلة دفع'"></app-page-header>
+    </section>
+    <p-menu #actionMenu [popup]="true" [model]="actionMenuItems" appendTo="body"></p-menu>
+
+    <section>
+        <h2 class="text-text-primary text-xl font-tajawal font-medium mb-7">
+            كشف رواتب الموظفين
+        </h2>
+        @if (isLoading()) {
+        <div class="flex items-center justify-center py-10">
+            <p class="text-text-secondary">جاري تحميل البيانات...</p>
+        </div>
+        } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            @for (method of paymentMethods(); track method.id) {
+            <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4" dir="rtl">
+                <!-- Header: name/location (right) + building icon (left) -->
+                <div class="flex flex-row justify-between items-start">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-2xl w-12 h-12 flex items-center justify-center bg-[#46EC131A] shrink-0">
+                            <img src="assets/icons/global/green_wallet.svg" alt="building" class="w-5 h-5" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-xl font-medium text-text-primary font-tajawal">
+                                {{ method.name }}
+                            </h3>
+                            <span class="flex items-center gap-1 text-sm font-medium text-text-secondary font-tajawal">
+                                {{ method.time }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-5">
+                        <span
+                            class="px-3 py-1 rounded-[20px] text-xs font-medium font-tajawal shrink-0 flex items-center gap-2 text-primary bg-[#10A9220D] border border-primary-op-30">
+                            @if (method.hasFees) {
+                            <span>رسوم {{ method.feesPercentage }}%</span>
+                            } @else {
+                            <span>بدون رسوم</span>
+                            }
+                        </span>
+                        <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            (click)="onActionButtonClick($event, actionMenu, method)">
+                            <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+                <!-- Apps list -->
+                @if (method.data && method.data.length > 0) {
+                <div class="grid grid-cols-2 gap-2.5">
+                    @for (app of method.data; track app.name) {
+                    <div class="flex items-center justify-between bg-background rounded-2xl p-3">
+                        <!-- Name + version -->
+                        <div class="flex flex-col items-start gap-1 overflow-hidden">
+                            <span class="text-[10px] font-medium text-[#5A6354] font-tajawal truncate">
+                                {{ app.name }}
+                            </span>
+                            <span class="text-sm font-medium text-[#151E11] font-tajawal truncate">
+                                {{ app.value }}
+                            </span>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </section>
+    <p-confirmDialog></p-confirmDialog>
+</main>

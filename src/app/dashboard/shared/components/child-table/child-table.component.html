@@ -1,12 +1,13 @@
 <!-- Title and Show All Button -->
 <section class="rounded-2xl overflow-hidden shadow-md">
-    <div *ngIf="title" class="flex items-center justify-between px-6 pt-6 pb-1 bg-white">
+    @if (!isLoading) {
+    <div *ngIf="title" class="flex items-center justify-between px-6 py-6 bg-white">
         <div>
             <div class="flex flex-row gap-2">
                 <img src="assets/icons/global/people.svg" alt="Navigate">
-                <h2 class="text-text-secondary text-base font-lexend font-bold">{{ title }}</h2>
+                <h2 class="text-text-secondary text-base font-tajawal font-bold">{{ title }}</h2>
             </div>
-            <p class="text-[12px] font-medium text-primary">5 موظف نشط</p>
+            <!-- <p class="text-[12px] font-medium text-primary">5 موظف نشط</p> -->
         </div>
         <!-- <button *ngIf="showAllButton" class="btn-outlined" (click)="onShowAll()">
             {{showAllButtonLabel}}
@@ -33,6 +34,22 @@
                     <div class="bg-[#EEF2FF] rounded-full w-8 h-8 flex items-center justify-center font-black">{{
                         row[col.field] }}</div>
                     }
+                    @case('points') {
+                    <p class="text-[#2E3139] text-base font-medium">{{
+                        row[col.field] }}</p>
+                    }
+                    @case('from_time') {
+                    <div class="flex flex-col">
+                        <span class="text-text-secondary text-sm font-medium mb-1">{{ row.from_time }}</span>
+                        <span class="text-[#94A3B8] text-sm font-medium">{{ row.to_time }}</span>
+                    </div>
+                    }
+                    @case('session_status') {
+                    <div appStatusBadge="{{ row[col.field] }}"></div>
+                    }
+                    @case('role') {
+                    <div appRoleBadge="{{ row[col.field] }}"></div>
+                    }
                     @case('actions') {
                     <div class="flex flex-row items-center gap-3">
                         <p-button icon="pi pi-eye" [rounded]="true" [text]="true"
@@ -43,12 +60,31 @@
                             (click)="onActionClick('delete', row)" />
                     </div>
                     } @default {
-                    <p>{{ row[col.field] }}</p>
+                    <p class="text-text-secondary text-base font-medium">{{ row[col.field] }}</p>
                     } }
                 </td>
             </tr>
         </ng-template>
     </p-table>
+    } @else {
+    <!-- Skeleton Loading -->
+    <table class="w-full text-sm">
+        <tbody>
+            @for (_ of [1,2,3]; track $index) {
+            <tr class="border-b">
+                <td class="px-4 py-3">
+                    <p-skeleton shape="circle" size="2rem"></p-skeleton>
+                </td>
+                @for (_ of columns; track $index) {
+                <td class="px-4 py-3">
+                    <p-skeleton width="120px" height="16px"></p-skeleton>
+                </td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
 </section>
 
 <!-- border: 1px solid #F2F2F2 -->
