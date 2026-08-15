@@ -1,18 +1,21 @@
 <section class="px-6">
-    <app-page-header title="سجل الايرادات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
+    <app-page-header title="سجل الايرادات" [home]="home" [breadcrumbItems]="breadcrumbItems" [showDateFilters]="true"
+        [dateFromValue]="dateFrom()" [dateToValue]="dateTo()" (dateFromChange)="onDateFromChange($event)"
+        (dateToChange)="onDateToChange($event)" (dateReset)="onHeaderDateReset()">
+    </app-page-header>
 </section>
 <section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
-    <app-shared-kpi-card [title]="'إجمالي المستخدمين'" [number]="180" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#137FEC" navigateLink="/user-database">
+    <app-shared-kpi-card [title]="'إجمالي الايرادات'" [number]="statistics().total_revenue"
+        iconPath="assets/icons/cards/blue_calendar.svg" iconBgColor="#EAD9FF" numberColor="#137FEC">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'المستخدمون النشطون'" [number]="165" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#10A922">
+    <app-shared-kpi-card [title]="'إيرادات اليوم'" [number]="statistics().today_revenue"
+        iconPath="assets/icons/cards/star.svg" iconBgColor="#DEFFE2" numberColor="#10A922">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'المستخدمون غير النشطين'" [number]="15" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#D22F27">
+    <app-shared-kpi-card [title]="'عدد الاشتراكات النشطه'" [number]="statistics().active_subscriptions"
+        iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'الأجهزة المسجلة'" [number]="280" iconPath="assets/icons/cards/people.svg"
-        iconBgColor="#C3E1FF" numberColor="#FF9500">
+    <app-shared-kpi-card [title]="'عدد الاشتراكات المنتهيه'" [number]="statistics().expired_subscriptions"
+        iconPath="assets/icons/cards/timer_off.svg" iconBgColor="#FFCFCF" numberColor="#D22F27">
     </app-shared-kpi-card>
 </section>
 
@@ -31,26 +34,74 @@
         </div>
 
         <!-- Buttons -->
-        <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-5">
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30">
-                <span>الكل</span>
-            </button>
-            <button type="button"
+        <div class="flex flex-row justify-between">
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-5">
+                <button type="button" (click)="onStatusButtonClick(null)" [ngClass]="{
+                  'bg-primary-op-10 text-primary border-primary': selectedStatus() === null,
+                  'bg-white text-text-primary border-[#E2E8F0]': selectedStatus() !== null
+                }"
+                    class="inline-flex items-center gap-2 rounded-2xl cursor-pointer px-7 py-2 text-sm font-medium border transition-colors hover:bg-primary-op-30">
+                    <span>الكل</span>
+                </button>
+                <button type="button" (click)="onStatusButtonClick('successful')" [ngClass]="{
+                  'bg-primary-op-10 text-primary border-primary': selectedStatus() === 'successful',
+                  'bg-white text-text-primary border-[#E2E8F0]': selectedStatus() !== 'successful'
+                }"
+                    class="inline-flex items-center gap-2 rounded-2xl cursor-pointer px-7 py-2 text-sm font-medium border transition-colors hover:bg-primary-op-10">
+                    <span>ناجحه</span>
+                </button>
+                <button type="button" (click)="onStatusButtonClick('pending_review')" [ngClass]="{
+                  'bg-primary-op-10 text-primary border-primary': selectedStatus() === 'pending_review',
+                  'bg-white text-text-primary border-[#E2E8F0]': selectedStatus() !== 'pending_review'
+                }"
+                    class="inline-flex items-center gap-2 rounded-2xl cursor-pointer px-7 py-2 text-sm font-medium border transition-colors hover:bg-primary-op-10">
+                    <span>قيد المراجعه</span>
+                </button>
+                <button type="button" (click)="onStatusButtonClick('rejected')" [ngClass]="{
+                  'bg-primary-op-10 text-primary border-primary': selectedStatus() === 'rejected',
+                  'bg-white text-text-primary border-[#E2E8F0]': selectedStatus() !== 'rejected'
+                }"
+                    class="inline-flex items-center gap-2 rounded-2xl cursor-pointer px-7 py-2 text-sm font-medium border transition-colors hover:bg-primary-op-10">
+                    <span>مرفوض</span>
+                </button>
+            </div>
+            <button type="button" (click)="openFilterDialog()"
                 class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                <span>ناجحه</span>
-            </button>
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                <span>قيد المراجعه</span>
-            </button>
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10">
-                <span>مرفوض</span>
+                <img src="assets/icons/global/search.svg" alt="filter" class="w-4 h-4" />
+                <span>ترشيح</span>
             </button>
         </div>
     </div>
 </section>
+
+<!-- Filter Dialog -->
+<p-dialog [visible]="showFilterDialog()" (onHide)="showFilterDialog.set(false)" header="المرشحات" [modal]="true"
+    [style]="{ width: '500px' }" [baseZIndex]="10000" dir="rtl">
+    <div class="flex flex-col gap-4">
+        <!-- Payment Method -->
+        <div class="flex flex-col gap-2">
+            <label for="paymentMethod" class="text-sm font-medium text-text-primary">وسيلة الدفع</label>
+            <p-select id="paymentMethod" [(ngModel)]="paymentMethodId" [options]="paymentMethods()" optionLabel="label"
+                optionValue="value" placeholder="اختر وسيلة دفع" [showClear]="true" appendTo="body">
+            </p-select>
+        </div>
+
+        <!-- Plan -->
+        <div class="flex flex-col gap-2">
+            <label for="plan" class="text-sm font-medium text-text-primary">الخطة</label>
+            <p-select id="plan" [(ngModel)]="planId" [options]="plans()" optionLabel="label" optionValue="value"
+                placeholder="اختر الخطة" [showClear]="true" appendTo="body">
+            </p-select>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 pt-4">
+            <p-button label="تطبيق" (click)="applyFilters()" styleClass="flex-1"></p-button>
+            <p-button label="الغاء" severity="secondary" (click)="clearFilters()" styleClass="flex-1"></p-button>
+        </div>
+    </div>
+</p-dialog>
+
 <section class="p-6">
     <app-shared-table [tableData]="revenueRecords" [columns]="columns" [totalRecords]="totalRecords"></app-shared-table>
 </section>
