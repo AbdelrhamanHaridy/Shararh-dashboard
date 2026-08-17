@@ -1,0 +1,64 @@
+<div class="start-session-container">
+    <div class="session-card">
+        <!-- User Info Section -->
+        <div class="user-info">
+            <!-- Avatar -->
+            <div class="avatar">
+                @if (currentUser()?.avatar_url) {
+                <img [src]="currentUser()!.avatar_url" [alt]="currentUser()!.full_name" class="avatar-image" />
+                } @else {
+                <div class="avatar-placeholder">{{ getInitials() }}</div>
+                }
+            </div>
+
+            <!-- User Details -->
+            <div class="user-details">
+                <h2 class="user-name">{{ currentUser()?.full_name }}</h2>
+                <p class="user-role">{{ currentUser()?.roles?.join(', ') }}</p>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        @if (errorMessage()) {
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            {{ errorMessage() }}
+        </div>
+        }
+
+        @if (successMessage()) {
+        <div class="success-message">
+            <span class="success-icon">✓</span>
+            {{ successMessage() }}
+        </div>
+        }
+
+        <!-- Session Form -->
+        <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="session-form">
+            <div class="form-section">
+                <label for="password" class="form-label">Session Password</label>
+                <app-shared-text-input formControlName="password" type="password"
+                    placeholder="Enter your password to start session" [disabled]="isLoading()">
+                </app-shared-text-input>
+
+                @if (sessionForm.get('password')?.hasError('required') && sessionForm.get('password')?.touched) {
+                <span class="error-text">Password is required</span>
+                }
+
+                @if (sessionForm.get('password')?.hasError('minlength') && sessionForm.get('password')?.touched) {
+                <span class="error-text">Password must be at least 8 characters</span>
+                }
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn" [disabled]="isLoading()" [class.loading]="isLoading()">
+                @if (isLoading()) {
+                <span class="loader"></span>
+                Starting Session...
+                } @else {
+                Start Session
+                }
+            </button>
+        </form>
+    </div>
+</div>

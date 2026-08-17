@@ -18,7 +18,7 @@ import { BaseComponent } from '../../../../shared/services/base.component';
 export class AccountsReceivable extends BaseComponent {
   private router = inject(Router);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

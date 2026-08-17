@@ -19,7 +19,7 @@ export class TrustedDevices implements OnInit {
   private readonly devicesService = inject(DevicesService);
   private readonly messageService = inject(MessageService);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

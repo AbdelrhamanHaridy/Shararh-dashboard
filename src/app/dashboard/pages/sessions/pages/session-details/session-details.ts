@@ -74,7 +74,7 @@ interface CommunicationEntry {
 })
 export class SessionDetails {
   home = { icon: 'pi pi-home', routerLink: '/' };
-  breadcrumbItems: BreadcrumbItem[] = [{ label: 'لوحة التحكم', routerLink: '/dashboard' }];
+  breadcrumbItems: BreadcrumbItem[] = [{ label: 'لوحة التحكم', routerLink: '/home' }];
 
   ref: DynamicDialogRef | null = null;
 

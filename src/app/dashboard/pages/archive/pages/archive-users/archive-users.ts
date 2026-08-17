@@ -13,7 +13,7 @@ import { SharedTableComponent } from '../../../../shared/components/shared-table
 export class ArchiveUsers {
   private router = inject(Router);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
 

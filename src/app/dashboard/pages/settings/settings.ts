@@ -21,7 +21,7 @@ import { SharedTextInputComponent } from '../../shared/components/shared-text-in
   styleUrl: './settings.scss',
 })
 export class Settings {
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
   userForm!: FormGroup;
 
   breadcrumbItems: MenuItem[] = [

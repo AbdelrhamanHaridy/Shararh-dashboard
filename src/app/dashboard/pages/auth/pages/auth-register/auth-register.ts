@@ -118,7 +118,7 @@ export class AuthRegister {
     this.authService.register(registerData).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading.set(false);

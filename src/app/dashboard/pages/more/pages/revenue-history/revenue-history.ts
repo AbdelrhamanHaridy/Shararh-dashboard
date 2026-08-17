@@ -43,7 +43,7 @@ export class RevenueHistory implements OnInit {
   private paymentMethodService = inject(PaymentMethodsService);
   private cdr = inject(ChangeDetectorRef);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

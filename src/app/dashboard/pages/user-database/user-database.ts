@@ -27,7 +27,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
   private usersService = inject(UserDatabaseService);
   private cdr = inject(ChangeDetectorRef);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
   isLoading: boolean = true;
