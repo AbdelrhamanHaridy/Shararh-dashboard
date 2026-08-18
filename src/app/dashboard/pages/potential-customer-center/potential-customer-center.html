@@ -11,11 +11,11 @@
     <app-shared-kpi-card [title]="'إجمالي النقاط'" [number]="stats.total_points"
         iconPath="assets/icons/cards/blocks.svg" iconBgColor="#D7EBFF" numberColor="#000">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'مشترك'" [number]="stats.subscribed_leads" iconPath="assets/icons/cards/circle_check.svg"
-        iconBgColor="#D8FFDC" numberColor="#000">
+    <app-shared-kpi-card [title]="'مشترك'" [number]="stats.subscribed_leads"
+        iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#000">
     </app-shared-kpi-card>
-    <app-shared-kpi-card [title]="'مرفوض'" [number]="stats.rejected_leads"
-        iconPath="assets/icons/cards/timer_off.svg" iconBgColor="#FDD9BD" numberColor="#000">
+    <app-shared-kpi-card [title]="'مرفوض'" [number]="stats.rejected_leads" iconPath="assets/icons/cards/timer_off.svg"
+        iconBgColor="#FDD9BD" numberColor="#000">
     </app-shared-kpi-card>
 
 
@@ -81,7 +81,8 @@
         @for (customer of currentCustomers; track customer.id) {
         <app-customer-card [customer]="customer" [mode]="activeTab" (copyPhone)="copyToClipboard($event)"
             (changeStatus)="onChangeStatus($event)" (whatsappContact)="onWhatsappContact($event)"
-            (phoneCall)="onPhoneCall($event)" (acceptCustomer)="onAcceptCustomer($event)" />
+            (phoneCall)="onPhoneCall($event)" (acceptCustomer)="onAcceptCustomer($event)"
+            (deleteCustomer)="onDeleteCustomer($event)" />
         }
     </div>
 </section>

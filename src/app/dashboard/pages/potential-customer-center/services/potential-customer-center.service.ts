@@ -14,7 +14,7 @@ export class PotentialCustomerCenterService {
   getStats(): Observable<LeadStatsResponse> {
     return this.http.get<LeadStatsResponse>(`${this.apiUrl}/stats`);
   }
-  
+
   getLeads(filters?: Record<string, any>): Observable<LeadsResponse> {
     let params = new HttpParams();
     if (filters) {
@@ -25,5 +25,13 @@ export class PotentialCustomerCenterService {
       });
     }
     return this.http.get<LeadsResponse>(this.apiUrl, { params });
+  }
+
+  changeLeadStatus(leadId: number, payload: { status: string; note?: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${leadId}/change-status`, payload);
+  }
+
+  deleteLead(leadId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${leadId}`);
   }
 }

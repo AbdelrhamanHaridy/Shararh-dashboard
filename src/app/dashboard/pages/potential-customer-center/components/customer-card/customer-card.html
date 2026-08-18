@@ -22,7 +22,9 @@
                 [style.color]="customer().statusColor" [style.backgroundColor]="customer().statusBgColor">
                 {{ customer().status }}
             </span>
-            <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+            <p-menu #cardMenu [popup]="true" [model]="menuItems" appendTo="body"></p-menu>
+            <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                (click)="onMenuToggle(cardMenu, $event)">
                 <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
             </button>
         </div>

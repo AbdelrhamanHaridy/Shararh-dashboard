@@ -9,6 +9,7 @@ import { CustomerCard, Customer } from './components/customer-card/customer-card
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { AddCustomerGroupDialog } from './components/add-customer-group-dialog/add-customer-group-dialog';
 import { AddPotentialCustomerDialog } from './components/add-potential-customer-dialog/add-potential-customer-dialog';
+import { ChangeStatusDialog } from './components/change-status-dialog/change-status-dialog';
 import { Lead, LeadStatistics } from './models/potential-customer-center.model';
 import { PotentialCustomerCenterService } from './services/potential-customer-center.service';
 
@@ -239,7 +240,48 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   }
 
   onChangeStatus(customerId: number) {
-    console.log('Change status for customer:', customerId);
+    const customer = this.currentCustomers.find((c) => c.id === customerId);
+
+    const dialogRef = this.dialogService.open(ChangeStatusDialog, {
+      header: 'تغيير حالة العميل',
+      width: '480px',
+      modal: true,
+      closable: true,
+      data: {
+        customerId,
+        customerName: customer?.name,
+      },
+    });
+
+    dialogRef?.onClose.subscribe((result) => {
+      if (result?.success && result?.data) {
+        this.potentialCustomerCenterService.changeLeadStatus(customerId, result.data).subscribe({
+          next: () => {
+            // Refresh the leads list after status change
+            this.loadLeads();
+            this.loadStats();
+          },
+          error: (err) => {
+            console.error('Failed to change status:', err);
+            alert('فشل تغيير الحالة. حاول مرة أخرى.');
+          },
+        });
+      }
+    });
+  }
+
+  onDeleteCustomer(customerId: number) {
+    this.potentialCustomerCenterService.deleteLead(customerId).subscribe({
+      next: () => {
+        // Refresh the leads list after deletion
+        this.loadLeads();
+        this.loadStats();
+      },
+      error: (err) => {
+        console.error('Failed to delete lead:', err);
+        alert('فشل حذف العميل. حاول مرة أخرى.');
+      },
+    });
   }
 
   onWhatsappContact(customerId: number) {
