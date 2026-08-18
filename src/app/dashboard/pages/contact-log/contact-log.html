@@ -16,10 +16,9 @@
 
             </div>
             <div class="grid grid-cols-2 gap-6">
-                <app-shared-text-input formControlName="customerName" label="اسم العميل" placeholder="ادخل اسم العميل"
-                    inputId="customerName" primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-text-input>
-                <app-shared-text-input formControlName="customerNumber" label="رقم العميل" placeholder="ادخل رقم العميل"
-                    inputId="customerNumber" primeNgIcon="pi pi-hashtag" [isRequired]="true"></app-shared-text-input>
+                <app-shared-select formControlName="leadId" label="اسم العميل" placeholder="اختر العميل"
+                    inputId="leadId" [options]="usersOptions" optionLabel="label" optionValue="value"
+                    primeNgIcon="pi pi-user" [isRequired]="true" class="col-span-2"></app-shared-select>
 
                 <app-shared-select formControlName="contactType" label="نوع التواصل" placeholder="اختر نوع التواصل"
                     inputId="contactType" [options]="contactTypeOptions" optionLabel="label" optionValue="value"
@@ -129,8 +128,9 @@
                 <!-- Main content -->
                 <div class="flex-1 flex items-center gap-6 py-6 pr-6">
                     <button type="button"
-                        class="w-10 h-10 rounded-xl bg-[#10A922] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
-                        <img src="assets/icons/global/whatsapp.svg" alt="whatsapp" class="w-6 h-6" />
+                        class="w-10 h-10 rounded-xl flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
+                        [style.background-color]="entry.iconBgColor">
+                        <img [src]="entry.icon" [alt]="entry.contactType" class="w-6 h-6" />
                     </button>
 
 
