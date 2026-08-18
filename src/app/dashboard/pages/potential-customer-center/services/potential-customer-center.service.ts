@@ -34,4 +34,24 @@ export class PotentialCustomerCenterService {
   deleteLead(leadId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${leadId}`);
   }
+
+  getSources(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/sources`);
+  }
+
+  createLead(payload: {
+    name: string;
+    activity_name: string;
+    phone: string;
+    city: string;
+    governorate: string;
+    street_name: string;
+    notes?: string;
+    source: string;
+    status: string;
+    assigned_employee_id?: number;
+    group_ids?: number[][];
+  }): Observable<any> {
+    return this.http.post(this.apiUrl, payload);
+  }
 }

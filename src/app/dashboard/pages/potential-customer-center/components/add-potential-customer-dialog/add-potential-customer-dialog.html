@@ -2,47 +2,53 @@
     <div class="p-fluid">
         <form [formGroup]="customerForm" (ngSubmit)="saveAndClose()" class="flex flex-col gap-6">
             <div class="flex flex-col gap-5 bg-white rounded-lg">
-                <app-shared-select formControlName="customerName" label="اسم العميل" placeholder="اختر العميل"
-                    inputId="customerName" [options]="customers" optionLabel="label" optionValue="value"
-                    primeNgIcon="pi pi-user" [isRequired]="true"></app-shared-select>
+                <app-shared-text-input formControlName="name" label="اسم العميل" placeholder="ادخل اسم العميل"
+                    inputId="name" primeNgIcon="pi pi-user" [isRequired]="true" type="text"></app-shared-text-input>
 
-                <app-shared-text-input formControlName="phoneNumber" label="رقم الجوال للتواصل"
-                    placeholder="ادخل رقم الجوال" inputId="phoneNumber" primeNgIcon="pi pi-phone" [isRequired]="true"
-                    type="number"></app-shared-text-input>
+                <app-shared-text-input formControlName="activity_name" label="اسم النشاط" placeholder="ادخل اسم النشاط"
+                    inputId="activity_name" primeNgIcon="pi pi-briefcase" [isRequired]="true"
+                    type="text"></app-shared-text-input>
+
+                <app-shared-text-input formControlName="phone" label="رقم الجوال للتواصل" placeholder="ادخل رقم الجوال"
+                    inputId="phone" primeNgIcon="pi pi-phone" [isRequired]="true" type="tel"></app-shared-text-input>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <app-shared-select formControlName="governorate" label="المحافظه" placeholder="اختر المحافظه"
-                        inputId="governorate" [options]="governorates" optionLabel="label" optionValue="value"
+                        inputId="governorate" [options]="governorates()" optionLabel="label" optionValue="value"
                         primeNgIcon="pi pi-map-marker" [isRequired]="true"></app-shared-select>
 
-                    <app-shared-text-input formControlName="cityCenter" label="المدينه / المركز"
-                        placeholder="ادخل المدينه / المركز" inputId="cityCenter" primeNgIcon="pi pi-building"
+                    <app-shared-text-input formControlName="city" label="المدينه / المركز"
+                        placeholder="ادخل المدينه / المركز" inputId="city" primeNgIcon="pi pi-building"
                         [isRequired]="true" type="text"></app-shared-text-input>
                 </div>
 
-                <app-shared-text-input formControlName="streetName" label="اسم الشارع" placeholder="ادخل اسم الشارع"
-                    inputId="streetName" primeNgIcon="pi pi-map" [isRequired]="true"
+                <app-shared-text-input formControlName="street_name" label="اسم الشارع" placeholder="ادخل اسم الشارع"
+                    inputId="street_name" primeNgIcon="pi pi-map" [isRequired]="true"
                     type="text"></app-shared-text-input>
 
-                <app-shared-select formControlName="customerSource" label="مصدر العميل" placeholder="اختر مصدر العميل"
-                    inputId="customerSource" [options]="customerSources" optionLabel="label" optionValue="value"
+                <app-shared-select formControlName="source" label="مصدر العميل" placeholder="اختر مصدر العميل"
+                    inputId="source" [options]="customerSources()" optionLabel="label" optionValue="value"
                     primeNgIcon="pi pi-briefcase" [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="status" label="الحالة" placeholder="اختر الحالة" inputId="status"
+                    [options]="statuses()" optionLabel="label" optionValue="value" primeNgIcon="pi pi-info-circle"
+                    [isRequired]="true"></app-shared-select>
+
+                <app-shared-select formControlName="assigned_employee_id" label="الموظف المسؤول"
+                    placeholder="اختر الموظف" inputId="assigned_employee_id" [options]="employees()" optionLabel="label"
+                    optionValue="value" primeNgIcon="pi pi-users" [isRequired]="false"></app-shared-select>
 
                 <app-shared-text-input formControlName="notes" label="ملاحظات" placeholder="ادخل ملاحظات"
                     inputId="notes" primeNgIcon="pi pi-comment" [isRequired]="false"
                     type="text"></app-shared-text-input>
 
-                <button type="submit"
+                <button type="submit" [disabled]="customerForm.invalid || isLoading()"
                     class="px-18 py-3 bg-primary text-white rounded-2xl cursor-pointer w-full hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    إضافة
-                </button>
-            </div>
-
-            <div class="dialog-actions flex flex-row gap-4 justify-end">
-                <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary"
-                    (click)="closeDialog()">
-                </button>
-                <button pButton type="submit" label="Save" icon="pi pi-check" [disabled]="customerForm.invalid">
+                    @if (isLoading()) {
+                    <span>جاري الإضافة...</span>
+                    } @else {
+                    <span>إضافة</span>
+                    }
                 </button>
             </div>
         </form>
