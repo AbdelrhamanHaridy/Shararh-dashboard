@@ -54,4 +54,21 @@ export class PotentialCustomerCenterService {
   }): Observable<any> {
     return this.http.post(this.apiUrl, payload);
   }
+  updateLead(
+    leadId: number,
+    payload: {
+      name: string;
+      activity_name: string;
+      phone: string;
+      city: string;
+      governorate: string;
+      street_name: string;
+      notes?: string;
+      source: string;
+      assigned_employee_id?: number;
+      group_ids?: number[][];
+    },
+  ): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${leadId}`, payload);
+  }
 }

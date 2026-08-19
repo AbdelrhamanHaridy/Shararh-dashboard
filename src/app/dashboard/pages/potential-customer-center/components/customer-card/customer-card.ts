@@ -41,7 +41,7 @@ export class CustomerCard {
   phoneCall = output<number>();
   acceptCustomer = output<number>();
   deleteCustomer = output<number>();
-
+  editCustomer = output<number>();
   menuItems: MenuItem[] = [];
 
   constructor(private confirmationService: ConfirmationService) {
@@ -53,7 +53,6 @@ export class CustomerCard {
       {
         label: 'تعديل',
         command: () => this.onEdit(),
-        disabled: true, // Not implemented yet
       },
       {
         label: 'حذف',
@@ -89,8 +88,7 @@ export class CustomerCard {
   }
 
   onEdit() {
-    console.log('Edit customer:', this.customer().id);
-    // TODO: Implement edit dialog
+    this.editCustomer.emit(this.customer().id);
   }
 
   onDelete() {

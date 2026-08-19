@@ -14,15 +14,16 @@ import { SharedTextInputComponent } from '../../../../shared/components/shared-t
 import { PotentialCustomerCenterService } from '../../services/potential-customer-center.service';
 import { UserDatabaseService } from '../../../user-database/services/user-database.service';
 import { finalize } from 'rxjs';
+import { Lead } from '../../models/potential-customer-center.model';
 
 @Component({
-  selector: 'app-add-potential-customer-dialog',
+  selector: 'app-edit-potential-customer-dialog',
   imports: [CommonModule, ReactiveFormsModule, SharedSelectComponent, SharedTextInputComponent],
-  templateUrl: './add-potential-customer-dialog.html',
-  styleUrl: './add-potential-customer-dialog.scss',
+  templateUrl: './edit-potential-customer-dialog.html',
+  styleUrl: './edit-potential-customer-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddPotentialCustomerDialog implements OnInit {
+export class EditPotentialCustomerDialog implements OnInit {
   private fb = inject(FormBuilder);
   private potentialCustomerService = inject(PotentialCustomerCenterService);
   private userService = inject(UserDatabaseService);
@@ -37,39 +38,46 @@ export class AddPotentialCustomerDialog implements OnInit {
   employees = signal<any[]>([]);
   governorates = signal<any[]>([]);
   customerSources = signal<any[]>([]);
-  statuses = signal<any[]>([]);
+
+  // The lead being edited, passed in via dialog data
+  private leadId!: number;
 
   ngOnInit() {
-    // Initialize form (group_ids is required by the API)
+    const lead: Lead | undefined = this.config.data?.lead;
+
+    if (!lead) {
+      // Nothing to edit against — close immediately rather than show a broken form.
+      console.error('EditPotentialCustomerDialog opened without a lead in dialog data');
+      this.ref.close();
+      return;
+    }
+
+    this.leadId = lead.id;
+
+    // group_ids isn't returned by the leads list API today, so we can't
+    // reliably prefill it — default to [[]] same as the create dialog.
     this.customerForm = this.fb.group({
-      name: ['', Validators.required],
-      activity_name: ['', Validators.required],
-      phone: ['', Validators.required],
-      governorate: ['', Validators.required],
-      city: ['', Validators.required],
-      street_name: ['', Validators.required],
-      source: ['', Validators.required],
-      status: ['', Validators.required],
-      assigned_employee_id: [''],
-      notes: [''],
-      // group_ids: [[[]], Validators.required], // required by API, default to [[]]
+      name: [lead.name, Validators.required],
+      activity_name: [lead.activity_name, Validators.required],
+      phone: [lead.phone, Validators.required],
+      governorate: [lead.governorate, Validators.required],
+      city: [lead.city, Validators.required],
+      street_name: [lead.street_name, Validators.required],
+      source: [lead.source, Validators.required],
+      assigned_employee_id: [lead.assigned_employee?.id ?? ''],
+      notes: [lead.notes ?? ''],
+      group_ids: [[[]]],
     });
 
-    // Load options
     this.loadEmployees();
     this.loadGovernorates();
     this.loadCustomerSources();
-    this.loadStatuses();
   }
 
   loadEmployees() {
     this.userService.getUsers().subscribe({
       next: (response) => {
-        // handle multiple possible shapes: { data: { users: [...] } } or { data: [...] } or [...]
-        console.log(response);
-        
         const users = response?.data ?? response ?? [];
-
         const mapped = Array.isArray(users)
           ? users.map((user: any) => ({
               label: user.full_name ?? user.name ?? user.first_name ?? user.username ?? '—',
@@ -88,7 +96,6 @@ export class AddPotentialCustomerDialog implements OnInit {
   }
 
   loadGovernorates() {
-    // Example data - replace with actual API if available
     this.governorates.set([
       { label: 'القاهرة', value: 'cairo' },
       { label: 'الجيزة', value: 'giza' },
@@ -101,7 +108,6 @@ export class AddPotentialCustomerDialog implements OnInit {
   loadCustomerSources() {
     this.potentialCustomerService.getSources().subscribe({
       next: (response) => {
-        // API returns { data: { sources: [ { value, label }, ... ] } }
         const sources = response?.data?.sources ?? [];
         const mapped = Array.isArray(sources)
           ? sources.map((s: any) => ({
@@ -118,16 +124,6 @@ export class AddPotentialCustomerDialog implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  loadStatuses() {
-    // Example data - replace with actual API if available
-    this.statuses.set([
-      { label: 'جديد', value: 'new' },
-      { label: 'تم الاتصال', value: 'contacted' },
-      { label: 'مهتم', value: 'interested' },
-      { label: 'غير مهتم', value: 'not_interested' },
-    ]);
   }
 
   closeDialog(data?: any) {
@@ -148,13 +144,12 @@ export class AddPotentialCustomerDialog implements OnInit {
         street_name: formValue.street_name,
         notes: formValue.notes || '',
         source: formValue.source,
-        status: formValue.status,
         assigned_employee_id: formValue.assigned_employee_id || undefined,
-        group_ids: formValue.group_ids ?? [[]], // ensure group_ids is present
+        // group_ids: formValue.group_ids ?? [[]],
       };
 
       this.potentialCustomerService
-        .createLead(payload)
+        .updateLead(this.leadId, payload)
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
           next: (response) => {
@@ -165,7 +160,7 @@ export class AddPotentialCustomerDialog implements OnInit {
             this.closeDialog(result);
           },
           error: (error) => {
-            console.error('Error creating lead:', error);
+            console.error('Error updating lead:', error);
             this.cdr.markForCheck();
           },
         });

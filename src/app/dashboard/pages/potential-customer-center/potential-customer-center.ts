@@ -12,6 +12,7 @@ import { AddPotentialCustomerDialog } from './components/add-potential-customer-
 import { ChangeStatusDialog } from './components/change-status-dialog/change-status-dialog';
 import { Lead, LeadStatistics } from './models/potential-customer-center.model';
 import { PotentialCustomerCenterService } from './services/potential-customer-center.service';
+import { EditPotentialCustomerDialog } from './components/edit-potential-customer-dialog/edit-potential-customer-dialog';
 
 // Which lead statuses belong to which tab.
 // Update this once the real "under implementation" status keys are confirmed —
@@ -72,7 +73,7 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   ];
 
   ref: DynamicDialogRef | null = null;
-
+  private rawLeads: Lead[] = [];
   isLoadingLeads = false;
   loadError = '';
 
@@ -151,13 +152,14 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       this.selectedStatus = status;
     }
 
-    filters['tab'] = TAB_PARAM_MAP[this.activeTab];
+    // filters['tab'] = TAB_PARAM_MAP[this.activeTab];
     if (this.selectedStatus) filters['status'] = this.selectedStatus;
     if (this.searchTerm) filters['search'] = this.searchTerm;
 
     this.potentialCustomerCenterService.getLeads(filters).subscribe({
       next: (res) => {
         if (res && Array.isArray(res.data)) {
+          this.rawLeads = res.data;
           const mapped = res.data.map((lead) => this.mapLeadToCustomer(lead));
           this.potentialCustomers = mapped.filter(
             (_, i) => this.resolveTab(res.data[i].status) === 'potential',
@@ -333,7 +335,31 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       }
     });
   }
+  showEditPotentialCustomerDialog(customerId: number) {
+    const lead = this.rawLeads.find((l) => l.id === customerId);
+    if (!lead) {
+      console.error('Could not find lead to edit:', customerId);
+      return;
+    }
 
+    this.ref = this.dialogService.open(EditPotentialCustomerDialog, {
+      header: 'تعديل بيانات العميل',
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: { lead },
+    });
+
+    this.ref!.onClose.subscribe((result) => {
+      if (result) {
+        this.handleDialogResult(result);
+      }
+    });
+  }
   showAddCustomerGroupDialog() {
     this.ref = this.dialogService.open(AddCustomerGroupDialog, {
       header: 'إضافة مجموعة عملاء',
