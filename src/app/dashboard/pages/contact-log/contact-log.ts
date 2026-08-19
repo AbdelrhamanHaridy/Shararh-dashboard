@@ -12,6 +12,7 @@ import {
   OptionItem,
   CreateCommunicationPayload,
 } from './models/communications.model';
+import { PotentialCustomerCenterService } from '../potential-customer-center/services/potential-customer-center.service';
 
 interface ContactLogEntry {
   id: number;
@@ -60,7 +61,7 @@ export class ContactLog implements OnInit {
   contactTypeOptions: OptionItem[] = [];
   contactViaOptions: OptionItem[] = [];
   contactReasonOptions: OptionItem[] = [];
-  usersOptions: { label: string; value: number }[] = [];
+  leadsOptions: { label: string; value: number }[] = [];
 
   // Populated from GET /admin/lead-communications/suggested-tasks
   taskStats = {
@@ -76,6 +77,7 @@ export class ContactLog implements OnInit {
   constructor(
     private fb: FormBuilder,
     private contactLogService: ContactLogService,
+    private potentialCustomerService: PotentialCustomerCenterService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -88,7 +90,7 @@ export class ContactLog implements OnInit {
       notes: [''],
     });
 
-    this.loadUsers();
+    this.loadLeads();
     this.loadOptions();
     this.loadSuggestedTasks();
     this.loadCommunications();
@@ -166,18 +168,20 @@ export class ContactLog implements OnInit {
     });
   }
 
-  private loadUsers() {
-    this.contactLogService.getUsers().subscribe({
+  private loadLeads() {
+    this.potentialCustomerService.getLeads().subscribe({
       next: (res) => {
         if (res?.data && Array.isArray(res.data)) {
-          this.usersOptions = res.data.map((user: any) => ({
-            label: user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim(),
-            value: user.id,
+          this.leadsOptions = res.data.map((lead: any) => ({
+            label: lead.name || lead.activity_name || '—',
+            value: lead.id,
           }));
+          console.log(this.leadsOptions);
+          
           this.cdr.markForCheck();
         }
       },
-      error: (err) => console.error('Failed loading users', err),
+      error: (err) => console.error('Failed loading leads', err),
     });
   }
 
