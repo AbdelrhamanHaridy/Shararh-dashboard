@@ -41,6 +41,7 @@ export class CustomerCard {
   phoneCall = output<number>();
   acceptCustomer = output<number>();
   deleteCustomer = output<number>();
+  archiveCustomer = output<number>();
   editCustomer = output<number>();
   menuItems: MenuItem[] = [];
 
@@ -57,6 +58,10 @@ export class CustomerCard {
       {
         label: 'حذف',
         command: () => this.onDelete(),
+      },
+      {
+        label: 'أرشفة',
+        command: () => this.onArchive(),
       },
     ];
   }
@@ -99,6 +104,17 @@ export class CustomerCard {
       acceptLabel: 'نعم',
       rejectLabel: 'لا',
       accept: () => this.deleteCustomer.emit(this.customer().id),
+    });
+  }
+
+  onArchive() {
+    this.confirmationService.confirm({
+      message: `هل أنت متأكد من أرشفة العميل ${this.customer().name}؟`,
+      header: 'تأكيد الأرشفة',
+      icon: 'pi pi-archive',
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      accept: () => this.archiveCustomer.emit(this.customer().id),
     });
   }
 }

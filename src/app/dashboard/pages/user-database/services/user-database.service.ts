@@ -23,6 +23,14 @@ export class UserDatabaseService {
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`);
   }
 
+  getArchivedUsers(): Observable<UserListResponse> {
+    return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users/archived`);
+  }
+
+  archiveUser(userId: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/admin/users/${userId}/archive`, {});
+  }
+
   /**
    * Get user database stores (stores list)
    */

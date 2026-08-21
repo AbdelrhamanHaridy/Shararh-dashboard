@@ -82,6 +82,17 @@ export class SharedTableComponent {
     menu.toggle(event);
   }
 
+  onArchiveMenuClick(menu: Menu, row: any, event: Event) {
+    event.stopPropagation();
+    menu.model = [
+      {
+        label: 'أرشفة',
+        command: () => this.actionClick.emit({ action: 'archive', row }),
+      },
+    ];
+    menu.toggle(event);
+  }
+
   getContextMenu(row: any): any[] {
     const isActive = row.coupon_status === 'active';
 

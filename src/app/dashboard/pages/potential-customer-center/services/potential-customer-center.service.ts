@@ -27,12 +27,28 @@ export class PotentialCustomerCenterService {
     return this.http.get<LeadsResponse>(this.apiUrl, { params });
   }
 
+  getArchivedLeads(filters?: Record<string, any>): Observable<LeadsResponse> {
+    let params = new HttpParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          params = params.set(key, value.toString());
+        }
+      });
+    }
+    return this.http.get<LeadsResponse>(`${this.apiUrl}/archived`, { params });
+  }
+
   changeLeadStatus(leadId: number, payload: { status: string; note?: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/${leadId}/change-status`, payload);
   }
 
   deleteLead(leadId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${leadId}`);
+  }
+
+  archiveLead(leadId: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${leadId}/archive`, {});
   }
 
   getSources(): Observable<any> {

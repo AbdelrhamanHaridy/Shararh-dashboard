@@ -5,7 +5,7 @@
         <tr class="text-[12px] font-medium leading-[120%] p-datatable-sortable-column text-nowrap">
             <!-- <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th> -->
             <th *ngFor="let col of columns" pSortableColumn="{{ col.field }}" class="px-4 py-3 text-left">
-                <ng-container *ngIf="col.field !== 'actions'; else noSort">
+                <ng-container *ngIf="col.field !== 'actions' && col.field !== 'archive_actions'; else noSort">
                     <span>
                         {{ col.header }}
                         <p-sortIcon [field]="col.field"></p-sortIcon>
@@ -87,6 +87,17 @@
                 <div class="flex flex-row items-center gap-3">
                     <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
+                    </button>
+                </div>
+                }
+                @case('archive_actions') {
+                <div class="card flex justify-center">
+                    <p-menu #archiveMenu [popup]="true" appendTo="body" [style]="{ minWidth: '120px' }">
+                    </p-menu>
+                    <button type="button" #archiveMenuButton
+                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        (click)="onArchiveMenuClick(archiveMenu, row, $event)" title="المزيد">
+                        <img src="assets/icons/global/menu_dots.svg" alt="المزيد" class="w-5 h-5" />
                     </button>
                 </div>
                 }

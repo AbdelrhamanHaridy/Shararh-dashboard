@@ -286,6 +286,19 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
     });
   }
 
+  onArchiveCustomer(customerId: number) {
+    this.potentialCustomerCenterService.archiveLead(customerId).subscribe({
+      next: () => {
+        this.loadLeads();
+        this.loadStats();
+      },
+      error: (err) => {
+        console.error('Failed to archive lead:', err);
+        alert('فشل أرشفة العميل. حاول مرة أخرى.');
+      },
+    });
+  }
+
   onWhatsappContact(customerId: number) {
     const customer = this.currentCustomers.find((c) => c.id === customerId);
     if (customer) {

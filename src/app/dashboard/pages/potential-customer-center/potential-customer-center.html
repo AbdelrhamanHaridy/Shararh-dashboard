@@ -81,8 +81,9 @@
         @for (customer of currentCustomers; track customer.id) {
         <app-customer-card [customer]="customer" [mode]="activeTab" (copyPhone)="copyToClipboard($event)"
             (changeStatus)="onChangeStatus($event)" (whatsappContact)="onWhatsappContact($event)"
-            (phoneCall)="onPhoneCall($event)" (acceptCustomer)="onAcceptCustomer($event)" (editCustomer)="showEditPotentialCustomerDialog($event)"
-            (deleteCustomer)="onDeleteCustomer($event)" />
+            (phoneCall)="onPhoneCall($event)" (acceptCustomer)="onAcceptCustomer($event)"
+            (editCustomer)="showEditPotentialCustomerDialog($event)" (deleteCustomer)="onDeleteCustomer($event)"
+            (archiveCustomer)="onArchiveCustomer($event)" />
         }
     </div>
 </section>
