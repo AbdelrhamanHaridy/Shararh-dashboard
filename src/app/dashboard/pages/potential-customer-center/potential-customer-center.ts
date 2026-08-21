@@ -323,7 +323,16 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   }
 
   onAcceptCustomer(customerId: number) {
-    console.log('Accept customer:', customerId);
+    this.potentialCustomerCenterService.claimLead(customerId).subscribe({
+      next: () => {
+        this.loadLeads();
+        this.loadStats();
+      },
+      error: (err) => {
+        console.error('Failed to claim lead:', err);
+        alert('فشل استلام العميل. حاول مرة أخرى.');
+      },
+    });
   }
 
   showAddPotentialCustomerDialog() {

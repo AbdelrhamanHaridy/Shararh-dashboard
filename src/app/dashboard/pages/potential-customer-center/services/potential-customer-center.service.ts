@@ -51,6 +51,14 @@ export class PotentialCustomerCenterService {
     return this.http.patch(`${this.apiUrl}/${leadId}/archive`, {});
   }
 
+  claimLead(leadId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${leadId}/claim`, {});
+  }
+
+  assignLead(leadId: number, employeeId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${leadId}/assign`, { employee_id: employeeId });
+  }
+
   getSources(): Observable<any> {
     return this.http.get(`${this.apiUrl}/sources`);
   }

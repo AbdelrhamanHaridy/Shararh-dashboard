@@ -13,7 +13,7 @@ import { SharedSelectComponent } from '../../../../shared/components/shared-sele
 import { SharedTextInputComponent } from '../../../../shared/components/shared-text-input/shared-text-input.component';
 import { PotentialCustomerCenterService } from '../../services/potential-customer-center.service';
 import { UserDatabaseService } from '../../../user-database/services/user-database.service';
-import { finalize } from 'rxjs';
+import { finalize, of, switchMap } from 'rxjs';
 import { Lead } from '../../models/potential-customer-center.model';
 
 @Component({
@@ -144,12 +144,19 @@ export class EditPotentialCustomerDialog implements OnInit {
         street_name: formValue.street_name,
         notes: formValue.notes || '',
         source: formValue.source,
-        assigned_employee_id: formValue.assigned_employee_id || undefined,
         // group_ids: formValue.group_ids ?? [[]],
       };
+      const employeeId = Number(formValue.assigned_employee_id);
 
       this.potentialCustomerService
         .updateLead(this.leadId, payload)
+        .pipe(
+          switchMap((response) =>
+            employeeId
+              ? this.potentialCustomerService.assignLead(this.leadId, employeeId)
+              : of(response),
+          ),
+        )
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
           next: (response) => {
