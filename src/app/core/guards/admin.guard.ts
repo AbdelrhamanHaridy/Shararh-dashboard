@@ -1,9 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { AuthService } from '../../dashboard/pages/auth/services/auth.service';
+import { SessionService } from '../../dashboard/pages/auth/services/session.service';
+import { catchError, map, of } from 'rxjs';
 
-export const adminGuard: CanActivateFn = (): boolean | UrlTree => {
+export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
+  const sessionService = inject(SessionService);
   const router = inject(Router);
 
   const currentUser = authService.getCurrentUser();
@@ -20,6 +23,23 @@ export const adminGuard: CanActivateFn = (): boolean | UrlTree => {
     return true;
   }
 
-  // Non-admin users redirect to employee dashboard
-  return router.parseUrl('/employee-dashboard');
+  if (roles.some((role) => employeeRoles.includes(role))) {
+    return sessionService.getCurrentSession().pipe(
+      map((response) =>
+        response.success
+          ? router.parseUrl('/employee-dashboard')
+          : router.parseUrl('/auth/start-session'),
+      ),
+      catchError((error) => {
+        if (error?.status === 404) {
+          return of(router.parseUrl('/auth/start-session'));
+        }
+
+        console.error('Failed to check employee session:', error);
+        return of(router.parseUrl('/auth/start-session'));
+      }),
+    );
+  }
+
+  return router.parseUrl('/home');
 };
