@@ -32,6 +32,8 @@
     "@primeuix/themes": "^3.0.0-rc.1",
     "@tailwindcss/postcss": "^4.3.2",
     "echarts": "^6.1.0",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "postcss": "^8.5.16",
     "primeng": "^21.0.0-rc.1",
     "rxjs": "~7.8.0",
@@ -42,6 +44,7 @@
     "@angular/build": "^21.1.4",
     "@angular/cli": "^21.1.4",
     "@angular/compiler-cli": "^21.1.0",
+    "@types/file-saver": "^2.0.7",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

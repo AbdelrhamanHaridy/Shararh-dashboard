@@ -18,17 +18,9 @@ export const employeeRoleGuard: CanActivateFn = (): boolean | UrlTree => {
   const employeeRoles = ['supervisor', 'customer_service', 'sales', 'technical_support'];
 
   // Check if user has at least one allowed employee role
-  if (roles.some((r) => employeeRoles.includes(r)) && roles.includes('admin')) {
+  if (roles.some((r) => employeeRoles.includes(r))) {
     return true;
-  } else {
-    return router.parseUrl('/home');
   }
 
-  // If user is admin, redirect to home
-//   if (roles.includes('admin')) {
-//     return router.parseUrl('/home');
-//   }
-
-  // Otherwise, user is unauthorized
-  return router.parseUrl('/unauthorized');
+  return router.parseUrl('/home');
 };

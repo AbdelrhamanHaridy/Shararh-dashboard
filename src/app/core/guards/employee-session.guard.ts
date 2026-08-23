@@ -20,7 +20,7 @@ export const employeeSessionGuard: CanActivateFn = () => {
   // Step 2: Check if user is an employee
   const roles: string[] = Array.isArray(currentUser.roles) ? currentUser.roles : [];
   const employeeRoles = ['supervisor', 'customer_service', 'sales', 'technical_support'];
-  const isEmployee = roles.some((r) => employeeRoles.includes(r)) && roles.includes('admin');
+  const isEmployee = roles.some((r) => employeeRoles.includes(r));
 
   if (!isEmployee) {
     console.log('❌ Employee Session Guard: User is not an employee, redirecting to home');
@@ -34,7 +34,9 @@ export const employeeSessionGuard: CanActivateFn = () => {
     map((response) => {
       // If session is active, redirect to employee dashboard
       if (response.success) {
-        console.log('✅ Employee Session Guard: Active session found, redirecting to employee-dashboard');
+        console.log(
+          '✅ Employee Session Guard: Active session found, redirecting to employee-dashboard',
+        );
         return router.parseUrl('/employee-dashboard');
       }
       // If no active session, allow access to start-session page
@@ -44,7 +46,9 @@ export const employeeSessionGuard: CanActivateFn = () => {
     catchError((error) => {
       // If 404, no active session exists, allow access to start-session
       if (error?.status === 404) {
-        console.log('✅ Employee Session Guard: No active session (404), allowing access to start-session');
+        console.log(
+          '✅ Employee Session Guard: No active session (404), allowing access to start-session',
+        );
         return of(true);
       }
       // For other errors, still allow access but log the error

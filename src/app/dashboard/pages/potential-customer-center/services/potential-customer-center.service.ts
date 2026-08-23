@@ -95,4 +95,7 @@ export class PotentialCustomerCenterService {
   ): Observable<any> {
     return this.http.put(`${this.apiUrl}/${leadId}`, payload);
   }
+  importLeads(payload: { file: string; leads: any[] }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/import`, payload);
+  }
 }

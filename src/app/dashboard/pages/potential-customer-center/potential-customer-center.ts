@@ -385,22 +385,19 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   showAddCustomerGroupDialog() {
     this.ref = this.dialogService.open(AddCustomerGroupDialog, {
       header: 'إضافة مجموعة عملاء',
-      width: '520px',
+      width: '420px',
       modal: true,
       closable: true,
       breakpoints: {
         '960px': '75vw',
         '640px': '90vw',
       },
-      data: {
-        userId: 123,
-        context: 'addCustomerGroup',
-      },
     });
 
     this.ref!.onClose.subscribe((result) => {
-      if (result) {
-        this.handleDialogResult(result);
+      if (result?.success) {
+        this.loadLeads();
+        this.loadStats();
       }
     });
   }
