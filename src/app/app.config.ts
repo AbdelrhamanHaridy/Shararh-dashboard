@@ -6,11 +6,12 @@ import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { authTokenInterceptor } from './core/interceptors/auth-token.interceptor';
-
+import { MessageService } from 'primeng/api';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    MessageService,
     provideHttpClient(withInterceptors([authTokenInterceptor])),
     providePrimeNG({
       theme: {
