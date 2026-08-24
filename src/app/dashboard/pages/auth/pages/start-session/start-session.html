@@ -1,64 +1,84 @@
-<div class="start-session-container">
-    <div class="session-card">
-        <!-- User Info Section -->
-        <div class="user-info">
-            <!-- Avatar -->
-            <div class="avatar">
+<div class="flex flex-col h-full bg-white font-sans" dir="rtl">
+    <!-- Header -->
+    <!-- <header class="flex items-center justify-end px-5 py-3.5 border-b border-gray-100">
+        <div class="flex items-center gap-2 text-[13px] text-gray-400">
+            <span>{{ currentDate() }}</span>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+        </div>
+    </header> -->
+
+    <div class="flex-1 flex flex-col items-center px-6 pt-10 pb-6 text-center">
+        <h1 class="text-3xl font-bold text-gray-900 mb-1.5">بدء الجلسه</h1>
+        <p class="text-base text-gray-400 mb-7">ادخل كلمة مرورك لبدء الجلسه بنجاح</p>
+
+        <!-- User Info -->
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-[76px] h-[76px] rounded-full border-2 border-green-500 p-[3px] mb-3">
                 @if (currentUser()?.avatar_url) {
-                <img [src]="currentUser()!.avatar_url" [alt]="currentUser()!.full_name" class="avatar-image" />
+                <img [src]="currentUser()!.avatar_url" [alt]="currentUser()!.full_name"
+                    class="w-full h-full rounded-full object-cover block" />
                 } @else {
-                <div class="avatar-placeholder">{{ getInitials() }}</div>
+                <div
+                    class="w-full h-full rounded-full bg-gray-100 text-gray-500 flex items-center justify-center font-bold text-xl">
+                    {{ getInitials() }}
+                </div>
                 }
             </div>
-
-            <!-- User Details -->
-            <div class="user-details">
-                <h2 class="user-name">{{ currentUser()?.full_name }}</h2>
-                <p class="user-role">{{ currentUser()?.roles?.join(', ') }}</p>
-            </div>
+            <h2 class="text-lg font-medium text-gray-900 mb-1">{{ currentUser()?.full_name }}</h2>
+            <span class="text-lg font-semibold text-[#0D7F1A]">{{ currentUser()?.roles?.join(', ') }}</span>
         </div>
 
         <!-- Messages -->
         @if (errorMessage()) {
-        <div class="error-message">
-            <span class="error-icon">⚠️</span>
+        <div
+            class="w-full max-w-[320px] flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-[13px] mb-4 bg-red-50 text-red-500">
+            <span>⚠️</span>
             {{ errorMessage() }}
         </div>
         }
-
         @if (successMessage()) {
-        <div class="success-message">
-            <span class="success-icon">✓</span>
+        <div
+            class="w-full max-w-[320px] flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-[13px] mb-4 bg-green-50 text-green-500">
+            <span>✓</span>
             {{ successMessage() }}
         </div>
         }
 
         <!-- Session Form -->
-        <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="session-form">
-            <div class="form-section">
-                <label for="password" class="form-label">Session Password</label>
-                <app-shared-text-input formControlName="password" type="password"
-                    placeholder="Enter your password to start session" [disabled]="isLoading()">
+        <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()" class="w-full max-w-[320px] flex flex-col gap-5">
+            <div class="flex flex-col gap-2 text-right">
+                <label for="password" class="text-[13px] text-gray-500">ادخل رمز الدخول</label>
+                <app-shared-text-input formControlName="password" type="password" placeholder=""
+                    [disabled]="isLoading()">
                 </app-shared-text-input>
 
                 @if (sessionForm.get('password')?.hasError('required') && sessionForm.get('password')?.touched) {
-                <span class="error-text">Password is required</span>
+                <span class="text-xs text-red-500 text-right">رمز الدخول مطلوب</span>
                 }
-
                 @if (sessionForm.get('password')?.hasError('minlength') && sessionForm.get('password')?.touched) {
-                <span class="error-text">Password must be at least 8 characters</span>
+                <span class="text-xs text-red-500 text-right">يجب ألا يقل رمز الدخول عن 8 أحرف</span>
                 }
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn" [disabled]="isLoading()" [class.loading]="isLoading()">
+            <button type="submit" [disabled]="isLoading()"
+                class="w-full py-3.5 bg-primary text-white border-none rounded-[10px] text-[15px] font-bold flex items-center justify-center gap-2 transition-colors duration-200 hover:bg-green-600 disabled:opacity-70 disabled:cursor-not-allowed">
                 @if (isLoading()) {
-                <span class="loader"></span>
-                Starting Session...
+                <span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+                جارِ بدء الجلسه...
                 } @else {
-                Start Session
+                بدء الجلسه
                 }
             </button>
         </form>
+
+
+        <a href="javascript:void(0)"
+        (click)="onForgotCode()"
+        class="block mt-5 text-[13px] text-gray-400 no-underline hover:text-gray-500 hover:underline">
+        هل نسيت رمز الدخول ؟
+        </a>
     </div>
 </div>

@@ -11,7 +11,6 @@ import { SessionService } from '../../services/session.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, SharedTextInputComponent],
   templateUrl: './start-session.html',
-  styleUrl: './start-session.scss',
 })
 export class StartSession {
   private fb = inject(FormBuilder);
@@ -24,6 +23,7 @@ export class StartSession {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  currentDate = signal(this.formatDate(new Date()));
 
   ngOnInit() {
     const user = this.authService.getCurrentUser();
@@ -52,7 +52,6 @@ export class StartSession {
       next: (response) => {
         this.isLoading.set(false);
         this.successMessage.set('Session started successfully!');
-        // Optionally redirect after a short delay
         setTimeout(() => {
           this.router.navigate(['/employee-dashboard']);
         }, 1500);
@@ -72,5 +71,22 @@ export class StartSession {
     const firstName = user.first_name?.charAt(0) || '';
     const lastName = user.last_name?.charAt(0) || '';
     return (firstName + lastName).toUpperCase();
+  }
+
+  onForgotCode(): void {
+    this.router.navigate(['/forgot-code']);
+  }
+
+  private formatDate(date: Date): string {
+    const formatter = new Intl.DateTimeFormat('ar-EG', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    return formatter.format(date);
   }
 }
