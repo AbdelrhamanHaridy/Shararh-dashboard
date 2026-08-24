@@ -1,7 +1,6 @@
 <main class="px-6 flex flex-col gap-8">
     <section>
-        <app-page-header title="حسابات المديونيات" [home]="home"
-            [breadcrumbItems]="breadcrumbItems"></app-page-header>
+        <app-page-header title="حسابات المديونيات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
 
     <section>
@@ -17,8 +16,18 @@
         </div>
     </section>
 
+    @if (isLoading()) {
+    <section class="px-4 sm:px-6 py-16 text-center">
+        <p class="text-text-secondary">جاري تحميل البيانات...</p>
+    </section>
+    } @else if (error()) {
+    <section class="px-4 sm:px-6 py-16 text-center">
+        <p class="text-red-600">{{ error() }}</p>
+    </section>
+    } @else {
     <section>
-        <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"
+        <app-shared-table [tableData]="users()" [columns]="columns" [totalRecords]="totalUsers()"
             (actionClick)="onTableActionClick($event)"></app-shared-table>
     </section>
+    }
 </main>

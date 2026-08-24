@@ -12,6 +12,13 @@ export class DebtTransactionsService {
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Get all debt transactions with users
+   */
+  getDebtTransactions(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}`);
+  }
+
   addTransaction(payload: DebtTransactionPayload): Observable<DebtTransactionResponse> {
     return this.http.post<DebtTransactionResponse>(`${this.baseUrl}/add`, payload);
   }

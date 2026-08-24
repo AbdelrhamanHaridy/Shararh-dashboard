@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { SharedTableComponent } from '../../../../shared/components/shared-table/shared-table.component';
 import { Router } from '@angular/router';
@@ -7,16 +8,19 @@ import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { takeUntil } from 'rxjs';
 import { DebtTransactionDialog } from './components/debt-transaction-dialog/debt-transaction-dialog';
 import { BaseComponent } from '../../../../shared/services/base.component';
+import { DebtTransactionsService } from './services/debt-transactions.service';
+import { DebtTransactionUser } from './models/debt-transaction.model';
 
 @Component({
   selector: 'app-accounts-receivable',
-  imports: [PageHeaderComponent, SharedTableComponent, DynamicDialogModule],
+  imports: [CommonModule, PageHeaderComponent, SharedTableComponent, DynamicDialogModule],
   providers: [DialogService],
   templateUrl: './accounts-receivable.html',
   styleUrl: './accounts-receivable.scss',
 })
 export class AccountsReceivable extends BaseComponent {
   private router = inject(Router);
+  private debtTransactionsService = inject(DebtTransactionsService);
 
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
@@ -25,8 +29,40 @@ export class AccountsReceivable extends BaseComponent {
     { label: 'حسابات المديونيات', routerLink: '/more/accounts-receivable' },
   ];
 
+  users = signal<DebtTransactionUser[]>([]);
+  totalUsers = signal<number>(0);
+  isLoading = signal<boolean>(false);
+  error = signal<string | null>(null);
+
   constructor(private dialogService: DialogService) {
     super();
+  }
+
+  ngOnInit(): void {
+    this.loadDebtTransactions();
+  }
+
+  private loadDebtTransactions(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.debtTransactionsService
+      .getDebtTransactions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.users.set(response.data);
+            this.totalUsers.set(response.pagination?.total || response.data.length);
+          }
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Failed to load debt transactions:', error);
+          this.error.set('Failed to load debt transactions');
+          this.isLoading.set(false);
+        },
+      });
   }
 
   onAddUser(): void {
@@ -34,23 +70,10 @@ export class AccountsReceivable extends BaseComponent {
   }
 
   columns = [
-    { field: 'amount', header: 'المبلغ' },
-    { field: 'account', header: 'اسم الحساب', style: { fontSize: '16px', color: '#1A1C18' } },
+    { field: 'current_balance', header: 'الرصيد الحالي' },
+    { field: 'full_name', header: 'اسم الحساب', style: { fontSize: '16px', color: '#1A1C18' } },
     { field: 'paymentActions', header: '' },
   ];
-
-  // NOTE: no GET endpoint was provided for this list — this is still static
-  // dummy data. Each row now includes user_id since both debt-transaction
-  // endpoints require it. Replace with a real fetch once the endpoint exists.
-  users = [
-    { user_id: 1, amount: 5000, account: 'حساب احمد محمد' },
-    { user_id: 2, amount: 5000, account: 'حساب احمد محمد' },
-    { user_id: 3, amount: 5000, account: 'حساب احمد محمد' },
-    { user_id: 4, amount: 5000, account: 'حساب احمد محمد' },
-    { user_id: 5, amount: 5000, account: 'حساب احمد محمد' },
-    { user_id: 6, amount: 5000, account: 'حساب احمد محمد' },
-  ];
-  totalUsers = this.users.length;
 
   onTableActionClick(event: { action: string; row: any }) {
     if (event.action === 'add') {
@@ -60,7 +83,7 @@ export class AccountsReceivable extends BaseComponent {
     }
   }
 
-  private openDebtTransactionDialog(mode: 'add' | 'payment', row: any) {
+  private openDebtTransactionDialog(mode: 'add' | 'payment', row: DebtTransactionUser) {
     const ref = this.dialogService.open(DebtTransactionDialog, {
       showHeader: false,
       width: '420px',
@@ -68,17 +91,16 @@ export class AccountsReceivable extends BaseComponent {
       closable: true,
       data: {
         mode,
-        userId: row.user_id,
-        accountName: row.account,
+        userId: row.id,
+        accountName: row.full_name,
       },
     });
 
     if (ref) {
       ref.onClose.pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result) {
-          // No GET endpoint yet to refresh balances from — once available,
-          // re-fetch the list here instead of leaving stale amounts.
-          console.log('Transaction saved:', result);
+          // Refresh the list after transaction
+          this.loadDebtTransactions();
         }
       });
     }
