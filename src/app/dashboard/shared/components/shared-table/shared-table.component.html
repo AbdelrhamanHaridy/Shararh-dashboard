@@ -118,6 +118,8 @@
                         class="px-5 py-1 bg-primary text-white text-sm rounded-xl cursor-pointer w-fit">إضافه</button>
                     <button type="button" (click)="onActionClick('payment', row); $event.stopPropagation()"
                         class="px-5 py-1 bg-white text-text-success text-sm rounded-xl cursor-pointer w-fit border border-text-success">سداد</button>
+                    <button type="button" (click)="onActionClick('details', row); $event.stopPropagation()"
+                        class="px-5 py-1 bg-white text-primary text-sm rounded-xl cursor-pointer w-fit border border-primary">التفاصيل</button>
                 </div>
                 }
                 @default {

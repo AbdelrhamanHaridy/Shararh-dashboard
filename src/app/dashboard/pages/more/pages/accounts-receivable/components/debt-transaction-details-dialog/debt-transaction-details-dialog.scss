@@ -1,0 +1,31 @@
+/* Dialog Styles */
+:host ::ng-deep {
+  .p-dialog {
+    .p-dialog-header {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .p-dialog-content {
+      padding: 0;
+    }
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+
+  &:hover {
+    background: #94a3b8;
+  }
+}

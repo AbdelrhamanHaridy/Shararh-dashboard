@@ -49,3 +49,39 @@ export interface GetDebtTransactionsResponse {
   data: DebtTransactionUser[];
   pagination: PaginationMeta;
 }
+
+export interface TransactionRecord {
+  id: number;
+  type: 'add' | 'payment';
+  type_label: string;
+  amount: number;
+  description: string;
+  created_at: string;
+}
+
+export interface Employee {
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  phone: string;
+  email: string;
+  role: string;
+}
+
+export interface TransactionDetailsData {
+  employee: Employee;
+  current_balance: number;
+  total_added: number;
+  total_payments: number;
+  last_transaction_date: string | null;
+  transaction_count: number;
+  transactions: TransactionRecord[];
+}
+
+export interface GetTransactionDetailsResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: TransactionDetailsData;
+}

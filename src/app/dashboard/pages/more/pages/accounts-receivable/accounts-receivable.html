@@ -9,7 +9,7 @@
             <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
                 style="height: 52px;">
                 <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
-                <input type="text" placeholder="ابحث..."
+                <input type="text" placeholder="ابحث..." [value]="search()" (input)="onSearch($event)"
                     class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
                     style="color: #6B7280;" />
             </div>

@@ -7,6 +7,7 @@ import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { takeUntil } from 'rxjs';
 import { DebtTransactionDialog } from './components/debt-transaction-dialog/debt-transaction-dialog';
+import { DebtTransactionDetailsDialog } from './components/debt-transaction-details-dialog/debt-transaction-details-dialog';
 import { BaseComponent } from '../../../../shared/services/base.component';
 import { DebtTransactionsService } from './services/debt-transactions.service';
 import { DebtTransactionUser } from './models/debt-transaction.model';
@@ -33,6 +34,8 @@ export class AccountsReceivable extends BaseComponent {
   totalUsers = signal<number>(0);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
+  search = signal('');
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
   constructor(private dialogService: DialogService) {
     super();
@@ -42,12 +45,22 @@ export class AccountsReceivable extends BaseComponent {
     this.loadDebtTransactions();
   }
 
+  onSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.search.set(input.value);
+
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      this.loadDebtTransactions();
+    }, 400);
+  }
+
   private loadDebtTransactions(): void {
     this.isLoading.set(true);
     this.error.set(null);
 
     this.debtTransactionsService
-      .getDebtTransactions()
+      .getDebtTransactions(this.search())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -80,13 +93,15 @@ export class AccountsReceivable extends BaseComponent {
       this.openDebtTransactionDialog('add', event.row);
     } else if (event.action === 'payment') {
       this.openDebtTransactionDialog('payment', event.row);
+    } else if (event.action === 'details') {
+      this.openTransactionDetailsDialog(event.row);
     }
   }
 
   private openDebtTransactionDialog(mode: 'add' | 'payment', row: DebtTransactionUser) {
     const ref = this.dialogService.open(DebtTransactionDialog, {
-      showHeader: false,
       width: '420px',
+      header: mode === 'add' ? 'إضافة معاملة' : 'سداد معاملة',
       modal: true,
       closable: true,
       data: {
@@ -103,6 +118,23 @@ export class AccountsReceivable extends BaseComponent {
           this.loadDebtTransactions();
         }
       });
+    }
+  }
+
+  private openTransactionDetailsDialog(row: DebtTransactionUser) {
+    const ref = this.dialogService.open(DebtTransactionDetailsDialog, {
+      showHeader: false,
+      width: '750px',
+      modal: true,
+      closable: true,
+      data: {
+        userId: row.id,
+        accountName: row.full_name,
+      },
+    });
+
+    if (ref) {
+      ref.onClose.pipe(takeUntil(this.destroy$)).subscribe();
     }
   }
 }
