@@ -8,7 +8,6 @@
 
 <ng-container *ngIf="!isLoading() && !errorMessage()">
 
-    <!-- KPIs: all 4 match summary{} exactly -->
     <section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
 
         <app-shared-kpi-card [title]="'عملاء تحت التنفيذ'" [number]="summary()?.clients_in_progress || 0"
@@ -24,11 +23,18 @@
         <app-shared-kpi-card [title]="'الاشتراكات الفعّالة'" [number]="summary()?.active_subscriptions || 0"
             iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">
         </app-shared-kpi-card>
+        <!-- <app-shared-kpi-card [title]="'المهام المكتملة'" [number]="summary()?.completed_tasks_count || 0"
+            iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">
+        </app-shared-kpi-card>
+        <app-shared-kpi-card [title]="'إجمالي المهام'" [number]="summary()?.total_tasks_count || 0"
+            iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000">
+        </app-shared-kpi-card> -->
     </section>
     <section class="p-6 grid grid-cols-10 gap-5">
         <div class="col-span-10 bg-white rounded-2xl p-5 shadow-md flex flex-col gap-3">
             <h2 class="text-text-secondary text-lg font-tajawal font-bold">رابط الإحالة الخاص بك</h2>
             <p class="text-xs text-text-secondary">@{{ referral()?.username }}</p>
+            <p class="text-xs text-text-secondary break-all">{{ referral()?.full_url }}</p>
             <div class="flex flex-row items-center gap-2 bg-[#F8FAFC] rounded-xl px-3 py-2">
                 <span class="text-sm text-primary truncate flex-1">{{ referral()?.url }}</span>
                 <button type="button" (click)="copyReferralLink()"
@@ -42,16 +48,51 @@
             </p>
         </div>
 
+        <!-- <div class="col-span-10 grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">زيارات اليوم</p>
+                <p class="text-xl font-bold text-text-primary">{{ visitsStatistics()?.total_visits_today || 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">زيارات الشهر</p>
+                <p class="text-xl font-bold text-text-primary">{{ visitsStatistics()?.total_visits_month || 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">تسجيلات اليوم</p>
+                <p class="text-xl font-bold text-text-primary">{{ visitsStatistics()?.new_registrations_today || 0 }}
+                </p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">تسجيلات الشهر</p>
+                <p class="text-xl font-bold text-text-primary">{{ visitsStatistics()?.new_registrations_month || 0 }}
+                </p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">إجمالي الزيارات</p>
+                <p class="text-xl font-bold text-text-primary">{{ visitsStatistics()?.total_visits || 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">إجمالي التسجيلات</p>
+                <p class="text-xl font-bold text-text-primary">{{ visitsStatistics()?.new_registrations || 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">تقدم المهام</p>
+                <p class="text-xl font-bold text-text-primary">{{ summary()?.suggested_tasks_formatted }}</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-md">
+                <p class="text-xs text-text-secondary">آخر تحديث</p>
+                <p class="text-sm font-bold text-text-primary">{{ dashboardData()?.updated_at }}</p>
+            </div>
+        </div> -->
+
         <!-- Left column: two small stacked tables -->
         <div class="col-span-10 md:col-span-6 flex flex-col gap-2.5">
-            <app-child-table [tableData]="employees()" [columns]="employeeColumns"
+            <app-child-table [tableData]="employees().slice(0, 3)" [columns]="employeeColumns"
                 [title]="'متابعة الزيارات والتسجيلات'" [showAllButton]="true" [showAllButtonLabel]="'عرض الكل'">
             </app-child-table>
 
-            <!-- expiring_subscriptions is always [] in the API sample — shape unknown.
-                 Table is wired but will render empty until a populated response is available. -->
-            <app-child-table [tableData]="expiringSubscriptions()" [columns]="[]" [title]="'قائمة الاشتراكات المنتهية'"
-                [showAllButton]="true" [showAllButtonLabel]="'عرض الكل'">
+            <app-child-table [tableData]="expiringSubscriptions().slice(0, 3)" [columns]="subscriptionColumns"
+                [title]="'قائمة الاشتراكات المنتهية'" [showAllButton]="true" [showAllButtonLabel]="'عرض الكل'">
             </app-child-table>
         </div>
 
@@ -72,10 +113,18 @@
 
                 <h2 class="text-[#303136] text-sm font-tajawal font-medium p-4 pb-0">
                     عملائي المسجلين
-                    <span class="text-xs text-text-secondary font-normal">(بيانات جزئية — راجع الملاحظات)</span>
                 </h2>
                 <app-donut-chart [chartData]="registeredClientsChartData()" [padAngle]="0">
                 </app-donut-chart>
+
+                <h2 class="text-[#303136] text-sm font-tajawal font-medium p-4 pb-0">ملخص الاشتراكات</h2>
+                <div class="grid grid-cols-2 gap-2 p-4 pt-2 text-xs text-text-secondary">
+                    <span>مسجل فقط: {{ dashboardData()?.customer_statistics?.subscriptions?.registered_only?.count || 0
+                        }}</span>
+                    <span>تجريبي: {{ dashboardData()?.customer_statistics?.subscriptions?.trial?.count || 0 }}</span>
+                    <span>نشط: {{ dashboardData()?.customer_statistics?.subscriptions?.active?.count || 0 }}</span>
+                    <span>منتهي: {{ dashboardData()?.customer_statistics?.subscriptions?.expired?.count || 0 }}</span>
+                </div>
             </div>
 
         </div>
