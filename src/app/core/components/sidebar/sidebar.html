@@ -19,8 +19,8 @@
         <ng-container *ngFor="let item of navItems">
 
             <!-- Leaf item (unchanged, exact same style as before) -->
-            <a *ngIf="!item.children" [routerLink]="item.route" routerLinkActive="is-active" #rla="routerLinkActive"
-                [routerLinkActiveOptions]="{ exact: false }" class="relative flex items-center gap-3 rounded-[10px] bg-transparent p-3.75
+            <a *ngIf="!item.children" [routerLink]="item.route === '/home' ? dashboardRoute : item.route"
+                routerLinkActive="is-active" #rla="routerLinkActive" [routerLinkActiveOptions]="{ exact: false }" class="relative flex items-center gap-3 rounded-[10px] bg-transparent p-3.75
                         border-r-3 border-transparent
                         transition-all duration-1000" [class.border-primary]="rla.isActive"
                 [class.bg-primary-op-8]="rla.isActive">

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../dashboard/pages/auth/services/auth.service';
 
 interface NavChild {
   label: string;
@@ -24,6 +25,10 @@ interface NavItem {
   styleUrls: ['./sidebar.scss'],
 })
 export class Sidebar {
+  private authService = inject(AuthService);
+
+  readonly dashboardRoute = this.getDashboardRoute();
+
   navItems: NavItem[] = [
     { label: 'لوحة التحكم', icon: 'icon.svg', route: '/home' },
     { label: 'قاعدة بيانات المستخدمين', icon: 'icon-1.svg', route: '/user-database' },
@@ -105,5 +110,12 @@ export class Sidebar {
         matrixParams: 'ignored',
       }),
     );
+  }
+
+  private getDashboardRoute(): string {
+    const roles = this.authService.getCurrentUser()?.roles ?? [];
+    const employeeRoles = ['supervisor', 'customer_service', 'sales', 'technical_support'];
+
+    return roles.some((role) => employeeRoles.includes(role)) ? '/employee-dashboard' : '/home';
   }
 }

@@ -5,14 +5,16 @@ import { AuthService } from '../../dashboard/pages/auth/services/auth.service';
 export const loginGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-    console.log(authService.isLoggedIn());
-    
-  // If user is already logged in, redirect to dashboard home
+
   if (authService.isLoggedIn()) {
-    router.navigate(['/home']);
-    return false;
+    const currentUser = authService.getCurrentUser();
+    const roles = Array.isArray(currentUser?.roles) ? currentUser.roles : [];
+    const employeeRoles = ['supervisor', 'customer_service', 'sales', 'technical_support'];
+
+    return router.parseUrl(
+      roles.some((role) => employeeRoles.includes(role)) ? '/employee-dashboard' : '/home',
+    );
   }
 
-  // Allow access to login/register pages if not logged in
   return true;
 };
