@@ -32,6 +32,10 @@ export class StatusBadgeDirective implements OnChanges {
         color = '#F44336';
         label = 'غير نشط';
         break;
+      case 'closed':
+        color = '#F44336';
+        label = 'مغلق';
+        break;
       default:
         color = '#9E9E9E';
         label = 'آخر';
