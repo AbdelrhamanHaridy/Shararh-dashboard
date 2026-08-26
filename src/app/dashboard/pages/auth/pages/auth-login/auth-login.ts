@@ -59,7 +59,7 @@ export class AuthLogin {
     this.authService.login(credentials).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading.set(false);

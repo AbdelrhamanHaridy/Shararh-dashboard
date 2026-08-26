@@ -27,7 +27,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
   private usersService = inject(UserDatabaseService);
   private cdr = inject(ChangeDetectorRef);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
   isLoading: boolean = true;
@@ -65,7 +65,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
       // If your table supports custom rendering
       render: (row: User) => row.roles?.join(', ') || '-',
     },
-    { field: 'actions', header: '' },
+    { field: 'archive_actions', header: '' },
   ];
 
   users: User[] = [];
@@ -95,5 +95,12 @@ export class UserDatabase extends BaseComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  onArchiveUser(user: User): void {
+    this.usersService.archiveUser(user.id).subscribe({
+      next: () => this.onGetUsers(),
+      error: (err) => console.error('Failed to archive user:', err),
+    });
   }
 }

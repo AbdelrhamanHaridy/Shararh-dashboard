@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { employeeSessionGuard } from '../../../core/guards/employee-session.guard';
 
 export const authRoutes: Routes = [
   {
@@ -27,6 +28,12 @@ export const authRoutes: Routes = [
         path: 'reset-password',
         loadComponent: () =>
           import('./pages/reset-password/reset-password').then((m) => m.ResetPassword),
+      },
+      {
+        path: 'start-session',
+        loadComponent: () =>
+          import('./pages/start-session/start-session').then((m) => m.StartSession),
+        canActivate: [employeeSessionGuard],
       },
     ],
   },

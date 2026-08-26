@@ -3,10 +3,12 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Sidebar } from './core/components/sidebar/sidebar';
 import { Header } from './core/components/header/header';
 import { filter } from 'rxjs';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, Header],
+  imports: [RouterOutlet, Sidebar, Header, ToastModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -16,7 +18,7 @@ export class App {
   protected isAuthRoute = signal(false);
   protected isMobileSidebarOpen = signal(false);
 
-  constructor() {
+  constructor(private messageService: MessageService) {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.isAuthRoute.set(this.router.url.includes('/auth'));
       this.isMobileSidebarOpen.set(false);

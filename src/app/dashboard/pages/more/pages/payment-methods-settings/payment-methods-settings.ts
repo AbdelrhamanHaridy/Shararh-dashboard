@@ -25,7 +25,7 @@ export class PaymentMethodsSettings implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },
     { label: 'إعدادات وسائل الدفع', routerLink: '/payment-methods-settings' },

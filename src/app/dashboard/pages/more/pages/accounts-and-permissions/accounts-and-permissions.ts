@@ -19,7 +19,7 @@ import { Employee } from './models/accounts-and-permissions-add-new-account.mode
   styleUrl: './accounts-and-permissions.scss',
 })
 export class AccountsAndPermissions extends BaseComponent implements OnInit {
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

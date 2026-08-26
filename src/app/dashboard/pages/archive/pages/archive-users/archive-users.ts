@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { SharedTableComponent } from '../../../../shared/components/shared-table/shared-table.component';
+import { UserDatabaseService } from '../../../user-database/services/user-database.service';
+import { User } from '../../../user-database/models/user-database.model';
 
 @Component({
   selector: 'app-archive-users',
@@ -10,10 +12,14 @@ import { SharedTableComponent } from '../../../../shared/components/shared-table
   templateUrl: './archive-users.html',
   styleUrl: './archive-users.scss',
 })
-export class ArchiveUsers {
+export class ArchiveUsers implements OnInit {
   private router = inject(Router);
+  private usersService = inject(UserDatabaseService);
+  private cdr = inject(ChangeDetectorRef);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  isLoading = false;
+
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'قاعدة بيانات المستخدمين', routerLink: '/users' }];
 
@@ -22,71 +28,44 @@ export class ArchiveUsers {
   }
 
   columns = [
-    { field: 'username', header: 'اسم المستخدم' },
-    { field: 'fullName', header: 'الاسم' },
-    { field: 'role_text', header: 'الدور', style: { fontWeight: 'bold', color: '#B34E0A' } },
-    { field: 'storeName', header: 'اسم المحل', style: { fontWeight: 'bold', color: '#717171' } },
-    { field: 'deviceCount', header: 'عدد الأجهزة', style: { fontWeight: 'bold', color: '#717171' } },
-    { field: 'version', header: 'الإصدارات', style: { fontWeight: 'bold', color: '#717171' } },
-    { field: 'activity', header: 'النشاط', style: { fontWeight: 'medium', color: '#0D7F1A' } },
+    { field: 'full_name', header: 'الاسم' },
+    { field: 'email', header: 'البريد الإلكتروني' },
+    { field: 'phone', header: 'رقم الهاتف' },
+    {
+      field: 'account_status',
+      header: 'الحالة',
+      style: { fontWeight: 'bold' },
+    },
+    {
+      field: 'roles',
+      header: 'الأدوار',
+      style: { fontWeight: 'bold', color: '#B34E0A' },
+      render: (row: User) => row.roles?.join(', ') || '-',
+    },
+    // { field: 'actions', header: '' },
   ];
 
-  users = [
-    {
-      username: 'ahmed.h',
-      fullName: 'أحمد حسن',
-      role_text: 'مدير',
-      storeName: 'متجر التقنية',
-      deviceCount: 2,
-      version: 'v2.1.0',
-      activity: 'نشط',
-    },
-    {
-      username: 'mo.ali',
-      fullName: 'محمد علي',
-      role_text: 'موظف',
-      storeName: 'سوبر ماركت الوفاء',
-      deviceCount: 1,
-      version: 'v2.0.5',
-      activity: 'نشط',
-    },
-    {
-      username: 'omar.k',
-      fullName: 'عمر خالد',
-      role_text: 'مدير فرع',
-      storeName: 'محل الأصدقاء',
-      deviceCount: 3,
-      version: 'v2.1.0',
-      activity: 'نشط',
-    },
-    {
-      username: 'youssef.n',
-      fullName: 'يوسف نبيل',
-      role_text: 'موظف',
-      storeName: 'متجر الملابس',
-      deviceCount: 1,
-      version: 'v2.0.0',
-      activity: 'غير نشط',
-    },
-    {
-      username: 'karim.s',
-      fullName: 'كريم سمير',
-      role_text: 'مدير',
-      storeName: 'محل الإلكترونيات',
-      deviceCount: 2,
-      version: 'v2.1.0',
-      activity: 'نشط',
-    },
-    {
-      username: 'tarek.f',
-      fullName: 'طارق فوزي',
-      role_text: 'موظف',
-      storeName: 'سوبر ماركت النيل',
-      deviceCount: 1,
-      version: 'v2.0.8',
-      activity: 'نشط',
-    },
-  ];
-  
-  totalUsers = this.users.length;
+  users: User[] = [];
+  totalUsers = 0;
+
+  ngOnInit(): void {
+    this.loadArchivedUsers();
+  }
+
+  private loadArchivedUsers(): void {
+    this.isLoading = true;
+    this.usersService.getArchivedUsers().subscribe({
+      next: (res) => {
+        this.users = res.data;
+        this.totalUsers = res.data.length;
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Failed to load archived users', err);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
 }

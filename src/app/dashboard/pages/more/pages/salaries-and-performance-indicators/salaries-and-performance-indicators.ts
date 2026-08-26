@@ -16,7 +16,7 @@ import { SalaryDisbursementDialog } from './components/salary-disbursement-dialo
 export class SalariesAndPerformanceIndicators {
   private readonly dialogService = inject(DialogService);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
   ref: DynamicDialogRef | null = null;
 
   breadcrumbItems: MenuItem[] = [

@@ -32,7 +32,7 @@ export class CouponsAndDiscountCodes extends BaseComponent {
   private dialogService = inject(DialogService);
   private couponsService = inject(CouponsAndDiscountCodesService);
 
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

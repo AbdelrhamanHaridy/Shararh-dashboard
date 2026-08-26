@@ -2,123 +2,157 @@
     <app-page-header title="لوحة التقدم" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
 </section>
 
+@if (isLoading()) {
+<section class="px-4 sm:px-6 py-16 text-center">
+    <p class="text-text-secondary">جاري تحميل البيانات...</p>
+</section>
+} @else if (error()) {
+<section class="px-4 sm:px-6 py-16 text-center">
+    <p class="text-red-600">{{ error() }}</p>
+</section>
+} @else {
 <section class="px-4 sm:px-6">
     <!-- Description -->
-    <div class=" max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <p class="text-start text-text-secondary text-sm sm:text-base font-medium font-tajawal mb-5">
-            استعراض أداء الفريق الموظفين وتحديد المساهمات الفردية الموظفين وتحديد نظام النقاط تدخل
+            {{ description() }}
         </p>
     </div>
 
     <!-- Top 3 Podium -->
+    @if (topThree().length > 0) {
     <div
         class="grid grid-cols-1 sm:grid-cols-3 items-end justify-center gap-6 sm:gap-8 mb-10 sm:mb-16 bg-white shadow-md max-w-4xl mx-auto rounded-2xl p-4 sm:p-5 pt-8 sm:pt-15">
         <!-- 2nd Place (Left) -->
+        @if (topThree()[0]) {
         <div class="order-2 sm:order-1 flex flex-col items-center gap-4 w-full">
             <div class="relative">
                 <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-[#E2E8F0] shadow-lg">
-                    <img [src]="topThree[0].avatar" [alt]="topThree[0].name" class="w-full h-full object-cover" />
+                    <img [src]="topThree()[0].avatar || 'assets/testing/avatar.png'" [alt]="topThree()[0].name"
+                        class="w-full h-full object-cover" />
                 </div>
                 <div
                     class="absolute -bottom-2 left-1/2 translate-x-6 w-8 h-8 rounded-full bg-[#E2E8F0] flex items-center justify-center border-2 border-white">
-                    <span class="text-[#475569] text-sm font-bold font-tajawal">2</span>
+                    <span class="text-[#475569] text-sm font-bold font-tajawal">{{ topThree()[0].rank }}</span>
                 </div>
             </div>
             <div class="text-center">
-                <h3 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal mb-1">{{ topThree[0].name }}
+                <h3 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal mb-1">{{ topThree()[0].name }}
                 </h3>
-                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree[0].points }} نقطة</p>
+                <p class="text-[#8A97A8] text-xs sm:text-sm font-medium font-tajawal mb-2">{{ topThree()[0].role_label
+                    }}
+                </p>
+                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree()[0].total_points }} نقطة</p>
             </div>
             <div
                 class="rounded-xl bg-[#F1F5F9] border border-[#E2E8F0] flex items-start justify-center w-full h-24 sm:h-28">
                 <img src="assets/icons/global/second_badge.svg" alt="" class="mt-4">
             </div>
         </div>
+        }
 
         <!-- 1st Place (Center) -->
+        @if (topThree()[1]) {
         <div class="order-1 sm:order-2 flex flex-col items-center gap-4 sm:pb-9 w-full">
             <div class="relative">
                 <img src="assets/icons/global/star.svg" alt="" class="absolute -top-9 left-1/2 -translate-x-1/2">
                 <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-[#FACC15] shadow-xl">
-                    <img [src]="topThree[1].avatar" [alt]="topThree[1].name" class="w-full h-full object-cover" />
+                    <img [src]="topThree()[1].avatar || 'assets/testing/avatar.png'" [alt]="topThree()[1].name"
+                        class="w-full h-full object-cover" />
                 </div>
                 <div
                     class="absolute -bottom-2 left-1/2 translate-x-6 w-8 h-8 rounded-full bg-[#FFD700] flex items-center justify-center border-2 border-white">
-                    <span class="text-white text-sm font-bold font-tajawal">1</span>
+                    <span class="text-white text-sm font-bold font-tajawal">{{ topThree()[1].rank }}</span>
                 </div>
             </div>
             <div class="text-center">
-                <h3 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal mb-1">{{ topThree[1].name }}
+                <h3 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal mb-1">{{ topThree()[1].name }}
                 </h3>
-                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree[1].points }} نقطة</p>
+                <p class="text-[#8A97A8] text-xs sm:text-sm font-medium font-tajawal mb-2">{{ topThree()[1].role_label
+                    }}
+                </p>
+                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree()[1].total_points }} نقطة</p>
             </div>
             <div
                 class="rounded-xl bg-[#EFF6FF] border border-[#DBEAFE] flex flex-col items-center justify-start gap-2.5 w-full h-32 sm:h-36">
                 <img src="assets/icons/global/first_badge.svg" alt="" class="mt-6">
-                <span class="text-[#A16207] text-[10px] px-8 py-0.5 bg-[#FACC1533] rounded-full">اعلى اداء</span>
+                @if (topThree()[1].badge) {
+                <span class="text-[#A16207] text-[10px] px-8 py-0.5 bg-[#FACC1533] rounded-full">{{
+                    topThree()[1].badge }}</span>
+                }
             </div>
         </div>
+        }
 
         <!-- 3rd Place (Right) -->
+        @if (topThree()[2]) {
         <div class="order-3 sm:order-3 flex flex-col items-center gap-4 w-full">
             <div class="relative">
                 <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-[#FED7AA] shadow-lg">
-                    <img [src]="topThree[2].avatar" [alt]="topThree[2].name" class="w-full h-full object-cover" />
+                    <img [src]="topThree()[2].avatar || 'assets/testing/avatar.png'" [alt]="topThree()[2].name"
+                        class="w-full h-full object-cover" />
                 </div>
                 <div
                     class="absolute -bottom-2 left-1/2 translate-x-6 w-8 h-8 rounded-full bg-[#FED7AA] flex items-center justify-center border-2 border-white">
-                    <span class="text-[#C2410C] text-sm font-bold font-tajawal">3</span>
+                    <span class="text-[#C2410C] text-sm font-bold font-tajawal">{{ topThree()[2].rank }}</span>
                 </div>
             </div>
             <div class="text-center">
-                <h3 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal mb-1">{{ topThree[2].name }}
+                <h3 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal mb-1">{{ topThree()[2].name }}
                 </h3>
-                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree[2].points }} نقطة</p>
+                <p class="text-[#8A97A8] text-xs sm:text-sm font-medium font-tajawal mb-2">{{ topThree()[2].role_label
+                    }}
+                </p>
+                <p class="text-[#10A922] text-sm font-medium font-tajawal">{{ topThree()[2].total_points }} نقطة</p>
             </div>
             <div
                 class="rounded-xl bg-white border border-[#E2E8F0] flex items-start justify-center w-full h-24 sm:h-28">
                 <img src="assets/icons/global/third_badge.svg" alt="" class="mt-4">
             </div>
         </div>
+        }
     </div>
+    }
 
     <!-- Other Employees Section -->
+    @if (rankedEmployees().length > 0) {
     <div class="max-w-4xl mx-auto mb-8">
-        <div class=" max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto">
             <h2 class="text-[#0F172A] text-lg font-medium font-tajawal mb-6 text-start">ترتيب باقي الموظفين</h2>
         </div>
 
         <div class="flex flex-col gap-4">
-            @for (employee of rankedEmployees; track employee.id) {
+            @for (employee of rankedEmployees(); track employee.id) {
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 sm:px-6 py-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
                 <!-- Avatar and Info -->
                 <div class="flex items-center gap-3">
                     <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-[#E2E8F0]">
-                        <img [src]="employee.avatar" [alt]="employee.name" class="w-full h-full object-cover" />
+                        <img [src]="employee.avatar || 'assets/testing/avatar.png'" [alt]="employee.name"
+                            class="w-full h-full object-cover" />
                     </div>
                     <div class="flex-1">
                         <h4 class="text-[#0F172A] text-base sm:text-lg font-medium font-tajawal">{{ employee.name }}
                         </h4>
-                        <p class="text-[#8A97A8] text-sm font-medium font-tajawal">{{ employee.position }}</p>
+                        <p class="text-[#8A97A8] text-sm font-medium font-tajawal">{{ employee.role_label }}</p>
                     </div>
                 </div>
                 <!-- Points Badge -->
                 <div
                     class="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl border-2 border-[#10A922] bg-white flex flex-row items-center gap-3 sm:gap-4 self-start sm:self-auto">
-                    <span class="text-[#10A922] text-2xl sm:text-3xl font-bold font-tajawal">{{ employee.points
+                    <span class="text-[#10A922] text-2xl sm:text-3xl font-bold font-tajawal">{{ employee.total_points
                         }}</span>
                     <span class="text-[#2E3139] text-sm font-bold font-tajawal mr-1">نقطة</span>
                 </div>
 
                 <!-- Rank Number -->
-
                 <span
                     class="text-[#137FEC] text-xl sm:text-2xl font-medium font-tajawal min-w-8 self-end sm:self-auto">#{{
                     employee.rank }}</span>
-
             </div>
             }
         </div>
     </div>
+    }
 </section>
+}

@@ -24,15 +24,12 @@ export class EmployeeDashboard extends BaseComponent implements OnInit {
   visitsStatistics = computed(() => this.dashboardData()?.visits_statistics);
   employees = computed(() => this.dashboardData()?.visits_statistics.employees ?? []);
 
-  // Field exists in the API but is always [] in the sample response — shape unknown.
-  // Leaving the table wired up but empty until a populated example is available.
   expiringSubscriptions = computed(() => this.dashboardData()?.expiring_subscriptions ?? []);
 
   coupons = computed(() => this.dashboardData()?.my_coupons ?? []);
 
-  // Donut 1: "عملائي المشتركين" — direct 1:1 match with API fields
   subscribedClientsChartData = computed(() => {
-    const stats = this.dashboardData()?.customer_statistics.subscriptions;
+    const stats = this.dashboardData()?.customer_statistics.my_subscribed_clients;
     if (!stats) return [];
     return [
       { value: stats.active.count, name: 'نشط' },
@@ -41,22 +38,17 @@ export class EmployeeDashboard extends BaseComponent implements OnInit {
     ];
   });
 
-  // Donut 2: "عملائي المسجلين" — PARTIAL MATCH ONLY.
-  // API has no "مشترك"/"غير مشترك" boolean; derived as:
-  //   مسجل فقط = registered_only (direct)
-  //   مشترك    = trial + active + expired (anyone with any subscription history)
-  // "غير مشترك" has no distinct source and is intentionally omitted — see chat notes.
   registeredClientsChartData = computed(() => {
-    const stats = this.dashboardData()?.customer_statistics.subscriptions;
+    const stats = this.dashboardData()?.customer_statistics.my_registered_clients;
     if (!stats) return [];
-    const subscribedCount = stats.trial.count + stats.active.count + stats.expired.count;
     return [
       { value: stats.registered_only.count, name: 'مسجل فقط' },
-      { value: subscribedCount, name: 'مشترك' },
+      { value: stats.subscribed.count, name: 'مشترك' },
+      { value: stats.unsubscribed.count, name: 'غير مشترك' },
     ];
   });
 
-  employeeColumns: any[] = [
+  employeeColumns = [
     { field: 'name', header: 'اسم الموظف' },
     { field: 'role', header: 'الدور' },
     { field: 'today_points', header: 'نقاط اليوم' },
@@ -64,7 +56,17 @@ export class EmployeeDashboard extends BaseComponent implements OnInit {
     { field: 'status', header: 'الحالة' },
   ];
 
-  couponColumns: any[] = [
+  subscriptionColumns = [
+    { field: 'id', header: 'المعرف' },
+    { field: 'store_id', header: 'معرف المتجر' },
+    { field: 'store_name', header: 'اسم المتجر' },
+    { field: 'expires_at', header: 'تاريخ الانتهاء' },
+    { field: 'expires_at_formatted', header: 'الانتهاء' },
+    { field: 'status', header: 'الحالة' },
+    { field: 'status_label', header: 'وصف الحالة' },
+  ];
+
+  couponColumns = [
     { field: 'code', header: 'الكود' },
     { field: 'status', header: 'الحالة' },
     { field: 'target', header: 'الفئة المستهدفة' },

@@ -30,7 +30,6 @@ export const dashboardRoutes: Routes = [
   {
     path: 'user-database',
     children: userDatabaseRoutes,
-    canActivate: [adminGuard],
   },
   {
     path: 'subscription-management',
@@ -38,7 +37,6 @@ export const dashboardRoutes: Routes = [
       import('./pages/subscription-management/subscription-management').then(
         (m) => m.SubscriptionManagement,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'potential-customer-center',
@@ -46,18 +44,15 @@ export const dashboardRoutes: Routes = [
       import('./pages/potential-customer-center/potential-customer-center').then(
         (m) => m.PotentialCustomerCenter,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'contact-log',
     loadComponent: () => import('./pages/contact-log/contact-log').then((m) => m.ContactLog),
-    canActivate: [adminGuard],
   },
   {
     path: 'progress-board',
     loadComponent: () =>
       import('./pages/progress-board/progress-board').then((m) => m.ProgressBoard),
-    canActivate: [adminGuard],
   },
   {
     path: 'version-control-and-updates',
@@ -65,12 +60,10 @@ export const dashboardRoutes: Routes = [
       import('./pages/version-control-and-updates/version-control-and-updates').then(
         (m) => m.VersionControlAndUpdates,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'notifications',
     loadComponent: () => import('./pages/notifications/notifications').then((m) => m.Notifications),
-    canActivate: [adminGuard],
   },
   {
     path: 'complaints-and-suggestions',
@@ -78,7 +71,6 @@ export const dashboardRoutes: Routes = [
       import('./pages/complaints-and-suggestions/complaints-and-suggestions').then(
         (m) => m.ComplaintsAndSuggestions,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'frequently-asked-questions',
@@ -86,26 +78,21 @@ export const dashboardRoutes: Routes = [
       import('./pages/frequently-asked-questions/frequently-asked-questions').then(
         (m) => m.FrequentlyAskedQuestions,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'sessions',
     children: sessionsRoutes,
-    canActivate: [adminGuard],
   },
   {
     path: 'archive',
     children: archiveRoutes,
-    canActivate: [adminGuard],
   },
   {
     path: 'more',
     children: moreRoutes,
-    canActivate: [adminGuard],
   },
   {
     path: 'settings',
     loadComponent: () => import('./pages/settings/settings').then((m) => m.Settings),
-    canActivate: [adminGuard],
   },
 ];

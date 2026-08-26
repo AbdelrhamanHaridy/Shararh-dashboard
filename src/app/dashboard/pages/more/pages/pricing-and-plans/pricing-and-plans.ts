@@ -35,7 +35,7 @@ interface DisplayPricingTier {
   styleUrl: './pricing-and-plans.scss',
 })
 export class PricingAndPlans extends BaseComponent implements OnInit {
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

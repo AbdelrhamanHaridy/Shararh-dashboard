@@ -9,7 +9,7 @@ import { PageHeaderComponent } from '../../../../../../shared/components/page-he
   styleUrl: './salary-calculation.scss',
 })
 export class SalaryCalculation {
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
 
   breadcrumbItems: MenuItem[] = [
     { label: 'المزيد' },

@@ -2,11 +2,15 @@ export interface DashboardSummary {
   registered_clients: number;
   active_subscriptions: number;
   clients_in_progress: number;
+  completed_tasks_count: number;
+  total_tasks_count: number;
   suggested_tasks: number;
+  suggested_tasks_formatted: string;
 }
 
 export interface DashboardReferral {
   url: string;
+  full_url: string;
   username: string;
   registered_from_link: number;
 }
@@ -21,6 +25,10 @@ export interface DashboardEmployeeVisit {
 }
 
 export interface DashboardVisitsStatistics {
+  total_visits_today: number;
+  total_visits_month: number;
+  new_registrations_today: number;
+  new_registrations_month: number;
   total_visits: number;
   new_registrations: number;
   employees: DashboardEmployeeVisit[];
@@ -32,6 +40,16 @@ export interface DashboardSubscriptionStat {
 }
 
 export interface DashboardCustomerStatistics {
+  my_subscribed_clients: {
+    active: DashboardSubscriptionStat;
+    expired: DashboardSubscriptionStat;
+    trial: DashboardSubscriptionStat;
+  };
+  my_registered_clients: {
+    registered_only: DashboardSubscriptionStat;
+    subscribed: DashboardSubscriptionStat;
+    unsubscribed: DashboardSubscriptionStat;
+  };
   subscriptions: {
     registered_only: DashboardSubscriptionStat;
     trial: DashboardSubscriptionStat;
@@ -48,7 +66,15 @@ export interface DashboardCoupon {
   max_usage: number | null;
 }
 
-export type DashboardExpiringSubscription = Record<string, any>;
+export interface DashboardExpiringSubscription {
+  id: number;
+  store_id: number;
+  store_name: string;
+  expires_at: string;
+  expires_at_formatted: string;
+  status: string;
+  status_label: string;
+}
 
 export interface EmployeeDashboardData {
   summary: DashboardSummary;

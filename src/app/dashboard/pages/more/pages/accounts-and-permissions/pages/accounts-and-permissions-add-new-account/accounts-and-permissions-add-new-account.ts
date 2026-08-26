@@ -30,7 +30,7 @@ import {
   styleUrl: './accounts-and-permissions-add-new-account.scss',
 })
 export class AccountsAndPermissionsAddNewAccount extends BaseComponent implements OnInit {
-  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/dashboard' };
+  home: MenuItem = { label: 'لوحة التحكم', routerLink: '/home' };
   userForm!: FormGroup;
   isSubmitting = false;
   isLoadingOptions = false;

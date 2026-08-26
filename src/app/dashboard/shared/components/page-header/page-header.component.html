@@ -1,19 +1,44 @@
-<div class="flex flex-col md:flex-row justify-between gap-4 items-center rounded-2xl bg-white pl-8 pr-4 py-4">
+<div class="flex flex-col gap-4 rounded-2xl bg-white p-4 md:p-8">
+    <!-- Header Row with Title and Date Filters -->
+    <div class="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
+        <div class="flex flex-col">
+            <p-breadcrumb *ngIf="breadcrumbItems?.length" [model]="breadcrumbItems" [home]="home"></p-breadcrumb>
+            <h1 class="m-0 text-right text-[28px] font-medium text-black px-3.5 py-0">
+                {{ title }}
+            </h1>
+        </div>
 
-    <div class="flex flex-col">
-        <p-breadcrumb *ngIf="breadcrumbItems?.length" [model]="breadcrumbItems" [home]="home"></p-breadcrumb>
-        <h1 class="m-0 text-right text-[28px] font-medium text-black px-3.5 py-0">
-            {{ title }}
-        </h1>
+        <!-- Date Range Filters (inline with title) -->
+        <div *ngIf="showDateFilters" class="flex flex-row gap-3 items-end">
+            <!-- From Date -->
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-text-primary">من التاريخ</label>
+                <p-datepicker [ngModel]="dateFromValue" (ngModelChange)="onDateFromChange($event)" dateFormat="yy-mm-dd"
+                    [showIcon]="true" iconDisplay="input" placeholder="اختر التاريخ" appendTo="body"
+                    class="w-full"></p-datepicker>
+            </div>
+
+            <!-- To Date -->
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-text-primary">إلى التاريخ</label>
+                <p-datepicker [ngModel]="dateToValue" (ngModelChange)="onDateToChange($event)" dateFormat="yy-mm-dd"
+                    [showIcon]="true" iconDisplay="input" placeholder="اختر التاريخ" appendTo="body"
+                    class="w-full"></p-datepicker>
+            </div>
+            <!-- Reset dates small button -->
+            <div class="flex items-end">
+                <button type="button" (click)="onResetDates()"
+                    class="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#F3F4F6] hover:bg-[#E5E7EB] px-3 py-1 text-sm font-medium text-[#374151]">
+                    مسح
+                </button>
+            </div>
+        </div>
+
+        <button *ngIf="showActionButton" type="button"
+            class="inline-flex items-center gap-2 rounded-xl bg-[#171717] cursor-pointer px-5 py-2.5 text-base font-bold text-white transition-colors hover:bg-neutral-700"
+            (click)="onActionClick($event)">
+            <img src="assets/icons/global/plus.svg" alt="Plus">
+            <span>{{ actionButtonLabel }}</span>
+        </button>
     </div>
-    <button *ngIf="showActionButton" type="button"
-        class="inline-flex items-center gap-2 rounded-xl bg-[#171717] cursor-pointer px-5 py-2.5 text-base font-bold text-white transition-colors hover:bg-neutral-700"
-        (click)="onActionClick($event)">
-        <img src="assets/icons/global/plus.svg" alt="Plus">
-        <span>{{ actionButtonLabel }}</span>
-    </button>
-
-
-
-
 </div>

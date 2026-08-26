@@ -16,6 +16,7 @@
     styleClass="w-full"
     (onChange)="onSelectionChange($event.value)"
     (onBlur)="onTouched()"
+    appendTo="body"
   ></p-select>
 
   @if (control?.hasError('required') && (control?.dirty || control?.touched)) {

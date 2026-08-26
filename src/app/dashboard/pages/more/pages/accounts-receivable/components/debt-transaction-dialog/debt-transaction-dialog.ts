@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs';
 import { BaseComponent } from '../../../../../../shared/services/base.component';
 import { DebtTransactionsService } from '../../services/debt-transactions.service';
 import { DebtTransactionPayload } from '../../models/debt-transaction.model';
+import { ToastService } from '../../../../../../shared/services/toast.service';
 
 export type DebtTransactionMode = 'add' | 'payment';
 
@@ -39,6 +40,7 @@ export class DebtTransactionDialog extends BaseComponent implements OnInit {
     public ref: DynamicDialogRef,
     private debtTransactionsService: DebtTransactionsService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {
     super();
   }
@@ -83,12 +85,16 @@ export class DebtTransactionDialog extends BaseComponent implements OnInit {
       next: (res) => {
         this.isSubmitting = false;
         this.cdr.markForCheck();
+        const successMessage =
+          this.mode === 'add' ? 'تم إضافة المعاملة بنجاح' : 'تم سداد المعاملة بنجاح';
+        this.toastService.success(successMessage);
         this.ref.close(res.data);
       },
       error: (err) => {
         console.error('Error submitting debt transaction:', err);
         this.isSubmitting = false;
         this.errorMessage = 'حدث خطأ أثناء تنفيذ العملية، حاول مرة أخرى';
+        this.toastService.error('خطأ في تنفيذ العملية', this.errorMessage);
         this.cdr.markForCheck();
       },
     });

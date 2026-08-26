@@ -1,7 +1,6 @@
 <main class="px-6 flex flex-col gap-8">
     <section>
-        <app-page-header title="حسابات المديونيات" [home]="home"
-            [breadcrumbItems]="breadcrumbItems"></app-page-header>
+        <app-page-header title="حسابات المديونيات" [home]="home" [breadcrumbItems]="breadcrumbItems"></app-page-header>
     </section>
 
     <section>
@@ -10,15 +9,25 @@
             <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
                 style="height: 52px;">
                 <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
-                <input type="text" placeholder="ابحث..."
+                <input type="text" placeholder="ابحث..." [value]="search()" (input)="onSearch($event)"
                     class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
                     style="color: #6B7280;" />
             </div>
         </div>
     </section>
 
+    @if (isLoading()) {
+    <section class="px-4 sm:px-6 py-16 text-center">
+        <p class="text-text-secondary">جاري تحميل البيانات...</p>
+    </section>
+    } @else if (error()) {
+    <section class="px-4 sm:px-6 py-16 text-center">
+        <p class="text-red-600">{{ error() }}</p>
+    </section>
+    } @else {
     <section>
-        <app-shared-table [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"
+        <app-shared-table [tableData]="users()" [columns]="columns" [totalRecords]="totalUsers()"
             (actionClick)="onTableActionClick($event)"></app-shared-table>
     </section>
+    }
 </main>

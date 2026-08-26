@@ -1,5 +1,12 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  PotentialCustomerCenterExcelService,
+  ParsedLeadRow,
+} from '../../services/potential-customer-center-excel.service';
+import { PotentialCustomerCenterService } from '../../services/potential-customer-center.service';
+type ImportStage = 'idle' | 'parsing' | 'ready' | 'uploading' | 'error';
 
 interface UploadFile {
   id: number;
@@ -14,26 +21,31 @@ interface UploadFile {
   templateUrl: './add-customer-group-dialog.html',
   styleUrl: './add-customer-group-dialog.scss',
 })
-export class AddCustomerGroupDialog implements OnDestroy {
-  maxFiles = 3;
-  allowedTypes = 'pdf , word , png , jpg , jpeg, excel';
+export class AddCustomerGroupDialog {
+  private excelService = inject(PotentialCustomerCenterExcelService);
+  private potentialCustomerService = inject(PotentialCustomerCenterService);
+  public ref = inject(DynamicDialogRef);
 
-  files: UploadFile[] = [];
+  allowedTypes = 'xlsx';
 
+  selectedFile: File | null = null;
+  parsedLeads: ParsedLeadRow[] = [];
+  stage = signal<ImportStage>('idle');
+  errorMessage = signal('');
   isDraggingOver = false;
-  private nextId = 3;
-  private intervals = new Map<number, ReturnType<typeof setInterval>>();
 
-  get uploadingFile(): UploadFile | undefined {
-    return this.files.find((file) => !file.completed);
-  }
+  isDownloadingTemplate = false;
 
-  get completedFiles(): UploadFile[] {
-    return this.files.filter((file) => file.completed);
-  }
-
-  get remainingSlots(): number {
-    return Math.max(0, this.maxFiles - this.files.length);
+  async downloadTemplate() {
+    this.isDownloadingTemplate = true;
+    try {
+      await this.excelService.generateLeadsTemplate();
+    } catch (err) {
+      console.error('Template generation error:', err);
+      this.errorMessage.set('تعذر إنشاء القالب');
+    } finally {
+      this.isDownloadingTemplate = false;
+    }
   }
 
   onBrowseClick(fileInput: HTMLInputElement): void {
@@ -42,10 +54,9 @@ export class AddCustomerGroupDialog implements OnDestroy {
 
   onFilesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.addFiles(input.files);
-      input.value = '';
-    }
+    const file = input.files?.[0];
+    if (file) this.handleFile(file);
+    input.value = '';
   }
 
   onDragOver(event: DragEvent): void {
@@ -61,64 +72,63 @@ export class AddCustomerGroupDialog implements OnDestroy {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     this.isDraggingOver = false;
-    if (event.dataTransfer?.files) {
-      this.addFiles(event.dataTransfer.files);
+    const file = event.dataTransfer?.files?.[0];
+    if (file) this.handleFile(file);
+  }
+
+  private async handleFile(file: File): Promise<void> {
+    if (!file.name.endsWith('.xlsx')) {
+      this.stage.set('error');
+      this.errorMessage.set('الملفات المسموحة: xlsx فقط');
+      return;
+    }
+
+    this.selectedFile = file;
+    this.stage.set('parsing');
+    this.errorMessage.set('');
+
+    try {
+      this.parsedLeads = await this.excelService.parseLeadsFile(file);
+      this.stage.set('ready');
+    } catch (err: any) {
+      this.stage.set('error');
+      this.errorMessage.set(err?.message ?? 'تعذر قراءة الملف');
+      this.selectedFile = null;
+      this.parsedLeads = [];
     }
   }
 
-  private addFiles(fileList: FileList): void {
-    const availableSlots = this.remainingSlots;
-    Array.from(fileList)
-      .slice(0, availableSlots)
-      .forEach((file) => this.startUpload(file.name));
-  }
-
-  private startUpload(name: string): void {
-    const uploadFile: UploadFile = { id: this.nextId++, name, progress: 0, completed: false };
-    this.files.push(uploadFile);
-
-    // Show progress immediately after selecting/dropping a file.
-    this.advanceProgress(uploadFile);
-
-    const interval = setInterval(() => {
-      this.advanceProgress(uploadFile);
-
-      if (uploadFile.completed) {
-        clearInterval(interval);
-        this.intervals.delete(uploadFile.id);
-      }
-    }, 250);
-
-    this.intervals.set(uploadFile.id, interval);
-  }
-
-  private advanceProgress(uploadFile: UploadFile): void {
-    uploadFile.progress = Math.min(100, uploadFile.progress + 15);
-    if (uploadFile.progress >= 100) {
-      uploadFile.completed = true;
-    }
-  }
-
-  removeFile(file: UploadFile): void {
-    const interval = this.intervals.get(file.id);
-    if (interval) {
-      clearInterval(interval);
-      this.intervals.delete(file.id);
-    }
-    this.files = this.files.filter((f) => f.id !== file.id);
-  }
-
-  onClose(): void {
-    // TODO: close dialog
+  removeFile(): void {
+    this.selectedFile = null;
+    this.parsedLeads = [];
+    this.stage.set('idle');
+    this.errorMessage.set('');
   }
 
   onUploadFiles(): void {
-    console.log('Submitting files', this.completedFiles);
-    // TODO: send completed files to the API
+    if (!this.selectedFile || this.parsedLeads.length === 0) return;
+
+    this.stage.set('uploading');
+    this.errorMessage.set('');
+
+    const payload = {
+      file: this.selectedFile.name,
+      leads: this.parsedLeads,
+    };
+
+    this.potentialCustomerService.importLeads(payload).subscribe({
+      next: (response) => {
+        this.ref.close({ success: true, data: response, count: this.parsedLeads.length });
+      },
+      error: (err) => {
+        console.error('Import failed:', err);
+        this.stage.set('error');
+        this.errorMessage.set(err?.error?.message ?? 'تعذر استيراد الملف، يرجى المحاولة مرة أخرى');
+      },
+    });
   }
 
-  ngOnDestroy(): void {
-    this.intervals.forEach((interval) => clearInterval(interval));
-    this.intervals.clear();
+  onClose(): void {
+    this.ref.close();
   }
 }

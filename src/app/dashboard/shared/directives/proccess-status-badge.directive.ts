@@ -14,18 +14,27 @@ export class ProcessStatusBadgeDirective implements OnChanges {
   ngOnChanges(): void {
     if (!this.status) return;
 
-    const value = this.status.trim().toLowerCase();
+    const raw = String(this.status);
+    const value = raw.trim().toLowerCase();
+    // normalize whitespace to underscores so both "pending review" and
+    // "pending_review" match the same case
+    const normalized = value.replace(/\s+/g, '_');
 
     let color = '';
     let bgColor = '';
-    let label = this.status;
+    let label = raw;
 
-    console.log(value);
-    switch (value) {
+    switch (normalized) {
       case 'ناجحة':
         color = '#10A922';
         bgColor = '#A2FF801A';
         label = 'ناجحة';
+        break;
+      case 'pending_review':
+      case 'قيد_المراجعة':
+        color = '#F5A623';
+        bgColor = '#FFF4E5';
+        label = 'قيد المراجعة';
         break;
       default:
         color = '#9E9E9E';

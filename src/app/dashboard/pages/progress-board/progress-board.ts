@@ -1,25 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
-
-interface TopEmployee {
-  id: number;
-  name: string;
-  position: string;
-  points: number;
-  avatar: string;
-  rank: number;
-}
-
-interface RankedEmployee {
-  id: number;
-  rank: number;
-  name: string;
-  position: string;
-  points: number;
-  avatar: string;
-}
+import { ProgressBoardService, Employee } from './progress-board.service';
 
 @Component({
   selector: 'app-progress-board',
@@ -28,68 +11,48 @@ interface RankedEmployee {
   styleUrl: './progress-board.scss',
 })
 export class ProgressBoard {
+  private readonly progressBoardService = inject(ProgressBoardService);
+
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems: MenuItem[] = [{ label: 'لوحة التقدم', routerLink: '/progress-board' }];
 
-  topThree: TopEmployee[] = [
-    {
-      id: 2,
-      rank: 2,
-      name: 'لين كيلر',
-      position: 'مسؤلة',
-      points: 1500,
-      avatar: 'assets/testing/avatar.png',
-    },
-    {
-      id: 1,
-      rank: 1,
-      name: 'احمد العتيبي',
-      position: 'المدير العام',
-      points: 13450,
-      avatar: 'assets/testing/avatar.png',
-    },
-    {
-      id: 3,
-      rank: 3,
-      name: 'سارة المتنوري',
-      position: 'مسؤلة',
-      points: 1240,
-      avatar: 'assets/testing/avatar.png',
-    },
-  ];
+  topThree = signal<Employee[]>([]);
+  rankedEmployees = signal<Employee[]>([]);
+  description = signal<string>('');
+  isLoading = signal<boolean>(true);
+  error = signal<string | null>(null);
 
-  rankedEmployees: RankedEmployee[] = [
-    {
-      id: 4,
-      rank: 4,
-      name: 'خالد الشمري',
-      position: 'محاسب اول',
-      points: 945,
-      avatar: 'assets/testing/avatar.png',
-    },
-    {
-      id: 5,
-      rank: 5,
-      name: 'نورة السديري',
-      position: 'محاسب اول',
-      points: 945,
-      avatar: 'assets/testing/avatar.png',
-    },
-    {
-      id: 6,
-      rank: 6,
-      name: 'خالد الشمري',
-      position: 'محاسب اول',
-      points: 945,
-      avatar: 'assets/testing/avatar.png',
-    },
-    {
-      id: 7,
-      rank: 6,
-      name: 'خالد الشمري',
-      position: 'محاسب اول',
-      points: 945,
-      avatar: 'assets/testing/avatar.png',
-    },
-  ];
+  ngOnInit(): void {
+    this.loadProgressBoard();
+  }
+
+  private loadProgressBoard(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.progressBoardService.getProgressBoard().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const { top_performers, other_employees, description } = response.data;
+
+          // Get top 3 performers (or less if available)
+          const topPerformers = top_performers.slice(0, 3);
+
+          // Reorder: rank 2, rank 1, rank 3 for the podium display
+          const podiumOrder = [topPerformers[1], topPerformers[0], topPerformers[2]];
+          this.topThree.set(podiumOrder.filter((e) => e !== undefined));
+
+          // Other employees start after top 3
+          this.rankedEmployees.set(other_employees);
+          this.description.set(description);
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Failed to load progress board:', error);
+        this.error.set('Failed to load progress board data');
+        this.isLoading.set(false);
+      },
+    });
+  }
 }

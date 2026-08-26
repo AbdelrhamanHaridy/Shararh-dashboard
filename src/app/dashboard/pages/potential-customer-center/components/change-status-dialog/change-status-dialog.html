@@ -1,0 +1,25 @@
+<div class="flex flex-col gap-6 p-6" dir="rtl">
+    <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+        <app-shared-select formControlName="status" label="الحالة الجديدة" placeholder="اختر الحالة" inputId="status"
+            [options]="statusOptions" optionLabel="label" optionValue="value" primeNgIcon="pi pi-tag"
+            [isRequired]="true"></app-shared-select>
+
+        <div class="flex flex-col gap-2">
+            <label for="note" class="text-sm font-medium text-text-primary font-tajawal">ملاحظة (اختياري)</label>
+            <textarea id="note" formControlName="note" placeholder="أدخل ملاحظة"
+                class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm"
+                rows="3"></textarea>
+        </div>
+
+        <div class="flex flex-row gap-4 justify-end">
+            <button type="button" (click)="onCancel()"
+                class="px-8 py-3 rounded-xl border border-[#E2E8F0] text-base font-medium text-text-primary font-tajawal hover:bg-gray-50 transition-colors cursor-pointer">
+                إلغاء
+            </button>
+            <button type="submit" [disabled]="statusForm.invalid"
+                class="px-8 py-3 rounded-xl bg-primary text-white text-base font-medium font-tajawal hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                حفظ
+            </button>
+        </div>
+    </form>
+</div>
