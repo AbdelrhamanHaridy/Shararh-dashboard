@@ -142,7 +142,7 @@ export class Sessions implements OnInit {
     }).format(date);
   }
 
-  onSessionRowClick(): void {
-    this.router.navigate(['/sessions/session-details']);
+  onSessionRowClick(row: SessionRow): void {
+    this.router.navigate(['/sessions/session-details', row.id]);
   }
 }

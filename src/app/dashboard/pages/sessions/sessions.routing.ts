@@ -6,7 +6,7 @@ export const sessionsRoutes: Routes = [
     loadComponent: () => import('./sessions').then((m) => m.Sessions),
   },
   {
-    path: 'session-details',
+    path: 'session-details/:id',
     loadComponent: () =>
       import('./pages/session-details/session-details').then(
         (m) => m.SessionDetails,

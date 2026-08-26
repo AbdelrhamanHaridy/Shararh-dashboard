@@ -1,0 +1,30 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 p-4">
+  @if (errorMessage) {
+  <div class="text-red-500 text-sm bg-red-50 rounded-lg p-3">{{ errorMessage }}</div>
+  }
+
+  <div class="flex flex-col gap-2">
+    <label class="text-sm text-[#334155]">تقييم الجلسة</label>
+    <select formControlName="rating" class="border border-gray-200 rounded-lg px-3 py-2 text-sm">
+      <option value="" disabled>اختر التقييم</option>
+      <option *ngFor="let opt of ratingOptions" [value]="opt.value">{{ opt.label }}</option>
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label class="text-sm text-[#334155]">ملاحظات</label>
+    <textarea formControlName="review_notes" rows="4"
+      class="border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none"></textarea>
+  </div>
+
+  <div class="flex flex-row gap-3 justify-end">
+    <button type="button" (click)="onCancel()"
+      class="px-4 py-2 rounded-xl border border-gray-200 text-sm text-[#334155] hover:bg-gray-50">
+      إلغاء
+    </button>
+    <button type="submit" [disabled]="isSubmitting"
+      class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-[#15803D] disabled:opacity-50">
+      {{ isSubmitting ? 'جارٍ الحفظ...' : 'حفظ' }}
+    </button>
+  </div>
+</form>
