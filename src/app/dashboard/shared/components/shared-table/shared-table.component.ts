@@ -93,6 +93,21 @@ export class SharedTableComponent {
     menu.toggle(event);
   }
 
+  onSessionMenuClick(menu: Menu, row: any, event: Event) {
+    event.stopPropagation();
+    menu.model = [
+      {
+        label: 'عرض تفاصيل الجلسه',
+        command: () => this.actionClick.emit({ action: 'viewSession', row }),
+      },
+      {
+        label: 'أرشفة الجلسه',
+        command: () => this.actionClick.emit({ action: 'archiveSession', row }),
+      },
+    ];
+    menu.toggle(event);
+  }
+
   getContextMenu(row: any): any[] {
     const isActive = row.coupon_status === 'active';
 

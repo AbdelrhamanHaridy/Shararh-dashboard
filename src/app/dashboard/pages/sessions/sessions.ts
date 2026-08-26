@@ -44,7 +44,7 @@ export class Sessions implements OnInit {
       header: 'العمليات',
       style: { fontWeight: 'bold', color: '#191C19', fontSize: '16px' },
     },
-    { field: 'actions', header: '' },
+    { field: 'session_actions', header: '' },
   ];
 
   isLoading = signal(false);
@@ -142,7 +142,24 @@ export class Sessions implements OnInit {
     }).format(date);
   }
 
-  onSessionRowClick(row: SessionRow): void {
-    this.router.navigate(['/sessions/session-details', row.id]);
+  onSessionAction(event: { action: string; row: SessionRow }): void {
+    if (event.action === 'viewSession') {
+      this.router.navigate(['/sessions/session-details', event.row.id]);
+      return;
+    }
+
+    if (event.action !== 'archiveSession') return;
+    if (!confirm('هل أنت متأكد من أرشفة هذه الجلسة؟')) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.sessionsService.archiveSession(event.row.id).subscribe({
+      next: () => this.fetchSessions(this.currentPage()),
+      error: (error) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(error?.error?.message || 'حدث خطأ أثناء أرشفة الجلسة');
+      },
+    });
   }
 }

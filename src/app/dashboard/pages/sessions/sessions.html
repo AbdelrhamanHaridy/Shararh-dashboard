@@ -36,6 +36,6 @@
     }
     <section>
         <app-shared-table [tableData]="sessions()" [columns]="columns" [totalRecords]="totalSessions()"
-            [isLoading]="isLoading()" (rowClick)="onSessionRowClick($event)"></app-shared-table>
+            [isLoading]="isLoading()" (actionClick)="onSessionAction($event)"></app-shared-table>
     </section>
 </main>
