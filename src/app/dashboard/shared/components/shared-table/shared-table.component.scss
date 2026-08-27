@@ -24,7 +24,7 @@
   --p-paginator-nav-button-hover-background: #03002f3b;
   --p-paginator-nav-button-selected-color: var(--color-accent);
   --p-paginator-nav-button-selected-background: var(--color-primary);
-
+  --p-paginator-nav-button-selected-color: white;
   --p-icon-size: 18px;
   ::ng-deep .p-datatable-sortable-column {
     --p-icon-size: 14px;
@@ -64,9 +64,9 @@
 //   height: var(--p-icon-size);
 // }
 ::ng-deep .p-component.p-menu.p-menu-overlay {
-    position: relative !important;
+  position: relative !important;
 }
 ::ng-deep .p-menu-list {
-    gap: 10px !important;
-    --p-menu-item-padding: 10px !important;
+  gap: 10px !important;
+  --p-menu-item-padding: 10px !important;
 }

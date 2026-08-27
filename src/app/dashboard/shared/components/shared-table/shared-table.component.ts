@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -48,6 +49,7 @@ export class SharedTableComponent implements OnInit, OnDestroy {
   @Input() columns: any[] = [];
   @Input() rowsPerPage: number = 10;
   @Input() totalRecords: number = 0;
+  @Input() currentPage: number = 1;   // NEW
   @Input() itemLabel: string = 'items';
   @Input() isLoading: boolean = false;
   @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
@@ -66,20 +68,24 @@ export class SharedTableComponent implements OnInit, OnDestroy {
   constructor(private readonly router: Router) {}
 
   ngOnInit(): void {
-    // p-menu with appendTo="body" renders its overlay outside this
-    // component's DOM subtree, in <body>. When the route changes, Angular
-    // tears down this component, but the overlay's own close/removal can
-    // lose the race with the navigation (especially mid fade-out
-    // animation), leaving a popup visually stuck open on the next page.
-    // Closing menus the instant navigation starts avoids that race
-    // entirely, instead of relying on component destruction to clean it up.
     this.routerSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.closeAllMenus();
       }
     });
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    // Keep the paginator's visual "first" in sync whenever the parent
+    // tells us which page we're actually on (API is source of truth).
+    if (changes['currentPage'] || changes['rowsPerPage']) {
+      this.currentFirst = (this.currentPage - 1) * this.rowsPerPage;
+    }
+  }
 
+  onPageChange(event: any) {
+    this.currentFirst = event.first;
+    this.pageChange.emit(event.page + 1); // PrimeNG page is 0-indexed
+  }
   ngOnDestroy(): void {
     // Belt-and-suspenders: also close on component destroy, in case this
     // component is removed without a route change (e.g. *ngIf toggling
@@ -98,10 +104,6 @@ export class SharedTableComponent implements OnInit, OnDestroy {
     return Math.min(this.currentFirst + this.rowsPerPage, this.totalRecords);
   }
 
-  onPageChange(event: any) {
-    this.currentFirst = event.first;
-    this.pageChange.emit(event.page + 1);
-  }
 
   onActionClick(action: string, row: any) {
     this.actionClick.emit({ action, row });
