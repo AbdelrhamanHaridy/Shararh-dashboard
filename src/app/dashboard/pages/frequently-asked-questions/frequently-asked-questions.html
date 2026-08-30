@@ -30,9 +30,9 @@
 </section>
 
 <!-- Loading / Error states -->
-<section class="px-4 sm:px-6 mt-6" *ngIf="isLoading">
-    <p class="text-text-secondary text-sm">جاري التحميل...</p>
-</section>
+<ng-container *ngIf="isLoading">
+    <app-faqs-loading-skeletons></app-faqs-loading-skeletons>
+</ng-container>
 
 <section class="px-4 sm:px-6 mt-6" *ngIf="!isLoading && errorMessage">
     <p class="text-red-500 text-sm">{{ errorMessage }}</p>

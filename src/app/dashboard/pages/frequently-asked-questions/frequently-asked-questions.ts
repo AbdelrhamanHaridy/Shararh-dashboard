@@ -13,6 +13,8 @@ import { Faq, FaqFilterParams } from './models/frequently-asked-questions.model'
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { AddFaqDialog } from './components/add-faq-dialog/add-faq-dialog';
 import { EditFaqDialog } from './components/edit-faq-dialog/edit-faq-dialog';
+import { SkeletonModule } from "primeng/skeleton";
+import { FaqsLoadingSkeletons } from "./components/faqs-loading-skeletons/faqs-loading-skeletons";
 
 interface TargetTypeFilter {
   label: string;
@@ -21,7 +23,7 @@ interface TargetTypeFilter {
 
 @Component({
   selector: 'app-frequently-asked-questions',
-  imports: [AccordionModule, CommonModule, PageHeaderComponent, FormsModule, ConfirmDialogModule],
+  imports: [AccordionModule, CommonModule, PageHeaderComponent, FormsModule, ConfirmDialogModule, SkeletonModule, FaqsLoadingSkeletons],
   providers: [DialogService, ConfirmationService],
   templateUrl: './frequently-asked-questions.html',
   styleUrl: './frequently-asked-questions.scss',
