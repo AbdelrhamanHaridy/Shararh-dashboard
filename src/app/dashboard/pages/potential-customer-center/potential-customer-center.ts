@@ -6,6 +6,7 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs'
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { CustomerCard, Customer } from './components/customer-card/customer-card';
+import { CustomerCardSkeleton } from './components/customer-card-skeleton/customer-card-skeleton';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { AddCustomerGroupDialog } from './components/add-customer-group-dialog/add-customer-group-dialog';
 import { AddPotentialCustomerDialog } from './components/add-potential-customer-dialog/add-potential-customer-dialog';
@@ -46,7 +47,7 @@ const DEFAULT_AVATAR = 'assets/testing/avatar.png';
 
 @Component({
   selector: 'app-potential-customer-center',
-  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard, MenuModule],
+  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard, MenuModule, CustomerCardSkeleton],
   providers: [DialogService],
   templateUrl: './potential-customer-center.html',
   styleUrl: './potential-customer-center.scss',

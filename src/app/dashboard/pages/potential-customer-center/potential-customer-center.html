@@ -65,7 +65,11 @@
 
 @if (isLoadingLeads) {
 <section class="p-6">
-    <p class="text-sm text-[#8A97A8] font-tajawal">جارٍ التحميل...</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
+        @for (_ of [1,2,3]; track $index) {
+        <app-customer-card-skeleton></app-customer-card-skeleton>
+        }
+    </div>
 </section>
 } @else if (loadError) {
 <section class="p-6">
@@ -87,4 +91,5 @@
         }
     </div>
 </section>
+
 }
