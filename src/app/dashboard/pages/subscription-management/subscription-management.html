@@ -58,7 +58,9 @@
             (viewDetails)="onViewDetails($event)" />
         }
         } @else {
-        <p class="text-text-secondary text-center py-8">لا توجد متاجر مسجلة</p>
+        @for (_ of [1,2,3]; track $index) {
+        <app-subscription-card-skeleton></app-subscription-card-skeleton>
+        }
         }
     </div>
 </section>

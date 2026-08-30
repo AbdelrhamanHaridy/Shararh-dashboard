@@ -11,6 +11,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { MenuItem } from 'primeng/api';
 import { SubscriptionCard } from './components/subscription-card/subscription-card';
+import { SubscriptionCardSkeleton } from './components/subscription-card-skeleton/subscription-card-skeleton';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { BranchStaffManagement } from './components/branch-staff-management/branch-staff-management';
 import { AddNewSubscriber } from './components/add-new-subscriber/add-new-subscriber';
@@ -25,7 +26,7 @@ import { StoreStatistics } from './models/subscription-stats.model';
 
 @Component({
   selector: 'app-subscription-management',
-  imports: [CommonModule, SharedKpiCard, PageHeaderComponent, SubscriptionCard],
+  imports: [CommonModule, SharedKpiCard, PageHeaderComponent, SubscriptionCard, SubscriptionCardSkeleton],
   providers: [DialogService],
   templateUrl: './subscription-management.html',
   styleUrl: './subscription-management.scss',
