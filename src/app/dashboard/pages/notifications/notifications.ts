@@ -6,6 +6,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { NotificationsService } from './services/notifications.service';
 import { NotificationItem } from './models/notification.model';
 import { NotificationDetailDialog } from './components/notification-detail-dialog/notification-detail-dialog';
+import { SkeletonModule } from "primeng/skeleton";
 
 interface NotificationView {
   id: string;
@@ -46,7 +47,7 @@ const DEFAULT_ACTION_LABELS = { primary: 'عرض التفاصيل', secondary: '
 
 @Component({
   selector: 'app-notifications',
-  imports: [PageHeaderComponent, CommonModule],
+  imports: [PageHeaderComponent, CommonModule, SkeletonModule],
   providers: [DialogService],
   templateUrl: './notifications.html',
   styleUrl: './notifications.scss',
