@@ -1,6 +1,15 @@
-import { Component } from '@angular/core';
+// review-tasks-dialog.ts
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { SessionsService } from '../../services/sessions.service';
+
+interface TaskItem {
+  id: number;
+  label: string;
+  is_completed: boolean;
+}
 
 @Component({
   selector: 'app-review-tasks-dialog',
@@ -9,47 +18,43 @@ import { CheckboxModule } from 'primeng/checkbox';
   styleUrl: './review-tasks-dialog.scss',
 })
 export class ReviewTasksDialog {
-  selectedEntryIds = new Set<number>();
+  private readonly config = inject(DynamicDialogConfig);
+  private readonly ref = inject(DynamicDialogRef);
+  private readonly sessionsService = inject(SessionsService);
 
-  communicationLog: any[] = [
-    {
-      id: 1,
-      name: 'ارسال تقرير الجلسه اليومي',
-      time: '10:45 ص',
-      timeAgo: 'قبل ساعة',
-      borderColor: '#10A922',
-      direction: 'صادر',
-      contactType: 'مكالمة هاتفية',
-      reason: 'استفسار عن رصيد',
-      channelIcon: 'pi pi-phone',
-      iconBg: '#DBEAFE',
-      iconColor: '#2563EB',
-    },
-    {
-      id: 2,
-      name: 'ارسال تقرير الجلسه اليومي',
-      time: '04:20 م',
-      timeAgo: '24 مايو',
-      borderColor: '#16A34A',
-      direction: 'وارد',
-      contactType: 'واتساب',
-      reason: 'تأكيد تحويل بنكي',
-      channelIcon: 'pi pi-whatsapp',
-      iconBg: '#DCFCE7',
-      iconColor: '#16A34A',
-    },
-  ];
+  tasks: TaskItem[] = this.config.data?.tasks ?? [];
+  isSubmitting = false;
+  errorMessage: string | null = null;
 
-  toggleSelection(entryId: number): void {
-    if (this.selectedEntryIds.has(entryId)) {
-      this.selectedEntryIds.delete(entryId);
+  selectedTaskIds = new Set<number>();
+
+  toggleSelection(taskId: number): void {
+    if (this.selectedTaskIds.has(taskId)) {
+      this.selectedTaskIds.delete(taskId);
       return;
     }
-
-    this.selectedEntryIds.add(entryId);
+    this.selectedTaskIds.add(taskId);
   }
 
-  isSelected(entryId: number): boolean {
-    return this.selectedEntryIds.has(entryId);
+  isSelected(taskId: number): boolean {
+    return this.selectedTaskIds.has(taskId);
+  }
+
+  onConfirm(): void {
+    const sessionId = this.config.data?.sessionId;
+    if (!sessionId || this.selectedTaskIds.size === 0 || this.isSubmitting) return;
+
+    this.isSubmitting = true;
+    this.errorMessage = null;
+
+    this.sessionsService
+      .reviewSession(sessionId, { task_ids: [...this.selectedTaskIds] })
+      .subscribe({
+        next: (response) => this.ref.close(response.data),
+        error: (error) => {
+          this.isSubmitting = false;
+          this.errorMessage = error?.error?.message || 'حدث خطأ أثناء مراجعة المهام';
+        },
+      });
   }
 }

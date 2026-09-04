@@ -1,8 +1,7 @@
+<!-- review-subscriptions-dialog.html -->
 <section class="flex flex-col gap-4 font-tajawal">
     <div class="flex items-center justify-between gap-3">
-        <div class="flex flex-col gap-1">
-            <p class="text-text-secondary text-sm font-medium">ملخص طلبات الدفع المرتبطة بالاشتراكات</p>
-        </div>
+        <p class="text-text-secondary text-sm font-medium">ملخص طلبات الدفع المرتبطة بالاشتراكات</p>
     </div>
 
     <div class="overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white">
@@ -17,23 +16,28 @@
             </thead>
 
             <tbody>
-                @for (row of subscriptionRows; track row.customer) {
+                @if (subscriptions.length === 0) {
+                <tr>
+                    <td colspan="4" class="px-4 py-6 text-center text-[#94A3B8]">لا توجد اشتراكات لمراجعتها</td>
+                </tr>
+                }
+                @for (row of subscriptions; track row.id) {
                 <tr class="border-t border-[#E2E8F0] text-[#191C18]">
-                    <td class="px-4 py-3 align-top">{{ row.note }}</td>
+                    <td class="px-4 py-3 align-top">{{ row.note ?? '-' }}</td>
                     <td class="px-4 py-3 align-top">
-                        <span
-                            class="inline-flex rounded-full bg-[#EEF2FF] px-3 py-1 text-xs font-medium text-[#334155]">
-                            {{ row.paymentStatus }}
+                        <span class="inline-flex rounded-full bg-[#EEF2FF] px-3 py-1 text-xs font-medium text-[#334155]">
+                            {{ row.status_label }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 align-top">{{ row.paymentMethod }}</td>
-                    <td class="px-4 py-3 align-top font-medium">{{ row.customer }}</td>
+                    <td class="px-4 py-3 align-top">{{ row.payment_method_label }}</td>
+                    <td class="px-4 py-3 align-top font-medium">{{ row.customer_name }}</td>
                 </tr>
                 }
             </tbody>
         </table>
     </div>
-    <button type="button"
+
+    <button type="button" (click)="onConfirm()"
         class="inline-flex items-center justify-center gap-2.5 w-full h-fit py-3 pr-2.5 pl-2.5 rounded-[15px] bg-[#10A922] text-white text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer mt-5">
         تأكيد المراجعه
     </button>

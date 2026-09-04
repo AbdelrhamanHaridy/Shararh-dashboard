@@ -13,8 +13,9 @@ export interface EndSessionResponse {
 }
 
 export interface ReviewSessionPayload {
-  rating: 'excellent' | 'good' | 'acceptable' | 'poor'; // adjust to your actual rating enum values
+  rating?: 'excellent' | 'good' | 'acceptable' | 'poor';
   review_notes?: string;
+  task_ids?: number[];
 }
 
 export interface ReviewSessionResponse {

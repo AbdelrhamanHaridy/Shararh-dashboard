@@ -269,17 +269,6 @@ export class SessionDetails implements OnInit {
     });
   }
 
-  onReviewSubscriptions(): void {
-    this.ref = this.dialogService.open(ReviewSubscriptionsDialog, {
-      width: '586px',
-      modal: true,
-      header: 'مراجعة الاشتراكات',
-      closable: true,
-      breakpoints: { '960px': '75vw', '640px': '90vw' },
-      data: { sessionId: this.sessionId },
-    });
-  }
-
   onReviewTasks(): void {
     this.ref = this.dialogService.open(ReviewTasksDialog, {
       width: '586px',
@@ -287,7 +276,18 @@ export class SessionDetails implements OnInit {
       header: 'مراجعة السجل',
       closable: true,
       breakpoints: { '960px': '75vw', '640px': '90vw' },
-      data: { sessionId: this.sessionId },
+      data: { sessionId: this.sessionId, tasks: this.details()?.tasks.items ?? [] },
+    });
+  }
+
+  onReviewSubscriptions(): void {
+    this.ref = this.dialogService.open(ReviewSubscriptionsDialog, {
+      width: '586px',
+      modal: true,
+      header: 'مراجعة الاشتراكات',
+      closable: true,
+      breakpoints: { '960px': '75vw', '640px': '90vw' },
+      data: { subscriptions: this.details()?.subscription_review.items ?? [] },
     });
   }
 
@@ -298,7 +298,7 @@ export class SessionDetails implements OnInit {
       header: 'مراجعة السجل',
       closable: true,
       breakpoints: { '960px': '75vw', '640px': '90vw' },
-      data: { sessionId: this.sessionId },
+      data: { communications: this.details()?.communication_review ?? [] },
     });
   }
 
