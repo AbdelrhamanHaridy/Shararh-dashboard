@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 // import { SubscriptionStoresResponse, Store } from '../models/subscription-stores.model';
 // import { StatisticsApiResponse } from '../models/subscription-stats.model';
@@ -19,8 +19,9 @@ export class UserDatabaseService {
   getUserStatistics(): Observable<any> {
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`);
   }
-  getUsers(): Observable<UserListResponse> {
-    return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`);
+  getUsers(page: number = 1): Observable<UserListResponse> {
+    const params = new HttpParams().set('page', page.toString()).set('per_page', 10);
+    return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`, { params });
   }
 
   getArchivedUsers(): Observable<UserListResponse> {

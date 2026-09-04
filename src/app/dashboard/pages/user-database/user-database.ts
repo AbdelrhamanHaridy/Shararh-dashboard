@@ -69,15 +69,18 @@ export class UserDatabase extends BaseComponent implements OnInit {
   ];
 
   users: User[] = [];
+  totalUsers = 0;
+  rowsPerPage = 15;   // will sync to API's per_page
+  currentPage = 1;
 
-  totalUsers = this.users.length;
   ngOnInit(): void {
-    this.onGetUsers();
+    this.onGetUsers(1);
   }
-  onGetUsers() {
+
+  onGetUsers(page: number = 1) {
     this.isLoading = true;
     this.usersService
-      .getUsers()
+      .getUsers(page)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
@@ -85,7 +88,9 @@ export class UserDatabase extends BaseComponent implements OnInit {
             ...user,
             status: user.account_status,
           }));
-          this.totalUsers = this.users.length;
+          this.totalUsers = res.pagination.total;
+          this.rowsPerPage = res.pagination.per_page;
+          this.currentPage = res.pagination.current_page;
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -97,9 +102,13 @@ export class UserDatabase extends BaseComponent implements OnInit {
       });
   }
 
+  onPageChange(page: number): void {
+    this.onGetUsers(page);
+  }
+
   onArchiveUser(user: User): void {
     this.usersService.archiveUser(user.id).subscribe({
-      next: () => this.onGetUsers(),
+      next: () => this.onGetUsers(this.currentPage),
       error: (err) => console.error('Failed to archive user:', err),
     });
   }

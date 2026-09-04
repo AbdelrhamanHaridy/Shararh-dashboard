@@ -3,9 +3,9 @@
 <p-table #dt [value]="tableData" [responsiveLayout]="'scroll'" class="w-full text-sm">
     <ng-template pTemplate="header">
         <tr class="text-[12px] font-medium leading-[120%] p-datatable-sortable-column text-nowrap">
-            <!-- <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th> -->
             <th *ngFor="let col of columns" pSortableColumn="{{ col.field }}" class="px-4 py-3 text-left">
-                <ng-container *ngIf="col.field !== 'actions' && col.field !== 'archive_actions'; else noSort">
+                <ng-container
+                    *ngIf="col.field !== 'actions' && col.field !== 'archive_actions' && col.field !== 'session_actions'; else noSort">
                     <span>
                         {{ col.header }}
                         <p-sortIcon [field]="col.field"></p-sortIcon>
@@ -17,13 +17,8 @@
             </th>
         </tr>
     </ng-template>
-    <!-- class="text-sm text-[#717171] font-medium" -->
     <ng-template pTemplate="body" let-row>
         <tr class="hover:bg-light-hover cursor-pointer transition" (click)="onRowClick(row)">
-            <!-- <td class="px-4 py-2" (click)="$event.stopPropagation()">
-                    <p-tableCheckbox [value]="row"></p-tableCheckbox>
-                </td> -->
-
             <td *ngFor="let col of columns" class="text-nowrap text-sm text-[#717171] font-medium"
                 [ngStyle]="getColumnStyle(col)">
                 @switch (col.field) {
@@ -90,24 +85,26 @@
                     </button>
                 </div>
                 }
+                @case('session_actions') {
+                <div class="card flex justify-center">
+                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        (click)="onSessionMenuClick(row, $event)" title="المزيد" aria-label="إجراءات الجلسة">
+                        <img src="assets/icons/global/menu_dots.svg" alt="المزيد" class="w-5 h-5" />
+                    </button>
+                </div>
+                }
                 @case('archive_actions') {
                 <div class="card flex justify-center">
-                    <p-menu #archiveMenu [popup]="true" appendTo="body" [style]="{ minWidth: '120px' }">
-                    </p-menu>
-                    <button type="button" #archiveMenuButton
-                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        (click)="onArchiveMenuClick(archiveMenu, row, $event)" title="المزيد">
+                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        (click)="onArchiveMenuClick(row, $event)" title="المزيد">
                         <img src="assets/icons/global/menu_dots.svg" alt="المزيد" class="w-5 h-5" />
                     </button>
                 </div>
                 }
                 @case('coupon_actions') {
                 <div class="card flex justify-center">
-                    <p-menu #menu [popup]="true" appendTo="body" [style]="{ minWidth: '160px' }">
-                    </p-menu>
-                    <button type="button" #menuButton
-                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        (click)="onCouponMenuClick(menu, row, $event)">
+                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        (click)="onCouponMenuClick(row, $event)">
                         <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
                     </button>
                 </div>
@@ -149,6 +146,21 @@
 </table>
 }
 
+<!-- Shared, single-instance popup menus (moved OUTSIDE the row *ngFor to stop
+     PrimeNG from creating/orphaning a new overlay per row on every re-render) -->
+<p-menu #sessionMenu [popup]="true" appendTo="body" [style]="{ minWidth: '180px' }"></p-menu>
+<p-menu #archiveMenu [popup]="true" appendTo="body" [style]="{ minWidth: '120px' }"></p-menu>
+<p-menu #couponMenu [popup]="true" appendTo="body" [style]="{ minWidth: '160px' }"></p-menu>
+<!-- Pagination -->
+<div class="flex flex-col items-center justify-between gap-2 mt-4 px-4">
+    <p-paginator [first]="currentFirst" [rows]="rowsPerPage" [totalRecords]="totalRecords"
+        (onPageChange)="onPageChange($event)">
+    </p-paginator>
+    <p class="text-sm text-secondary-text font-tajawal">
+        Showing {{ showingCount }} of {{ totalRecords }} {{ itemLabel }}
+    </p>
+
+</div>
 <!-- Pagination -->
 <!-- <div class="flex flex-row items-center justify-between mt-4 px-4">
     <p class="text-sm text-secondary-text font-tajawal">

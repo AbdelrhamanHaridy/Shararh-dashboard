@@ -46,5 +46,7 @@
 </section>
 <section class="p-6">
     <app-shared-table [isLoading]="isLoading" [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"
-        (actionClick)="onArchiveUser($event.row)"></app-shared-table>
+        [rowsPerPage]="rowsPerPage" [currentPage]="currentPage" (pageChange)="onPageChange($event)"
+        (actionClick)="onArchiveUser($event.row)">
+    </app-shared-table>
 </section>
