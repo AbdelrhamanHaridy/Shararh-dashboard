@@ -1,0 +1,16 @@
+<!-- shared/components/context-menu/context-menu.component.html -->
+@if (state(); as menu) {
+<div class="fixed min-w-[160px] bg-white border border-[#E2E8F0] rounded-xl shadow-lg z-[9999] py-1.5"
+    [style.top.px]="menu.position.top" [style.left.px]="menu.position.left" (click)="$event.stopPropagation()">
+    @for (item of menu.items; track item.label) {
+    <button type="button" (click)="onItemClick(item, $event)" [disabled]="item.disabled"
+        class="w-full flex items-center gap-2 text-right px-4 py-2 text-sm hover:bg-[#F8FAFC] cursor-pointer transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+        [style.color]="item.color || '#334155'">
+        @if (item.icon) {
+        <i [class]="item.icon" class="text-xs"></i>
+        }
+        <span>{{ item.label }}</span>
+    </button>
+    }
+</div>
+}

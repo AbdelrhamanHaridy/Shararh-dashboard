@@ -1,3 +1,5 @@
+<!-- shared-table.component.html -->
+
 @if (activeSearchTerm) {
 <div class="flex flex-row items-center justify-between gap-3 bg-[#EEF2FF] rounded-xl px-4 py-2.5 mb-3">
     <p class="text-sm text-[#4338CA] font-medium font-tajawal">
@@ -11,8 +13,6 @@
 </div>
 }
 
-<!-- Table -->
-
 @if (!isLoading) {
 <p-table #dt [value]="tableData" [responsiveLayout]="'scroll'" class="w-full text-sm">
     <ng-template pTemplate="header">
@@ -25,13 +25,11 @@
                         <p-sortIcon [field]="col.field"></p-sortIcon>
                     </span>
                 </ng-container>
-                <ng-template #noSort>
-                    {{ col.header }}
-                </ng-template>
+                <ng-template #noSort>{{ col.header }}</ng-template>
             </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-row>
+    <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
         <tr class="hover:bg-light-hover cursor-pointer transition" (click)="onRowClick(row)">
             <td *ngFor="let col of columns" class="text-nowrap text-sm text-[#717171] font-medium"
                 [ngStyle]="getColumnStyle(col)">
@@ -40,24 +38,12 @@
                 <div class="bg-[#EEF2FF] rounded-full w-8 h-8 flex items-center justify-center font-black">{{
                     row[col.field] }}</div>
                 }
-                @case('status') {
-                <div appStatusBadge="{{ row[col.field] }}"></div>
-                }
-                @case('role') {
-                <div appRoleBadge="{{ row[col.field] }}"></div>
-                }
-                @case('roles') {
-                <div appRoleBadge="{{ row[col.field] }}"></div>
-                }
-                @case('rating') {
-                <div appRatingBadge="{{ row[col.field] }}"></div>
-                }
-                @case('coupon_status') {
-                <div appCouponStatusBadge="{{ row[col.field] }}"></div>
-                }
-                @case('processStatus') {
-                <div appProcessStatusBadge="{{ row[col.field] }}"></div>
-                }
+                @case('status') { <div appStatusBadge="{{ row[col.field] }}"></div> }
+                @case('role') { <div appRoleBadge="{{ row[col.field] }}"></div> }
+                @case('roles') { <div appRoleBadge="{{ row[col.field] }}"></div> }
+                @case('rating') { <div appRatingBadge="{{ row[col.field] }}"></div> }
+                @case('coupon_status') { <div appCouponStatusBadge="{{ row[col.field] }}"></div> }
+                @case('processStatus') { <div appProcessStatusBadge="{{ row[col.field] }}"></div> }
                 @case('employeeName') {
                 <div class="flex flex-row pr-4 items-center gap-3">
                     <img src="{{ row.avatarUrl }}" alt="{{ row.employeeName }}" class="w-10 h-10 rounded-full">
@@ -101,24 +87,25 @@
                 }
                 @case('session_actions') {
                 <div class="card flex justify-center">
-                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        (click)="onSessionMenuClick(row, $event)" title="المزيد" aria-label="إجراءات الجلسة">
+                    <button type="button" [appMenuTrigger]="getSessionMenuItems(row)"
+                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" title="المزيد"
+                        aria-label="إجراءات الجلسة">
                         <img src="assets/icons/global/menu_dots.svg" alt="المزيد" class="w-5 h-5" />
                     </button>
                 </div>
                 }
                 @case('archive_actions') {
                 <div class="card flex justify-center">
-                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        (click)="onArchiveMenuClick(row, $event)" title="المزيد">
+                    <button type="button" [appMenuTrigger]="getArchiveMenuItems(row)"
+                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" title="المزيد">
                         <img src="assets/icons/global/menu_dots.svg" alt="المزيد" class="w-5 h-5" />
                     </button>
                 </div>
                 }
                 @case('coupon_actions') {
                 <div class="card flex justify-center">
-                    <button type="button" class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        (click)="onCouponMenuClick(row, $event)">
+                    <button type="button" [appMenuTrigger]="getCouponMenuItems(row)"
+                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <img src="assets/icons/global/menu_dots.svg" alt="more" class="w-5 h-5" />
                     </button>
                 </div>
@@ -133,26 +120,20 @@
                         class="px-5 py-1 bg-white text-primary text-sm rounded-xl cursor-pointer w-fit border border-primary">التفاصيل</button>
                 </div>
                 }
-                @default {
-                <p>{{ row[col.field] }}</p>
-                } }
+                @default { <p>{{ row[col.field] }}</p> }
+                }
             </td>
         </tr>
     </ng-template>
 </p-table>
 } @else {
-<!-- Skeleton Loading -->
 <table class="w-full text-sm">
     <tbody>
         @for (_ of [1,2,3,4,5]; track $index) {
         <tr class="border-b border-[#E2E8F0]">
-            <td class="px-4 py-3">
-                <p-skeleton shape="circle" size="2rem"></p-skeleton>
-            </td>
+            <td class="px-4 py-3"><p-skeleton shape="circle" size="2rem"></p-skeleton></td>
             @for (_ of columns; track $index) {
-            <td class="px-4 py-3">
-                <p-skeleton width="120px" height="16px"></p-skeleton>
-            </td>
+            <td class="px-4 py-3"><p-skeleton width="120px" height="16px"></p-skeleton></td>
             }
         </tr>
         }
@@ -160,11 +141,6 @@
 </table>
 }
 
-<!-- Shared, single-instance popup menus (moved OUTSIDE the row *ngFor to stop
-     PrimeNG from creating/orphaning a new overlay per row on every re-render) -->
-<p-menu #sessionMenu [popup]="true" appendTo="body" [style]="{ minWidth: '180px' }"></p-menu>
-<p-menu #archiveMenu [popup]="true" appendTo="body" [style]="{ minWidth: '120px' }"></p-menu>
-<p-menu #couponMenu [popup]="true" appendTo="body" [style]="{ minWidth: '160px' }"></p-menu>
 <!-- Pagination -->
 <div class="flex flex-col items-center justify-between gap-2 mt-4 px-4">
     <p-paginator [first]="currentFirst" [rows]="rowsPerPage" [totalRecords]="totalRecords"
@@ -173,12 +149,9 @@
     <p class="text-sm text-secondary-text font-tajawal">
         Showing {{ showingCount }} of {{ totalRecords }} {{ itemLabel }}
     </p>
-
 </div>
-<!-- Pagination -->
-<!-- <div class="flex flex-row items-center justify-between mt-4 px-4">
-    <p class="text-sm text-secondary-text font-tajawal">
-        Showing {{ showingCount }} of {{ totalRecords }} {{ itemLabel }}
-    </p>
-    <p-paginator [rows]="rowsPerPage" [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)"></p-paginator>
-</div> -->
+
+<!-- NEW: single shared dropdown, rendered once at the component root
+     (outside p-table's DOM), position: fixed to the last-clicked button's
+     coordinates. Being fixed means it's never clipped by the table's
+     overflow-x:auto scroll container, however deep the row is. -->
