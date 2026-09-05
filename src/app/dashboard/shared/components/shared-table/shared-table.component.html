@@ -1,4 +1,18 @@
+@if (activeSearchTerm) {
+<div class="flex flex-row items-center justify-between gap-3 bg-[#EEF2FF] rounded-xl px-4 py-2.5 mb-3">
+    <p class="text-sm text-[#4338CA] font-medium font-tajawal">
+        نتائج البحث عن: <span class="font-bold">"{{ activeSearchTerm }}"</span>
+    </p>
+    <button type="button" (click)="onClearSearchClick()"
+        class="flex items-center gap-1.5 text-sm text-[#4338CA] font-medium cursor-pointer hover:underline">
+        <i class="pi pi-times text-xs"></i>
+        <span>مسح الفلتر</span>
+    </button>
+</div>
+}
+
 <!-- Table -->
+
 @if (!isLoading) {
 <p-table #dt [value]="tableData" [responsiveLayout]="'scroll'" class="w-full text-sm">
     <ng-template pTemplate="header">

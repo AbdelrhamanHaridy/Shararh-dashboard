@@ -49,12 +49,14 @@ export class SharedTableComponent implements OnInit, OnDestroy {
   @Input() columns: any[] = [];
   @Input() rowsPerPage: number = 10;
   @Input() totalRecords: number = 0;
-  @Input() currentPage: number = 1;   // NEW
+  @Input() currentPage: number = 1; // NEW
   @Input() itemLabel: string = 'items';
   @Input() isLoading: boolean = false;
   @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
   @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() actionClick: EventEmitter<{ action: string; row: any }> = new EventEmitter();
+  @Output() clearSearch: EventEmitter<void> = new EventEmitter<void>(); // NEW
+  @Input() activeSearchTerm: string = ''; // NEW
 
   // Single shared menu instances, one per menu "type", reused across all rows.
   @ViewChild('sessionMenu') sessionMenu!: Menu;
@@ -104,6 +106,9 @@ export class SharedTableComponent implements OnInit, OnDestroy {
     return Math.min(this.currentFirst + this.rowsPerPage, this.totalRecords);
   }
 
+  onClearSearchClick(): void {
+    this.clearSearch.emit();
+  }
 
   onActionClick(action: string, row: any) {
     this.actionClick.emit({ action, row });

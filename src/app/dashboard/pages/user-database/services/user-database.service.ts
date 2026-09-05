@@ -19,11 +19,14 @@ export class UserDatabaseService {
   getUserStatistics(): Observable<any> {
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`);
   }
-  getUsers(page: number = 1): Observable<UserListResponse> {
-    const params = new HttpParams().set('page', page.toString()).set('per_page', 10);
+  // user-database.service.ts
+  getUsers(page: number = 1, perPage: number = 10, search?: string): Observable<UserListResponse> {
+    let params = new HttpParams().set('page', page.toString()).set('per_page', perPage.toString());
+    if (search) {
+      params = params.set('search', search);
+    }
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`, { params });
   }
-
   getArchivedUsers(): Observable<UserListResponse> {
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users/archived`);
   }

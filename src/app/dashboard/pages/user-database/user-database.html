@@ -23,10 +23,9 @@
 <section class="p-6">
     <div class="p-6 bg-white rounded-2xl shadow-md flex flex-col gap-5 relative">
         <!-- Search Bar -->
-        <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]"
-            style=" height: 52px;">
+        <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]" style="height: 52px;">
             <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
-            <input type="text" placeholder="ابحث..."
+            <input type="text" placeholder="ابحث..." [ngModel]="searchTerm" (ngModelChange)="onSearchInput($event)"
                 class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
                 style="color: #6B7280;" />
         </div>
@@ -46,7 +45,7 @@
 </section>
 <section class="p-6">
     <app-shared-table [isLoading]="isLoading" [tableData]="users" [columns]="columns" [totalRecords]="totalUsers"
-        [rowsPerPage]="rowsPerPage" [currentPage]="currentPage" (pageChange)="onPageChange($event)"
-        (actionClick)="onArchiveUser($event.row)">
-    </app-shared-table>
+        [rowsPerPage]="rowsPerPage" [currentPage]="currentPage" [activeSearchTerm]="searchTerm"
+        (pageChange)="onPageChange($event)" (clearSearch)="onClearSearch()"
+        (actionClick)="onArchiveUser($event.row)"></app-shared-table>
 </section>
