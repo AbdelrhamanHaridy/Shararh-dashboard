@@ -117,9 +117,10 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
       .createOwner(payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.isSubmitting = false;
-          this.router.navigate(['/merchants']); // adjust to your actual listing route
+          console.log('Owner created successfully:', response.data);
+          this.router.navigate(['/user-database']);
         },
         error: (err) => {
           console.error('Error creating merchant:', err);
@@ -130,6 +131,6 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate(['/merchants']); // adjust to your actual listing route
+    this.router.navigate(['/user-database']);
   }
 }
