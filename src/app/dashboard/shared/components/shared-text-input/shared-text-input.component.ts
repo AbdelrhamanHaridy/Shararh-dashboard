@@ -23,6 +23,7 @@ export class SharedTextInputComponent implements ControlValueAccessor {
   @Input() placeholder = '';
   @Input() inputId = '';
   @Input() isRequired = false;
+  @Input() readOnly = false;
 
   value = '';
   disabled = false;

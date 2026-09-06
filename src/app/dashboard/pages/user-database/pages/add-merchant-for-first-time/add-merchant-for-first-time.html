@@ -32,33 +32,47 @@
                 primeNgIcon="pi pi-map-marker" [isRequired]="true">
             </app-shared-select>
 
-            <app-shared-text-input formControlName="city" label="المدينه / المركز" placeholder="المدينه"
-                inputId="city" primeNgIcon="pi pi-building" [isRequired]="true">
+            <app-shared-text-input formControlName="city" label="المدينه / المركز" placeholder="المدينه" inputId="city"
+                primeNgIcon="pi pi-building" [isRequired]="true">
             </app-shared-text-input>
 
             <app-shared-text-input formControlName="streetName" label="اسم الشارع" placeholder="ادخل اسم الشارع"
                 inputId="streetName" primeNgIcon="pi pi-map" [isRequired]="true">
             </app-shared-text-input>
 
-            <!-- Optional coordinates -->
-            <div class="col-span-2 flex flex-row items-end gap-4">
-                <app-shared-text-input formControlName="lat" label="خط العرض (اختياري)" placeholder="Latitude"
-                    inputId="lat" primeNgIcon="pi pi-compass" [isRequired]="false" [type]="'number'">
-                </app-shared-text-input>
+            <!-- Map picker -->
+            <div class="col-span-2 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-medium text-text-secondary">
+                        حدد الموقع على الخريطة (اختياري)
+                    </label>
+                    <button type="button" (click)="useCurrentLocation()"
+                        class="px-4 py-2 bg-primary-op-10 text-primary rounded-xl cursor-pointer text-sm font-medium hover:bg-primary-op-30 transition-colors shrink-0">
+                        <i class="pi pi-map-marker"></i>
+                        الموقع الحالي
+                    </button>
+                </div>
 
-                <app-shared-text-input formControlName="long" label="خط الطول (اختياري)" placeholder="Longitude"
-                    inputId="long" primeNgIcon="pi pi-compass" [isRequired]="false" [type]="'number'">
-                </app-shared-text-input>
+                <app-location-picker-map [lat]="userForm.get('lat')?.value" [long]="userForm.get('long')?.value"
+                    (locationChange)="onMapLocationChange($event)">
+                </app-location-picker-map>
 
-                <button type="button" (click)="useCurrentLocation()"
-                    class="h-fit px-5 py-3 bg-primary-op-10 text-primary rounded-xl cursor-pointer text-sm font-medium hover:bg-primary-op-30 transition-colors shrink-0">
-                    <i class="pi pi-map-marker"></i>
-                    الموقع الحالي
-                </button>
+                <!-- Read-only display of the selected coordinates, kept in sync
+                 by the map and by "use current location" — no manual typing -->
+                <div class="grid grid-cols-2 gap-4">
+                    <app-shared-text-input formControlName="lat" label="خط العرض" placeholder="اختر من الخريطة"
+                        inputId="lat" primeNgIcon="pi pi-compass" [isRequired]="false" [type]="'number'"
+                        [readOnly]="true">
+                    </app-shared-text-input>
+
+                    <app-shared-text-input formControlName="long" label="خط الطول" placeholder="اختر من الخريطة"
+                        inputId="long" primeNgIcon="pi pi-compass" [isRequired]="false" [type]="'number'"
+                        [readOnly]="true">
+                    </app-shared-text-input>
+                </div>
             </div>
         </div>
     </section>
-
     <!-- Section 3: Business Details -->
     <section class="p-5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">بيانات المنشأة</h2>
@@ -73,8 +87,7 @@
             </app-shared-text-input>
 
             <app-shared-text-input formControlName="email" label="البريد الالكتروني"
-                placeholder="ادخل البريد الالكتروني" inputId="email" primeNgIcon="pi pi-envelope"
-                [isRequired]="true">
+                placeholder="ادخل البريد الالكتروني" inputId="email" primeNgIcon="pi pi-envelope" [isRequired]="true">
             </app-shared-text-input>
 
             <app-shared-text-input formControlName="password" label="كلمة المرور" placeholder="ادخل كلمة المرور"

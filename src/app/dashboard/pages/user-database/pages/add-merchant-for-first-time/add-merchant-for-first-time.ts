@@ -1,9 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+// add-merchant-for-first-time.ts
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SharedTextInputComponent } from '../../../../shared/components/shared-text-input/shared-text-input.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SharedSelectComponent } from '../../../../shared/components/shared-select/shared-select.component';
+import {
+  LocationPickerMapComponent,
+  LatLngValue,
+} from '../../../../shared/components/location-picker-map/location-picker-map.component';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { AddMerchantPayload } from '../../models/add-merchant.model';
@@ -18,11 +23,14 @@ import { OwnerService } from '../../services/owner.service.service';
     ToggleSwitchModule,
     CommonModule,
     SharedSelectComponent,
+    LocationPickerMapComponent,
   ],
   templateUrl: './add-merchant-for-first-time.html',
   styleUrl: './add-merchant-for-first-time.scss',
 })
 export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
+  @ViewChild(LocationPickerMapComponent) locationMap!: LocationPickerMapComponent;
+
   userForm!: FormGroup;
   isSubmitting = false;
   errorMessage = '';
@@ -32,7 +40,6 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
     { label: 'الإسكندرية', value: 'alexandria' },
     { label: 'الجيزة', value: 'giza' },
     { label: 'الدقهلية', value: 'dakahlia' },
-    // ... add more governorates
   ];
 
   constructor(
@@ -45,41 +52,39 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.userForm = this.fb.group({
-      // Personal Information
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-
-      // Store Information
       businessName: ['', [Validators.required, Validators.minLength(3)]],
       storePhone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-
-      // Location
       governorate: ['', Validators.required],
       city: ['', Validators.required],
       streetName: ['', Validators.required],
-
-      // Optional geo-coordinates
       lat: [null],
       long: [null],
-
-      // Business Details
       employeeCount: ['', [Validators.required, Validators.min(1)]],
     });
   }
 
-  // Populate lat/long from the browser's geolocation, if the user allows it
+  // Called from the map's (locationChange) — updates the form so the
+  // lat/long text inputs (kept read-only display fields, see template)
+  // and the payload stay in sync with whatever the user picked on the map.
+  onMapLocationChange(value: LatLngValue): void {
+    this.userForm.patchValue({ lat: value.lat, long: value.long });
+  }
+
+  // "Use current location" now also recenters + drops the pin on the map,
+  // instead of only patching the hidden form fields.
   useCurrentLocation() {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.userForm.patchValue({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
+        const { latitude, longitude } = position.coords;
+        this.userForm.patchValue({ lat: latitude, long: longitude });
+        this.locationMap?.setExternalLocation(latitude, longitude);
       },
       (err) => {
         console.error('Error getting location:', err);
