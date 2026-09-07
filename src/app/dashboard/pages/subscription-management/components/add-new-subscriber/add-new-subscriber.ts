@@ -4,11 +4,18 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { SharedSelectComponent } from '../../../../shared/components/shared-select/shared-select.component';
 import { SharedTextInputComponent } from '../../../../shared/components/shared-text-input/shared-text-input.component';
-import { ToggleSwitchModule } from "primeng/toggleswitch";
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-add-new-subscriber',
-  imports: [CommonModule, ReactiveFormsModule, SharedSelectComponent, SharedTextInputComponent, ToggleSwitchModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SharedSelectComponent,
+    SharedTextInputComponent,
+    ToggleSwitchModule,
+  ],
   templateUrl: './add-new-subscriber.html',
   styleUrl: './add-new-subscriber.scss',
 })
@@ -25,6 +32,7 @@ export class AddNewSubscriber implements OnInit {
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
     private fb: FormBuilder,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -101,6 +109,7 @@ export class AddNewSubscriber implements OnInit {
         success: true,
         data: this.subscriberForm.value,
       };
+      this.toastService.success('تمت الإضافة', 'تمت إضافة المشترك بنجاح');
       this.closeDialog(result);
     }
   }

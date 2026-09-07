@@ -6,6 +6,7 @@ import {
   ParsedLeadRow,
 } from '../../services/potential-customer-center-excel.service';
 import { PotentialCustomerCenterService } from '../../services/potential-customer-center.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 type ImportStage = 'idle' | 'parsing' | 'ready' | 'uploading' | 'error';
 
 interface UploadFile {
@@ -24,6 +25,7 @@ interface UploadFile {
 export class AddCustomerGroupDialog {
   private excelService = inject(PotentialCustomerCenterExcelService);
   private potentialCustomerService = inject(PotentialCustomerCenterService);
+  private toastService = inject(ToastService);
   public ref = inject(DynamicDialogRef);
 
   allowedTypes = 'xlsx';
@@ -42,7 +44,9 @@ export class AddCustomerGroupDialog {
       await this.excelService.generateLeadsTemplate();
     } catch (err) {
       console.error('Template generation error:', err);
-      this.errorMessage.set('تعذر إنشاء القالب');
+      const message = 'تعذر إنشاء القالب';
+      this.errorMessage.set(message);
+      this.toastService.error('فشل تحميل القالب', message);
     } finally {
       this.isDownloadingTemplate = false;
     }
@@ -79,7 +83,9 @@ export class AddCustomerGroupDialog {
   private async handleFile(file: File): Promise<void> {
     if (!file.name.endsWith('.xlsx')) {
       this.stage.set('error');
-      this.errorMessage.set('الملفات المسموحة: xlsx فقط');
+      const message = 'الملفات المسموحة: xlsx فقط';
+      this.errorMessage.set(message);
+      this.toastService.error('ملف غير صالح', message);
       return;
     }
 
@@ -92,7 +98,9 @@ export class AddCustomerGroupDialog {
       this.stage.set('ready');
     } catch (err: any) {
       this.stage.set('error');
-      this.errorMessage.set(err?.message ?? 'تعذر قراءة الملف');
+      const message = err?.message ?? 'تعذر قراءة الملف';
+      this.errorMessage.set(message);
+      this.toastService.error('فشل قراءة الملف', message);
       this.selectedFile = null;
       this.parsedLeads = [];
     }
@@ -118,12 +126,15 @@ export class AddCustomerGroupDialog {
 
     this.potentialCustomerService.importLeads(payload).subscribe({
       next: (response) => {
+        this.toastService.success('تم الاستيراد', 'تم استيراد العملاء المحتملين بنجاح');
         this.ref.close({ success: true, data: response, count: this.parsedLeads.length });
       },
       error: (err) => {
         console.error('Import failed:', err);
         this.stage.set('error');
-        this.errorMessage.set(err?.error?.message ?? 'تعذر استيراد الملف، يرجى المحاولة مرة أخرى');
+        const message = err?.error?.message ?? 'تعذر استيراد الملف، يرجى المحاولة مرة أخرى';
+        this.errorMessage.set(message);
+        this.toastService.error('فشل الاستيراد', message);
       },
     });
   }

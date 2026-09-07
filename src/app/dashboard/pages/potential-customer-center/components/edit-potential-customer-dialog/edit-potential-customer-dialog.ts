@@ -15,6 +15,7 @@ import { PotentialCustomerCenterService } from '../../services/potential-custome
 import { UserDatabaseService } from '../../../user-database/services/user-database.service';
 import { finalize, of, switchMap } from 'rxjs';
 import { Lead } from '../../models/potential-customer-center.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-edit-potential-customer-dialog',
@@ -28,6 +29,7 @@ export class EditPotentialCustomerDialog implements OnInit {
   private potentialCustomerService = inject(PotentialCustomerCenterService);
   private userService = inject(UserDatabaseService);
   private cdr = inject(ChangeDetectorRef);
+  private toastService = inject(ToastService);
   public ref = inject(DynamicDialogRef);
   public config = inject(DynamicDialogConfig);
 
@@ -90,6 +92,7 @@ export class EditPotentialCustomerDialog implements OnInit {
       error: (error) => {
         console.error('Error loading employees:', error);
         this.employees.set([]);
+        this.toastService.error('فشل تحميل الموظفين', this.getErrorMessage(error));
         this.cdr.markForCheck();
       },
     });
@@ -121,6 +124,7 @@ export class EditPotentialCustomerDialog implements OnInit {
       error: (error) => {
         console.error('Error loading sources:', error);
         this.customerSources.set([]);
+        this.toastService.error('فشل تحميل المصادر', this.getErrorMessage(error));
         this.cdr.markForCheck();
       },
     });
@@ -164,13 +168,45 @@ export class EditPotentialCustomerDialog implements OnInit {
               success: true,
               data: response,
             };
+            this.toastService.success('تم التحديث', 'تم تحديث العميل المحتمل بنجاح');
             this.closeDialog(result);
           },
           error: (error) => {
             console.error('Error updating lead:', error);
+            this.toastService.error('فشل تحديث العميل المحتمل', this.getErrorMessage(error));
             this.cdr.markForCheck();
           },
         });
     }
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }
