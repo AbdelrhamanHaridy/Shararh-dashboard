@@ -14,7 +14,7 @@
     </div>
     <!--  rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30 -->
     <!-- Radio Button Selection -->
-    <div class="mt-8 flex flex-row gap-7">
+    <div class="mt-8 flex flex-col sm:flex-row gap-7">
         <label *ngFor="let type of userTypes" [for]="'user-type-' + type.id"
             [class]="'flex items-center px-6 py-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer text-lg ' +
                         (selectedUserType === type.id ? 'border-primary-op-30 bg-primary-op-10' : 'border-[#E2E8F0] bg-white hover:border-primary/50')">

@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs';
 import { AddMerchantPayload } from '../../models/add-merchant.model';
 import { BaseComponent } from '../../../../shared/services/base.component';
 import { OwnerService } from '../../services/owner.service.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-add-merchant-for-first-time',
@@ -46,6 +47,7 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private ownerService: OwnerService,
+    private toastService: ToastService,
   ) {
     super();
   }
@@ -125,12 +127,14 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
         next: (response) => {
           this.isSubmitting = false;
           console.log('Owner created successfully:', response.data);
+          this.toastService.success('تمت الإضافة', 'تمت إضافة التاجر بنجاح');
           this.router.navigate(['/user-database']);
         },
         error: (err) => {
           console.error('Error creating merchant:', err);
           this.isSubmitting = false;
           this.errorMessage = this.getErrorMessage(err);
+          this.toastService.error('فشل إضافة التاجر', this.errorMessage);
         },
       });
   }

@@ -1,8 +1,8 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6 sm:gap-8">
     <!-- Section 1: Basic Information -->
-    <section class="p-5 bg-white rounded-3xl">
+    <section class="p-4 sm:p-5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">المعلومات الأساسية</h2>
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <app-shared-text-input formControlName="firstName" label="الاسم الاول" placeholder="ادخل الاسم الاول"
                 inputId="firstName" primeNgIcon="pi pi-user" [isRequired]="true">
             </app-shared-text-input>
@@ -24,9 +24,9 @@
     </section>
 
     <!-- Section 2: Location and Address -->
-    <section class="p-5 bg-white rounded-3xl">
+    <section class="p-4 sm:p-5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">الموقع والعنوان</h2>
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <app-shared-select formControlName="governorate" label="المحافظه" placeholder="اختر المحافظه"
                 inputId="governorate" [options]="governorateOptions" optionLabel="label" optionValue="value"
                 primeNgIcon="pi pi-map-marker" [isRequired]="true">
@@ -41,13 +41,13 @@
             </app-shared-text-input>
 
             <!-- Map picker -->
-            <div class="col-span-2 flex flex-col gap-3">
-                <div class="flex items-center justify-between">
+            <div class="col-span-1 md:col-span-2 flex flex-col gap-3 min-w-0">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
                     <label class="text-sm font-medium text-text-secondary">
                         حدد الموقع على الخريطة (اختياري)
                     </label>
                     <button type="button" (click)="useCurrentLocation()"
-                        class="px-4 py-2 bg-primary-op-10 text-primary rounded-xl cursor-pointer text-sm font-medium hover:bg-primary-op-30 transition-colors shrink-0">
+                        class="w-full sm:w-fit px-4 py-2 bg-primary-op-10 text-primary rounded-xl cursor-pointer text-sm font-medium hover:bg-primary-op-30 transition-colors shrink-0">
                         <i class="pi pi-map-marker"></i>
                         الموقع الحالي
                     </button>
@@ -59,7 +59,7 @@
 
                 <!-- Read-only display of the selected coordinates, kept in sync
                  by the map and by "use current location" — no manual typing -->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <app-shared-text-input formControlName="lat" label="خط العرض" placeholder="اختر من الخريطة"
                         inputId="lat" primeNgIcon="pi pi-compass" [isRequired]="false" [type]="'number'"
                         [readOnly]="true">
@@ -74,9 +74,9 @@
         </div>
     </section>
     <!-- Section 3: Business Details -->
-    <section class="p-5 bg-white rounded-3xl">
+    <section class="p-4 sm:p-5 bg-white rounded-3xl">
         <h2 class="text-text-secondary text-base font-medium mb-7">بيانات المنشأة</h2>
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <app-shared-text-input formControlName="employeeCount" label="عدد المظفين في المنشأه"
                 placeholder="عدد المظفين في المنشأه" inputId="employeeCount" primeNgIcon="pi pi-users"
                 [isRequired]="true" [type]="'number'">
@@ -99,13 +99,13 @@
     <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
 
     <!-- Form Actions -->
-    <div class="flex flex-row gap-8 justify-end">
+    <div class="flex flex-col-reverse sm:flex-row gap-4 sm:gap-8 justify-end">
         <button type="button" (click)="onCancel()"
-            class="px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer w-fit hover:bg-[#B8C4D4] transition-colors">
+            class="w-full sm:w-fit px-6 sm:px-18 py-3 bg-[#CBD4E2] text-black rounded-xl cursor-pointer hover:bg-[#B8C4D4] transition-colors">
             إلغاء
         </button>
         <button type="submit" [disabled]="userForm.invalid || isSubmitting"
-            class="px-18 py-3 bg-primary text-white rounded-xl cursor-pointer w-fit hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            class="w-full sm:w-fit px-6 sm:px-18 py-3 bg-primary text-white rounded-xl cursor-pointer hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             {{ isSubmitting ? 'جاري الإضافة...' : 'إضافة' }}
         </button>
     </div>
