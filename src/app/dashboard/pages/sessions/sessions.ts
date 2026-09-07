@@ -7,6 +7,7 @@ import { SharedTableComponent } from '../../shared/components/shared-table/share
 import { Router } from '@angular/router';
 import { SessionsService } from './services/sessions.service';
 import { ApiSession, SessionRow } from './models/session.model';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-sessions',
@@ -17,6 +18,7 @@ import { ApiSession, SessionRow } from './models/session.model';
 export class Sessions implements OnInit {
   private readonly router = inject(Router);
   private readonly sessionsService = inject(SessionsService);
+  private readonly toastService = inject(ToastService);
 
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems: MenuItem[] = [{ label: 'الجلسات', routerLink: '/sessions' }];
@@ -84,9 +86,9 @@ export class Sessions implements OnInit {
       },
       error: (error) => {
         this.isLoading.set(false);
-        this.errorMessage.set(
-          error?.error?.message || 'حدث خطأ أثناء تحميل الجلسات، حاول مرة أخرى',
-        );
+        const message = error?.error?.message || 'حدث خطأ أثناء تحميل الجلسات، حاول مرة أخرى';
+        this.errorMessage.set(message);
+        this.toastService.error('فشل تحميل الجلسات', message);
       },
     });
   }
@@ -155,10 +157,15 @@ export class Sessions implements OnInit {
     this.errorMessage.set(null);
 
     this.sessionsService.archiveSession(event.row.id).subscribe({
-      next: () => this.fetchSessions(this.currentPage()),
+      next: () => {
+        this.toastService.success('تمت الأرشفة', 'تمت أرشفة الجلسة بنجاح');
+        this.fetchSessions(this.currentPage());
+      },
       error: (error) => {
         this.isLoading.set(false);
-        this.errorMessage.set(error?.error?.message || 'حدث خطأ أثناء أرشفة الجلسة');
+        const message = error?.error?.message || 'حدث خطأ أثناء أرشفة الجلسة';
+        this.errorMessage.set(message);
+        this.toastService.error('فشل أرشفة الجلسة', message);
       },
     });
   }
