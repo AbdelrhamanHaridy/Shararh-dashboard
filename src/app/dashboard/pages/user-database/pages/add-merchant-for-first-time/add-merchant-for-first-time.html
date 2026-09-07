@@ -123,6 +123,6 @@
         <p *ngIf="userForm.get('employeeCount')?.errors?.['required']">عدد الموظفين مطلوب</p>
         <p *ngIf="userForm.get('email')?.errors?.['email']">البريد الالكتروني غير صحيح</p>
         <p *ngIf="userForm.get('phoneNumber')?.errors?.['pattern']">رقم الهاتف غير صحيح</p>
-        <p *ngIf="userForm.get('password')?.errors?.['minlength']">كلمة المرور يجب ان تكون 6 احرف على الاقل</p>
+        <p *ngIf="userForm.get('password')?.errors?.['minlength']">كلمة المرور يجب ان تكون 8 احرف على الاقل</p>
     </div>
 </form>

@@ -56,7 +56,7 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       businessName: ['', [Validators.required, Validators.minLength(3)]],
       storePhone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
       governorate: ['', Validators.required],
@@ -130,9 +130,41 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
         error: (err) => {
           console.error('Error creating merchant:', err);
           this.isSubmitting = false;
-          this.errorMessage = 'حدث خطأ أثناء إضافة التاجر، يرجى المحاولة مرة أخرى';
+          this.errorMessage = this.getErrorMessage(err);
         },
       });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) => {
+        if (Array.isArray(value)) {
+          return value.filter((message): message is string => typeof message === 'string');
+        }
+
+        return typeof value === 'string' ? [value] : [];
+      });
+
+      if (messages.length > 0) {
+        return messages.join(' ');
+      }
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ أثناء إضافة التاجر، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 
   onCancel() {
