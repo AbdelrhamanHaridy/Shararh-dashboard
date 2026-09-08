@@ -9,6 +9,7 @@ import { FrequentlyAskedQuestionsService } from '../../services/frequently-asked
 import { Faq } from '../../models/frequently-asked-questions.model';
 import { FAQ_TARGET_TYPES } from '../add-faq-dialog/add-faq-dialog';
 import { SharedChipListInput } from '../shared-chip-list-input/shared-chip-list-input';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-edit-faq-dialog',
@@ -36,6 +37,7 @@ export class EditFaqDialog implements OnInit {
     public config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
     private faqService: FrequentlyAskedQuestionsService,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -105,17 +107,49 @@ export class EditFaqDialog implements OnInit {
     this.faqService.updateFaq(this.faqId, payload).subscribe({
       next: (res) => {
         this.isSubmitting = false;
+        this.toastService.success('تم التحديث', 'تم تحديث السؤال بنجاح');
         this.ref.close(res.data);
       },
       error: (err) => {
         console.error('Error updating FAQ:', err);
         this.isSubmitting = false;
-        this.errorMessage = 'حدث خطأ أثناء حفظ التعديلات، حاول مرة أخرى';
+        this.errorMessage = this.getErrorMessage(err);
+        this.toastService.error('فشل تحديث السؤال', this.errorMessage);
       },
     });
   }
 
   onCancel() {
     this.ref.close();
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

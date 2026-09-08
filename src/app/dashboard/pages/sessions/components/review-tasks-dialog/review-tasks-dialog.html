@@ -1,36 +1,45 @@
+<!-- review-tasks-dialog.html -->
 <div class="flex flex-col gap-5 mb-3">
     <div class="flex flex-col gap-2.5 mb-3">
-        <p class="text-text-secondary text-sm font-medium mb-2">قم بتحديد المهام بعد التاكد من تنفيذها بالشكل المطلوب</p>
-        @for (entry of communicationLog; track entry.id) {
-        <div class="flex items-center gap-4 rounded-xl bg-white border border-[#E9E9E9] hover:shadow-md transition-shadow cursor-pointer"
-           (click)="toggleSelection(entry.id)">
+        <p class="text-text-secondary text-sm font-medium mb-2">قم بتحديد المهام بعد التاكد من تنفيذها بالشكل المطلوب
+        </p>
 
-            <!-- Main content -->
+        @if (errorMessage) {
+        <p class="text-red-600 text-sm" role="alert">{{ errorMessage }}</p>
+        }
+
+        @if (tasks.length === 0) {
+        <div class="text-[#94A3B8] text-sm text-center py-6">لا توجد مهام لمراجعتها</div>
+        }
+
+        @for (task of tasks; track task.id) {
+        <div class="flex items-center gap-4 rounded-xl bg-white border border-[#E9E9E9] hover:shadow-md transition-shadow cursor-pointer"
+            (click)="toggleSelection(task.id)">
+
             <div class="flex-1 flex items-center gap-2.5 py-2.5 px-4">
                 <div class="shrink-0 mr-4">
                     <div (click)="$event.stopPropagation()">
-                        <p-checkbox [binary]="true" [ngModel]="isSelected(entry.id)"
-                            (onChange)="toggleSelection(entry.id)"></p-checkbox>
+                        <p-checkbox [binary]="true" [ngModel]="isSelected(task.id)"
+                            (onChange)="toggleSelection(task.id)"></p-checkbox>
                     </div>
                 </div>
                 <button type="button"
                     class="w-9 h-10 rounded-xl bg-[#10A9221C] flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer">
-                    <img src="assets/icons/global/green_file.svg" alt="file"/>
+                    <img src="assets/icons/global/green_file.svg" alt="file" />
                 </button>
 
-
-
-                <!-- Center: Contact info -->
-                <h3 class="text-[#191C18] text-base font-medium font-tajawal leading-7 pr-2">{{ entry.name }}</h3>
+                <div class="flex flex-col pr-2">
+                    <h3 class="text-[#191C18] text-base font-medium font-tajawal leading-7">{{ task.label }}</h3>
+                </div>
             </div>
 
             <p class="text-sm text-[#137FEC] font-bold underline pl-8">مراجعه</p>
         </div>
         }
     </div>
-    <!-- Apply -->
-    <button type="button"
+
+    <button type="button" (click)="onConfirm()"
         class="inline-flex items-center justify-center gap-2.5 w-full h-fit py-3 pr-2.5 pl-2.5 rounded-[15px] bg-[#10A922] text-white text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer">
-        تأكيد المراجعه
+        {{ isSubmitting ? 'جارٍ الحفظ...' : 'تأكيد المراجعه' }}
     </button>
 </div>

@@ -1,10 +1,16 @@
-import { Component } from '@angular/core';
+// review-subscriptions-dialog.ts
+import { Component, inject } from '@angular/core';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-interface SubscriptionReviewRow {
-  note: string;
-  paymentStatus: string;
-  paymentMethod: string;
-  customer: string;
+interface SubscriptionReviewItem {
+  id: number;
+  customer_name: string;
+  plan_type_label: string;
+  duration: string;
+  amount: number | string;
+  payment_method_label: string;
+  status_label: string;
+  note?: string; // confirm against your actual model
 }
 
 @Component({
@@ -14,24 +20,12 @@ interface SubscriptionReviewRow {
   styleUrl: './review-subscriptions-dialog.scss',
 })
 export class ReviewSubscriptionsDialog {
-  readonly subscriptionRows: SubscriptionReviewRow[] = [
-    {
-      note: 'تم تأكيد التحويل بعد المراجعة',
-      paymentStatus: 'مكتمل',
-      paymentMethod: 'بطاقة بنكية',
-      customer: 'محمد أحمد',
-    },
-    {
-      note: 'بانتظار التأكيد من فريق المالية',
-      paymentStatus: 'قيد المراجعة',
-      paymentMethod: 'تحويل بنكي',
-      customer: 'سارة خالد',
-    },
-    {
-      note: 'تم إرسال تذكير بالدفع',
-      paymentStatus: 'معلق',
-      paymentMethod: 'نقدي',
-      customer: 'أحمد علي',
-    },
-  ];
+  private readonly config = inject(DynamicDialogConfig);
+  private readonly ref = inject(DynamicDialogRef);
+
+  subscriptions: SubscriptionReviewItem[] = this.config.data?.subscriptions ?? [];
+
+  onConfirm(): void {
+    this.ref.close(true);
+  }
 }

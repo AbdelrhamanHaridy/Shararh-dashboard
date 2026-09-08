@@ -27,6 +27,7 @@ import {
 } from './models/customer-request.model';
 import { EditRequestDialog } from './components/edit-request-dialog/edit-request-dialog';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-complaints-and-suggestions',
@@ -137,6 +138,7 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {
     super();
   }
@@ -199,6 +201,7 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
         error: (err) => {
           console.error('Error fetching data:', err);
           this.listErrorMessage = 'حدث خطأ أثناء تحميل البيانات';
+          this.toastService.error('فشل تحميل البيانات', this.getErrorMessage(err));
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -217,6 +220,7 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
         error: (err) => {
           console.error('Error fetching customer requests:', err);
           this.listErrorMessage = 'حدث خطأ أثناء تحميل السجل';
+          this.toastService.error('فشل تحميل السجل', this.getErrorMessage(err));
           this.cdr.markForCheck();
         },
       });
@@ -233,6 +237,7 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error fetching stats:', err);
+          this.toastService.error('فشل تحميل الإحصائيات', this.getErrorMessage(err));
           this.cdr.markForCheck();
         },
       });
@@ -292,13 +297,15 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
         next: (res) => {
           this.isSubmitting = false;
           this.requests = [res.data.customer_request, ...this.requests];
+          this.toastService.success('تمت الإضافة', 'تم حفظ الشكوى أو الاقتراح بنجاح');
           this.resetForm();
           this.refreshAll();
         },
         error: (err) => {
           console.error('Error creating customer request:', err);
           this.isSubmitting = false;
-          this.errorMessage = 'حدث خطأ أثناء حفظ الطلب، حاول مرة أخرى';
+          this.errorMessage = this.getErrorMessage(err);
+          this.toastService.error('فشل حفظ الطلب', this.errorMessage);
         },
       });
   }
@@ -349,9 +356,13 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
+          this.toastService.success('تم التحديث', 'تم تحديث حالة الطلب بنجاح');
           this.refreshAll();
         },
-        error: (err) => console.error('Error updating status:', err),
+        error: (err) => {
+          console.error('Error updating status:', err);
+          this.toastService.error('فشل تحديث الحالة', this.getErrorMessage(err));
+        },
       });
   }
 
@@ -369,11 +380,47 @@ export class ComplaintsAndSuggestions extends BaseComponent implements OnInit {
           .deleteCustomerRequest(request.id)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
-            next: () => this.refreshAll(),
-            error: (err) => console.error('Error deleting request:', err),
+            next: () => {
+              this.toastService.success('تم الحذف', 'تم حذف الطلب بنجاح');
+              this.refreshAll();
+            },
+            error: (err) => {
+              console.error('Error deleting request:', err);
+              this.toastService.error('فشل حذف الطلب', this.getErrorMessage(err));
+            },
           });
       },
     });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 
   getContextMenu(request: CustomerRequest): MenuItem[] {

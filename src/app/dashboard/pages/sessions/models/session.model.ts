@@ -75,6 +75,7 @@ export interface AdminSessionsQueryParams {
   employee_id?: number;
   type?: string;
   status?: string;
+  search?: string; // NEW
 }
 
 // View-model shape consumed by the sessions table UI

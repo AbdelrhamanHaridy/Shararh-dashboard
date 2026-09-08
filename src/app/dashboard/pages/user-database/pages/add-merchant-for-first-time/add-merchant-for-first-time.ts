@@ -1,14 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+// add-merchant-for-first-time.ts
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SharedTextInputComponent } from '../../../../shared/components/shared-text-input/shared-text-input.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SharedSelectComponent } from '../../../../shared/components/shared-select/shared-select.component';
+import {
+  LocationPickerMapComponent,
+  LatLngValue,
+} from '../../../../shared/components/location-picker-map/location-picker-map.component';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { AddMerchantPayload } from '../../models/add-merchant.model';
 import { BaseComponent } from '../../../../shared/services/base.component';
 import { OwnerService } from '../../services/owner.service.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-add-merchant-for-first-time',
@@ -18,11 +24,14 @@ import { OwnerService } from '../../services/owner.service.service';
     ToggleSwitchModule,
     CommonModule,
     SharedSelectComponent,
+    LocationPickerMapComponent,
   ],
   templateUrl: './add-merchant-for-first-time.html',
   styleUrl: './add-merchant-for-first-time.scss',
 })
 export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
+  @ViewChild(LocationPickerMapComponent) locationMap!: LocationPickerMapComponent;
+
   userForm!: FormGroup;
   isSubmitting = false;
   errorMessage = '';
@@ -32,54 +41,52 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
     { label: 'الإسكندرية', value: 'alexandria' },
     { label: 'الجيزة', value: 'giza' },
     { label: 'الدقهلية', value: 'dakahlia' },
-    // ... add more governorates
   ];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private ownerService: OwnerService,
+    private toastService: ToastService,
   ) {
     super();
   }
 
   ngOnInit() {
     this.userForm = this.fb.group({
-      // Personal Information
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-
-      // Store Information
+      password: ['', [Validators.required, Validators.minLength(8)]],
       businessName: ['', [Validators.required, Validators.minLength(3)]],
       storePhone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-
-      // Location
       governorate: ['', Validators.required],
       city: ['', Validators.required],
       streetName: ['', Validators.required],
-
-      // Optional geo-coordinates
       lat: [null],
       long: [null],
-
-      // Business Details
       employeeCount: ['', [Validators.required, Validators.min(1)]],
     });
   }
 
-  // Populate lat/long from the browser's geolocation, if the user allows it
+  // Called from the map's (locationChange) — updates the form so the
+  // lat/long text inputs (kept read-only display fields, see template)
+  // and the payload stay in sync with whatever the user picked on the map.
+  onMapLocationChange(value: LatLngValue): void {
+    this.userForm.patchValue({ lat: value.lat, long: value.long });
+  }
+
+  // "Use current location" now also recenters + drops the pin on the map,
+  // instead of only patching the hidden form fields.
   useCurrentLocation() {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.userForm.patchValue({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
+        const { latitude, longitude } = position.coords;
+        this.userForm.patchValue({ lat: latitude, long: longitude });
+        this.locationMap?.setExternalLocation(latitude, longitude);
       },
       (err) => {
         console.error('Error getting location:', err);
@@ -117,19 +124,54 @@ export class AddMerchantForFirstTime extends BaseComponent implements OnInit {
       .createOwner(payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.isSubmitting = false;
-          this.router.navigate(['/merchants']); // adjust to your actual listing route
+          console.log('Owner created successfully:', response.data);
+          this.toastService.success('تمت الإضافة', 'تمت إضافة التاجر بنجاح');
+          this.router.navigate(['/user-database']);
         },
         error: (err) => {
           console.error('Error creating merchant:', err);
           this.isSubmitting = false;
-          this.errorMessage = 'حدث خطأ أثناء إضافة التاجر، يرجى المحاولة مرة أخرى';
+          this.errorMessage = this.getErrorMessage(err);
+          this.toastService.error('فشل إضافة التاجر', this.errorMessage);
         },
       });
   }
 
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) => {
+        if (Array.isArray(value)) {
+          return value.filter((message): message is string => typeof message === 'string');
+        }
+
+        return typeof value === 'string' ? [value] : [];
+      });
+
+      if (messages.length > 0) {
+        return messages.join(' ');
+      }
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ أثناء إضافة التاجر، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+  }
+
   onCancel() {
-    this.router.navigate(['/merchants']); // adjust to your actual listing route
+    this.router.navigate(['/user-database']);
   }
 }

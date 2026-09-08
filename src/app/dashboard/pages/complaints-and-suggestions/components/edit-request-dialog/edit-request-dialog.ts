@@ -8,6 +8,7 @@ import { SharedSelectComponent } from '../../../../shared/components/shared-sele
 import { BaseComponent } from '../../../../shared/services/base.component';
 import { CustomerRequestsService } from '../../services/customer-requests.service';
 import { CustomerRequest, CustomerRequestPayload } from '../../models/customer-request.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-edit-request-dialog',
@@ -65,6 +66,7 @@ export class EditRequestDialog extends BaseComponent implements OnInit {
     public config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
     private requestsService: CustomerRequestsService,
+    private toastService: ToastService,
   ) {
     super();
   }
@@ -137,17 +139,49 @@ export class EditRequestDialog extends BaseComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.isSubmitting = false;
+          this.toastService.success('تم التحديث', 'تم تحديث الشكوى أو الاقتراح بنجاح');
           this.ref.close(res.data.customer_request);
         },
         error: (err) => {
           console.error('Error updating customer request:', err);
           this.isSubmitting = false;
-          this.errorMessage = 'حدث خطأ أثناء حفظ التعديلات، حاول مرة أخرى';
+          this.errorMessage = this.getErrorMessage(err);
+          this.toastService.error('فشل حفظ التعديلات', this.errorMessage);
         },
       });
   }
 
   onCancel() {
     this.ref.close();
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

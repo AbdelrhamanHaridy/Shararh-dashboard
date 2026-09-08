@@ -5,10 +5,11 @@ import { Header } from './core/components/header/header';
 import { filter } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ContextMenuComponent } from "./dashboard/shared/components/context-menu/context-menu.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, Header, ToastModule],
+  imports: [RouterOutlet, Sidebar, Header, ToastModule, ContextMenuComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

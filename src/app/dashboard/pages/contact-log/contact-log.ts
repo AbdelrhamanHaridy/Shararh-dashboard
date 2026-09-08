@@ -13,6 +13,7 @@ import {
   CreateCommunicationPayload,
 } from './models/communications.model';
 import { PotentialCustomerCenterService } from '../potential-customer-center/services/potential-customer-center.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 interface ContactLogEntry {
   id: number;
@@ -79,6 +80,7 @@ export class ContactLog implements OnInit {
     private contactLogService: ContactLogService,
     private potentialCustomerService: PotentialCustomerCenterService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -115,11 +117,15 @@ export class ContactLog implements OnInit {
     this.contactLogService.addCommunication(payload).subscribe({
       next: () => {
         this.contactForm.reset();
+        this.toastService.success('تمت الإضافة', 'تم تسجيل الاتصال بنجاح');
         // Refresh the timeline and suggested tasks after a successful submission
         this.loadCommunications();
         this.loadSuggestedTasks();
       },
-      error: (err) => console.error('Failed to add communication', err),
+      error: (err) => {
+        console.error('Failed to add communication', err);
+        this.toastService.error('فشل تسجيل الاتصال', this.getErrorMessage(err));
+      },
     });
   }
 
@@ -133,7 +139,10 @@ export class ContactLog implements OnInit {
           this.cdr.markForCheck();
         }
       },
-      error: (err) => console.error('Failed loading contact-log options', err),
+      error: (err) => {
+        console.error('Failed loading contact-log options', err);
+        this.toastService.error('فشل تحميل خيارات الاتصال', this.getErrorMessage(err));
+      },
     });
   }
 
@@ -152,7 +161,10 @@ export class ContactLog implements OnInit {
           this.cdr.markForCheck();
         }
       },
-      error: (err) => console.error('Failed loading suggested tasks', err),
+      error: (err) => {
+        console.error('Failed loading suggested tasks', err);
+        this.toastService.error('فشل تحميل المهام المقترحة', this.getErrorMessage(err));
+      },
     });
   }
 
@@ -164,7 +176,10 @@ export class ContactLog implements OnInit {
           this.cdr.markForCheck();
         }
       },
-      error: (err) => console.error('Failed loading communications', err),
+      error: (err) => {
+        console.error('Failed loading communications', err);
+        this.toastService.error('فشل تحميل سجل الاتصالات', this.getErrorMessage(err));
+      },
     });
   }
 
@@ -177,12 +192,45 @@ export class ContactLog implements OnInit {
             value: lead.id,
           }));
           console.log(this.leadsOptions);
-          
+
           this.cdr.markForCheck();
         }
       },
-      error: (err) => console.error('Failed loading leads', err),
+      error: (err) => {
+        console.error('Failed loading leads', err);
+        this.toastService.error('فشل تحميل العملاء المحتملين', this.getErrorMessage(err));
+      },
     });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 
   private groupCommunicationsByDay(items: Communication[]): ContactLogDay[] {

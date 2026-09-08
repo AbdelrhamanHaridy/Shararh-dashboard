@@ -16,8 +16,8 @@ export interface ToastOptions {
 export class ToastService {
   private messageService = inject(MessageService);
 
-  private readonly DEFAULT_LIFE_MS = 5000;
-  private readonly DEFAULT_ERROR_LIFE_MS = 5000;
+  private readonly DEFAULT_LIFE_MS = 6000;
+  private readonly DEFAULT_ERROR_LIFE_MS = 6000;
 
   /**
    * Show a success toast notification

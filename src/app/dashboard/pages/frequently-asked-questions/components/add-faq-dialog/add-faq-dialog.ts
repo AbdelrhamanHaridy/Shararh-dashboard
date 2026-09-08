@@ -8,6 +8,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { FrequentlyAskedQuestionsService } from '../../services/frequently-asked-questions.service';
 import { FaqTargetType } from '../../models/frequently-asked-questions.model';
 import { SharedChipListInput } from '../shared-chip-list-input/shared-chip-list-input';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 export interface FaqTargetTypeOption {
   label: string;
@@ -48,6 +49,7 @@ export class AddFaqDialog implements OnInit {
     public config: DynamicDialogConfig,
     public ref: DynamicDialogRef,
     private faqService: FrequentlyAskedQuestionsService,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -103,12 +105,14 @@ export class AddFaqDialog implements OnInit {
     this.faqService.createFaq(payload).subscribe({
       next: (res) => {
         this.isSubmitting = false;
+        this.toastService.success('تمت الإضافة', 'تمت إضافة السؤال بنجاح');
         this.ref.close(res.data);
       },
       error: (err) => {
         console.error('Error creating FAQ:', err);
         this.isSubmitting = false;
-        this.errorMessage = 'حدث خطأ أثناء إضافة السؤال، حاول مرة أخرى';
+        this.errorMessage = this.getApiErrorMessage(err);
+        this.toastService.error('فشل إضافة السؤال', this.errorMessage);
       },
     });
   }
@@ -130,5 +134,35 @@ export class AddFaqDialog implements OnInit {
 
   onCancel() {
     this.ref.close();
+  }
+
+  private getApiErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

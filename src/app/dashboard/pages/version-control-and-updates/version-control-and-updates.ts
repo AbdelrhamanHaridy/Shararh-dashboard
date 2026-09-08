@@ -5,6 +5,7 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { FilterByVersionDialog } from './components/filter-by-version-dialog/filter-by-version-dialog';
 import { EmployeeApplicationDetailsDialog } from './components/employee-application-details-dialog/employee-application-details-dialog';
 import { AdminApplicationDetailsDialog } from './components/admin-application-details-dialog/admin-application-details-dialog';
+import { VersionCardSkeleton } from './components/version-card-skeleton/version-card-skeleton';
 import { BaseComponent } from '../../shared/services/base.component';
 import {
   VersionControlAndUpdatesService,
@@ -14,7 +15,7 @@ import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-version-control-and-updates',
-  imports: [PageHeaderComponent],
+  imports: [PageHeaderComponent, VersionCardSkeleton],
   providers: [DialogService],
   templateUrl: './version-control-and-updates.html',
   styleUrl: './version-control-and-updates.scss',

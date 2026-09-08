@@ -5,7 +5,7 @@
   </label>
 
   <input pInputText [id]="inputId" [name]="inputId" [type]="type" [placeholder]="placeholder" [formControl]="control"
-    [class.ng-invalid]="isInvalid" class="w-full" />
+    [readonly]="readOnly" [class.ng-invalid]="isInvalid" class="w-full" />
 
   @if (control.hasError('required') && (control.dirty || control.touched)) {
   <small class="p-error">{{ label }} is required</small>

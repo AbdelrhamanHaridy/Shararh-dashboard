@@ -6,6 +6,8 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { NotificationsService } from './services/notifications.service';
 import { NotificationItem } from './models/notification.model';
 import { NotificationDetailDialog } from './components/notification-detail-dialog/notification-detail-dialog';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ToastService } from '../../shared/services/toast.service';
 
 interface NotificationView {
   id: string;
@@ -46,7 +48,7 @@ const DEFAULT_ACTION_LABELS = { primary: 'عرض التفاصيل', secondary: '
 
 @Component({
   selector: 'app-notifications',
-  imports: [PageHeaderComponent, CommonModule],
+  imports: [PageHeaderComponent, CommonModule, SkeletonModule],
   providers: [DialogService],
   templateUrl: './notifications.html',
   styleUrl: './notifications.scss',
@@ -66,6 +68,7 @@ export class Notifications implements OnInit {
     private notificationsService: NotificationsService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -88,6 +91,7 @@ export class Notifications implements OnInit {
         this.loadError = 'تعذر تحميل الإشعارات';
         this.cdr.markForCheck();
         console.error('Failed loading notifications', err);
+        this.toastService.error('فشل تحميل الإشعارات', this.getErrorMessage(err));
       },
     });
   }
@@ -142,9 +146,43 @@ export class Notifications implements OnInit {
     this.notificationsService.markAsRead(notification.id).subscribe({
       next: () => {
         notification.isRead = true;
+        this.toastService.success('تم التحديث', 'تم تعليم الإشعار كمقروء');
         this.cdr.markForCheck();
       },
-      error: (err) => console.error('Failed to mark notification as read', err),
+      error: (err) => {
+        console.error('Failed to mark notification as read', err);
+        this.toastService.error('فشل تحديث الإشعار', this.getErrorMessage(err));
+      },
     });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

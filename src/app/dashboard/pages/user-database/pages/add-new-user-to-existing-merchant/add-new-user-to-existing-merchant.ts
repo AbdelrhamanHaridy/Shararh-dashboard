@@ -17,6 +17,7 @@ import { PermissionsService } from '../../services/permissions.service';
 import { PermissionCategory } from '../../models/permissions.model';
 import { StoresService } from '../../services/stores.service';
 import { UserDatabaseService } from '../../services/user-database.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-add-new-user-to-existing-merchant',
@@ -51,6 +52,7 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
     private storesService: StoresService,
     private userService: UserDatabaseService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {
     super();
   }
@@ -206,10 +208,44 @@ export class AddNewUserToExistingMerchant extends BaseComponent implements OnIni
       .subscribe({
         next: (res) => {
           console.log('User created:', res);
+          this.toastService.success('تمت الإضافة', 'تمت إضافة المستخدم بنجاح');
         },
         error: (err) => {
           console.error('Error creating user:', err);
+          this.toastService.error('فشل إضافة المستخدم', this.getErrorMessage(err));
         },
       });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) => {
+        if (Array.isArray(value)) {
+          return value.filter((message): message is string => typeof message === 'string');
+        }
+
+        return typeof value === 'string' ? [value] : [];
+      });
+
+      if (messages.length > 0) {
+        return messages.join(' ');
+      }
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ أثناء إضافة المستخدم، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

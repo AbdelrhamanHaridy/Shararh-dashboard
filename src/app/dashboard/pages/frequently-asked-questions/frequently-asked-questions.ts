@@ -13,6 +13,9 @@ import { Faq, FaqFilterParams } from './models/frequently-asked-questions.model'
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { AddFaqDialog } from './components/add-faq-dialog/add-faq-dialog';
 import { EditFaqDialog } from './components/edit-faq-dialog/edit-faq-dialog';
+import { SkeletonModule } from 'primeng/skeleton';
+import { FaqsLoadingSkeletons } from './components/faqs-loading-skeletons/faqs-loading-skeletons';
+import { ToastService } from '../../shared/services/toast.service';
 
 interface TargetTypeFilter {
   label: string;
@@ -21,7 +24,15 @@ interface TargetTypeFilter {
 
 @Component({
   selector: 'app-frequently-asked-questions',
-  imports: [AccordionModule, CommonModule, PageHeaderComponent, FormsModule, ConfirmDialogModule],
+  imports: [
+    AccordionModule,
+    CommonModule,
+    PageHeaderComponent,
+    FormsModule,
+    ConfirmDialogModule,
+    SkeletonModule,
+    FaqsLoadingSkeletons,
+  ],
   providers: [DialogService, ConfirmationService],
   templateUrl: './frequently-asked-questions.html',
   styleUrl: './frequently-asked-questions.scss',
@@ -64,6 +75,7 @@ export class FrequentlyAskedQuestions extends BaseComponent implements OnInit {
     public dialogService: DialogService,
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {
     super();
   }
@@ -111,6 +123,7 @@ export class FrequentlyAskedQuestions extends BaseComponent implements OnInit {
         error: (err) => {
           console.error('Error fetching data:', err);
           this.errorMessage = 'حدث خطأ أثناء تحميل الأسئلة الشائعة';
+          this.toastService.error('فشل تحميل الأسئلة الشائعة', this.getErrorMessage(err));
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -156,11 +169,13 @@ export class FrequentlyAskedQuestions extends BaseComponent implements OnInit {
             this.faqs = this.faqs.map((f) => (f.id === updated.id ? updated : f));
             this.cdr.detectChanges();
           }
+          this.toastService.success('تم التحديث', 'تم تحديث حالة التثبيت بنجاح');
         },
         error: (err) => {
           console.error('Error toggling pin:', err);
           this.faqs = this.faqs.map((f) => (f.id === faq.id ? { ...f, is_pinned: wasPinned } : f));
           this.cdr.detectChanges();
+          this.toastService.error('فشل التحديث', this.getErrorMessage(err));
         },
       });
   }
@@ -185,9 +200,11 @@ export class FrequentlyAskedQuestions extends BaseComponent implements OnInit {
             next: () => {
               this.faqs = this.faqs.filter((f) => f.id !== faq.id);
               this.cdr.detectChanges();
+              this.toastService.success('تم الحذف', 'تم حذف السؤال بنجاح');
             },
             error: (err) => {
               console.error('Error deleting FAQ:', err);
+              this.toastService.error('فشل الحذف', this.getErrorMessage(err));
             },
           });
       },
@@ -196,9 +213,13 @@ export class FrequentlyAskedQuestions extends BaseComponent implements OnInit {
 
   onCopyAnswer(faq: Faq, event: Event) {
     event.stopPropagation();
-    navigator.clipboard?.writeText(faq.answer).catch((err) => {
-      console.error('Failed to copy answer:', err);
-    });
+    navigator.clipboard?.writeText(faq.answer).then(
+      () => this.toastService.success('تم النسخ', 'تم نسخ إجابة السؤال'),
+      (err) => {
+        console.error('Failed to copy answer:', err);
+        this.toastService.error('فشل النسخ', 'تعذر نسخ الإجابة');
+      },
+    );
   }
 
   showAddFaqDialog() {
@@ -247,5 +268,35 @@ export class FrequentlyAskedQuestions extends BaseComponent implements OnInit {
         },
         error: (err) => console.error('Error fetching FAQ:', err),
       });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

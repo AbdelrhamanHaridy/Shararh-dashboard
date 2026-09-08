@@ -6,6 +6,7 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs'
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { CustomerCard, Customer } from './components/customer-card/customer-card';
+import { CustomerCardSkeleton } from './components/customer-card-skeleton/customer-card-skeleton';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { AddCustomerGroupDialog } from './components/add-customer-group-dialog/add-customer-group-dialog';
 import { AddPotentialCustomerDialog } from './components/add-potential-customer-dialog/add-potential-customer-dialog';
@@ -13,6 +14,7 @@ import { ChangeStatusDialog } from './components/change-status-dialog/change-sta
 import { Lead, LeadStatistics } from './models/potential-customer-center.model';
 import { PotentialCustomerCenterService } from './services/potential-customer-center.service';
 import { EditPotentialCustomerDialog } from './components/edit-potential-customer-dialog/edit-potential-customer-dialog';
+import { ToastService } from '../../shared/services/toast.service';
 
 // Which lead statuses belong to which tab.
 // Update this once the real "under implementation" status keys are confirmed —
@@ -46,7 +48,7 @@ const DEFAULT_AVATAR = 'assets/testing/avatar.png';
 
 @Component({
   selector: 'app-potential-customer-center',
-  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard, MenuModule],
+  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard, MenuModule, CustomerCardSkeleton],
   providers: [DialogService],
   templateUrl: './potential-customer-center.html',
   styleUrl: './potential-customer-center.scss',
@@ -115,6 +117,7 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
     public dialogService: DialogService,
     private potentialCustomerCenterService: PotentialCustomerCenterService,
     private cdr: ChangeDetectorRef,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -176,6 +179,7 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
         this.loadError = 'تعذر تحميل بيانات العملاء المحتملين';
         this.cdr.markForCheck();
         console.error('Failed loading leads', err);
+        this.toastService.error('فشل تحميل العملاء المحتملين', this.getErrorMessage(err));
       },
     });
   }
@@ -188,7 +192,10 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         }
       },
-      error: (err) => console.error('Failed loading lead stats', err),
+      error: (err) => {
+        console.error('Failed loading lead stats', err);
+        this.toastService.error('فشل تحميل الإحصائيات', this.getErrorMessage(err));
+      },
     });
   }
 
@@ -236,9 +243,10 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   }
 
   copyToClipboard(phone: string) {
-    navigator.clipboard.writeText(phone).then(() => {
-      // alert('تم نسخ رقم الهاتف بنجاح');
-    });
+    navigator.clipboard.writeText(phone).then(
+      () => this.toastService.success('تم النسخ', 'تم نسخ رقم الهاتف بنجاح'),
+      () => this.toastService.error('فشل النسخ', 'تعذر نسخ رقم الهاتف'),
+    );
   }
 
   onChangeStatus(customerId: number) {
@@ -260,12 +268,13 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
         this.potentialCustomerCenterService.changeLeadStatus(customerId, result.data).subscribe({
           next: () => {
             // Refresh the leads list after status change
+            this.toastService.success('تم التحديث', 'تم تغيير حالة العميل بنجاح');
             this.loadLeads();
             this.loadStats();
           },
           error: (err) => {
             console.error('Failed to change status:', err);
-            alert('فشل تغيير الحالة. حاول مرة أخرى.');
+            this.toastService.error('فشل تغيير الحالة', this.getErrorMessage(err));
           },
         });
       }
@@ -276,12 +285,13 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
     this.potentialCustomerCenterService.deleteLead(customerId).subscribe({
       next: () => {
         // Refresh the leads list after deletion
+        this.toastService.success('تم الحذف', 'تم حذف العميل بنجاح');
         this.loadLeads();
         this.loadStats();
       },
       error: (err) => {
         console.error('Failed to delete lead:', err);
-        alert('فشل حذف العميل. حاول مرة أخرى.');
+        this.toastService.error('فشل حذف العميل', this.getErrorMessage(err));
       },
     });
   }
@@ -289,12 +299,13 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   onArchiveCustomer(customerId: number) {
     this.potentialCustomerCenterService.archiveLead(customerId).subscribe({
       next: () => {
+        this.toastService.success('تمت الأرشفة', 'تمت أرشفة العميل بنجاح');
         this.loadLeads();
         this.loadStats();
       },
       error: (err) => {
         console.error('Failed to archive lead:', err);
-        alert('فشل أرشفة العميل. حاول مرة أخرى.');
+        this.toastService.error('فشل أرشفة العميل', this.getErrorMessage(err));
       },
     });
   }
@@ -325,14 +336,45 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   onAcceptCustomer(customerId: number) {
     this.potentialCustomerCenterService.claimLead(customerId).subscribe({
       next: () => {
+        this.toastService.success('تم الاستلام', 'تم استلام العميل بنجاح');
         this.loadLeads();
         this.loadStats();
       },
       error: (err) => {
         console.error('Failed to claim lead:', err);
-        alert('فشل استلام العميل. حاول مرة أخرى.');
+        this.toastService.error('فشل استلام العميل', this.getErrorMessage(err));
       },
     });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const errorResponse =
+      this.isRecord(error) && this.isRecord(error['error'])
+        ? error['error']
+        : this.isRecord(error)
+          ? error
+          : {};
+    const fieldErrors = errorResponse['errors'];
+
+    if (this.isRecord(fieldErrors)) {
+      const messages = Object.values(fieldErrors).flatMap((value) =>
+        Array.isArray(value)
+          ? value.filter((message): message is string => typeof message === 'string')
+          : typeof value === 'string'
+            ? [value]
+            : [],
+      );
+
+      if (messages.length > 0) return messages.join(' ');
+    }
+
+    return typeof errorResponse['message'] === 'string'
+      ? errorResponse['message']
+      : 'حدث خطأ، يرجى المحاولة مرة أخرى';
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 
   showAddPotentialCustomerDialog() {

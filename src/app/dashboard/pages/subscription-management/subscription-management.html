@@ -52,13 +52,23 @@
 </section>
 <section class="p-6">
     <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
-        @if (subscriptions().length > 0) {
+        @if (isLoading()) {
+        @for (_ of [1,2,3]; track $index) {
+        <app-subscription-card-skeleton></app-subscription-card-skeleton>
+        }
+        } @else if (loadError()) {
+        <p class="col-span-full py-8 text-center text-base text-[#D22F27]" role="alert">
+            تعذر تحميل بيانات الاشتراكات. يرجى المحاولة مرة أخرى.
+        </p>
+        } @else if (subscriptions().length > 0) {
         @for (subscription of subscriptions(); track subscription.id) {
         <app-subscription-card [subscription]="subscription" (copyPhone)="copyToClipboard($event)"
             (viewDetails)="onViewDetails($event)" />
         }
         } @else {
-        <p class="text-text-secondary text-center py-8">لا توجد متاجر مسجلة</p>
+        <p class="col-span-full py-8 text-center text-base text-[#6B7280]">
+            لا توجد بيانات اشتراكات.
+        </p>
         }
     </div>
 </section>
