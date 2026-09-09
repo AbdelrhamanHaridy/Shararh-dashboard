@@ -17,7 +17,8 @@
 
 
     <!-- Table -->
-    <p-table [value]="tableData" [responsiveLayout]="'scroll'" class="w-full text-sm">
+    <p-table [value]="tableData" [responsiveLayout]="'scroll'" [scrollable]="true" scrollHeight="600px"
+        class="w-full text-sm">
         <ng-template pTemplate="header">
             <tr class="text-[12px] font-medium leading-[120%] text-nowrap">
                 <th *ngFor="let col of columns" class="px-4 py-3 text-left">

@@ -30,11 +30,26 @@ export class Home extends BaseComponent implements OnInit {
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal(false);
 
+  // Toggle flags for "show more" sections
+  showAllNotifications = signal(false);
+  showAllRequests = signal(false);
+
   summary = computed(() => this.dashboardData()?.summary);
   employees = computed(() => this.dashboardData()?.employee_performance.employees || []);
   customerStatistics = computed(() => this.dashboardData()?.customer_statistics);
   notifications = computed(() => this.dashboardData()?.recent_notifications || []);
   customerRequests = computed(() => this.dashboardData()?.customer_requests || []);
+
+  // Sliced lists shown by default (first 5), full list when expanded
+  visibleNotifications = computed(() => {
+    const all = this.notifications();
+    return this.showAllNotifications() ? all : all.slice(0, 5);
+  });
+
+  visibleCustomerRequests = computed(() => {
+    const all = this.customerRequests();
+    return this.showAllRequests() ? all : all.slice(0, 5);
+  });
 
   subscriptionChartData = computed(() => {
     const stats = this.customerStatistics()?.subscription_status;
@@ -92,5 +107,13 @@ export class Home extends BaseComponent implements OnInit {
       away: 'بعيد',
     };
     return statusMap[status] || status;
+  }
+
+  toggleNotifications(): void {
+    this.showAllNotifications.update((v) => !v);
+  }
+
+  toggleRequests(): void {
+    this.showAllRequests.update((v) => !v);
   }
 }

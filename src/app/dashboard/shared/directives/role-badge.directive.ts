@@ -20,7 +20,6 @@ export class RoleBadgeDirective implements OnChanges {
     let bgColor = '';
     let label = this.role;
 
-    console.log(value);
     switch (value) {
       case 'admin':
         color = '#7C3AED'; // Purple
@@ -46,6 +45,26 @@ export class RoleBadgeDirective implements OnChanges {
         color = '#EF4444'; // Red
         bgColor = '#EF44441A'; // Red with opacity
         label = 'كاشير'; // Cashier in Arabic
+        break;
+      case 'supervisor':
+        color = '#7C3AED';
+        bgColor = '#7C3AED1A';
+        label = 'مشرف';
+        break;
+      case 'customer_service':
+        color = '#0891B2';
+        bgColor = '#0891B21A';
+        label = 'خدمة العملاء';
+        break;
+      case 'sales':
+        color = '#2563EB';
+        bgColor = '#2563EB1A';
+        label = 'مبيعات';
+        break;
+      case 'technical_support':
+        color = '#0F766E';
+        bgColor = '#0F766E1A';
+        label = 'الدعم الفني';
         break;
       case 'تاجر': // Merchant
         color = '#10A922';

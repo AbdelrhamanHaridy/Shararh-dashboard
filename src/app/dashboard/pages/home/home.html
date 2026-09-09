@@ -6,7 +6,7 @@
 </main> -->
 <section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
     <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="summary()?.total_subscriptions || 0"
-        iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000" navigateLink="/subscriptions">
+        iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000" navigateLink="/subscription-management">
     </app-shared-kpi-card>
     <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="summary()?.active_subscriptions || 0"
         iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">
@@ -16,7 +16,7 @@
     </app-shared-kpi-card>
     <app-shared-kpi-card [title]="'العملاء المسجلين'" [number]="summary()?.registered_customers || 0"
         iconPath="assets/icons/cards/people.svg" iconBgColor="#C3E1FF" numberColor="#137FEC"
-        navigateLink="/subscriptions">
+        navigateLink="/user-database">
     </app-shared-kpi-card>
 </section>
 <section class="p-6 grid grid-cols-10 gap-5">
@@ -54,10 +54,16 @@
     </div>
     <div class="flex flex-col gap-5">
         @if (notifications().length > 0) {
-        @for (notification of notifications(); track notification.id) {
+        @for (notification of visibleNotifications(); track notification.id) {
         <app-notification [message]="notification.message || 'إشعار جديد'" messageColor="text-text-primary"
             [time]="notification.created_at | relativeTime">
         </app-notification>
+        }
+        @if (notifications().length > 5) {
+        <button (click)="toggleNotifications()"
+            class="text-primary text-sm font-tajawal font-bold self-center hover:underline cursor-pointer">
+            {{ showAllNotifications() ? 'عرض أقل' : 'عرض المزيد' }}
+        </button>
         }
         } @else {
         <p class="text-text-secondary text-center py-8">لا توجد إشعارات حالياً</p>
@@ -74,7 +80,7 @@
     </div>
     <div class="flex flex-col gap-5">
         @if (customerRequests().length > 0) {
-        @for (request of customerRequests(); track request.id) {
+        @for (request of visibleCustomerRequests(); track request.id) {
         <div class="p-5 bg-white rounded-2xl shadow-md flex flex-row flex-wrap gap-4 justify-between items-end">
             <div class="flex flex-row items-start gap-4">
                 <div class="rounded-full p-2 bg-[#FEE2E2]">
@@ -97,6 +103,12 @@
                 <img src="assets/icons/global/eye.svg" alt="Eye">
             </div>
         </div>
+        }
+        @if (customerRequests().length > 5) {
+        <button (click)="toggleRequests()"
+            class="text-primary text-sm font-tajawal font-bold self-center hover:underline cursor-pointer">
+            {{ showAllRequests() ? 'عرض أقل' : 'عرض المزيد' }}
+        </button>
         }
         } @else {
         <p class="text-text-secondary text-center py-8">لا توجد شكاوى أو مقترحات حالياً</p>
