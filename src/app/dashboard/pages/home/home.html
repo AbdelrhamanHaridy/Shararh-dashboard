@@ -6,7 +6,8 @@
 </main> -->
 <section class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
     <app-shared-kpi-card [title]="'إجمالي الاشتراكات'" [number]="summary()?.total_subscriptions || 0"
-        iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000" navigateLink="/subscription-management">
+        iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000"
+        navigateLink="/subscription-management">
     </app-shared-kpi-card>
     <app-shared-kpi-card [title]="'الاشتراكات الفعًّاله'" [number]="summary()?.active_subscriptions || 0"
         iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">
@@ -30,11 +31,13 @@
             <img src="assets/icons/global/partition.svg" alt="Navigate">
             <h2 class="text-text-secondary text-lg font-tajawal font-bold">إحصائيات العملاء</h2>
         </div>
-        <h2 class="text-[#303136] text-sm font-tajawal font-medium p-4 pb-0">حالة العملاء في النظام</h2>
-        <app-donut-chart [chartData]="subscriptionChartData()" [padAngle]="0">
+        <app-donut-chart [chartData]="subscriptionChartData()" [chartTitle]="'حالة الاشتراك'"
+            [centerValue]="subscriptionCenterValue()" [centerLabel]="subscriptionCenterLabel" [padAngle]="4"
+            [isLoading]="isLoading()">
         </app-donut-chart>
         <h2 class="text-[#303136] text-sm font-tajawal font-medium p-4 pb-0">حالة العملاء في النظام</h2>
-        <app-donut-chart [chartData]="customerChartData()" [padAngle]="0">
+        <app-donut-chart [chartData]="customerChartData()" [chartTitle]="'حالة العميل'" [padAngle]="0"
+            [isLoading]="isLoading()">
         </app-donut-chart>
     </div>
 </section>

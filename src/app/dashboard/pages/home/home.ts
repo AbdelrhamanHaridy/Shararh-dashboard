@@ -30,7 +30,6 @@ export class Home extends BaseComponent implements OnInit {
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal(false);
 
-  // Toggle flags for "show more" sections
   showAllNotifications = signal(false);
   showAllRequests = signal(false);
 
@@ -40,7 +39,6 @@ export class Home extends BaseComponent implements OnInit {
   notifications = computed(() => this.dashboardData()?.recent_notifications || []);
   customerRequests = computed(() => this.dashboardData()?.customer_requests || []);
 
-  // Sliced lists shown by default (first 5), full list when expanded
   visibleNotifications = computed(() => {
     const all = this.notifications();
     return this.showAllNotifications() ? all : all.slice(0, 5);
@@ -51,25 +49,41 @@ export class Home extends BaseComponent implements OnInit {
     return this.showAllRequests() ? all : all.slice(0, 5);
   });
 
+  // Subscription status donut (نشط / منتهي / تجريبي)
   subscriptionChartData = computed(() => {
     const stats = this.customerStatistics()?.subscription_status;
     if (!stats) return [];
     return [
-      { value: stats.active.count, name: 'نشط' },
-      { value: stats.expired.count, name: 'منتهي' },
-      { value: stats.trial.count, name: 'تجريبي' },
+      { value: stats.active.count, name: 'نشط', color: '#22C55E' },
+      { value: stats.expired.count, name: 'منتهي', color: '#EF4444' },
+      { value: stats.trial.count, name: 'تجريبي', color: '#F59E0B' },
     ];
   });
 
+  subscriptionCenterValue = computed(() => {
+    const stats = this.customerStatistics()?.subscription_status;
+    return stats ? `${stats.active.percentage}%` : '0%';
+  });
+
+  subscriptionCenterLabel = 'نشط';
+
+  // Customer status donut (مسجل فقط / اشتراك نشط / اشتراك منتهي)
   customerChartData = computed(() => {
     const stats = this.customerStatistics()?.customer_status;
     if (!stats) return [];
     return [
-      { value: stats.registered_only.count, name: 'مسجل فقط' },
-      { value: stats.subscribed.count, name: 'مشترك' },
-      { value: stats.expired_subscription.count, name: 'اشتراك منتهي' },
+      { value: stats.registered_only.count, name: 'مسجل فقط', color: '#86EFAC' },
+      { value: stats.subscribed.count, name: 'اشتراك نشط', color: '#22C55E' },
+      { value: stats.expired_subscription.count, name: 'اشتراك منتهي', color: '#475569' },
     ];
   });
+
+  customerCenterValue = computed(() => {
+    const stats = this.customerStatistics()?.customer_status;
+    return stats ? `${stats.subscribed.percentage}%` : '0%';
+  });
+
+  customerCenterLabel = 'مشترك';
 
   sessionColumns: any[] = [
     { field: 'full_name', header: 'اسم الموظف' },

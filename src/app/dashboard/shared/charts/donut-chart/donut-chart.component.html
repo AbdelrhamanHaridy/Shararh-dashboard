@@ -1,1 +1,70 @@
-<div #chartContainer class="chart-container"></div>
+@if (!isLoading) {
+<div class="flex flex-row-reverse items-center justify-between gap-5 py-5">
+    @if (chartTitle) {
+    <h2 class="sr-only">{{ chartTitle }}</h2>
+    }
+
+    <!-- Legend -->
+    <div class="flex flex-1 flex-col gap-4">
+        @for (item of segments; track item.name) {
+        <div class="flex flex-row-reverse items-center gap-2.5">
+            <span class="min-w-[34px] font-tajawal text-sm font-medium text-[#303136]">{{ item.percentage }}%</span>
+            <span class="flex-1 font-tajawal text-sm font-medium text-[#6B6B6B]">{{ item.name }}</span>
+            <span class="h-2.5 w-2.5 shrink-0 rounded-full" [style.background-color]="item.color"></span>
+        </div>
+        }
+    </div>
+
+    <!-- Donut ring -->
+    <div class="relative shrink-0" [style.width.px]="size" [style.height.px]="size">
+        <svg [attr.viewBox]="'0 0 ' + size + ' ' + size" class="block h-full w-full">
+            <g [attr.transform]="'rotate(-90 ' + center + ' ' + center + ')'">
+                @for (seg of segments; track seg.name) {
+                <circle [attr.cx]="center" [attr.cy]="center" [attr.r]="radius" fill="none" [attr.stroke]="seg.color"
+                    [attr.stroke-width]="strokeWidth" stroke-linecap="round" [attr.stroke-dasharray]="seg.dashArray"
+                    [attr.stroke-dashoffset]="seg.dashOffset"
+                    class="transition-[stroke-dasharray,stroke-dashoffset] duration-500 ease-out"></circle>
+                }
+            </g>
+        </svg>
+
+        <div class="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center">
+            <span class="font-tajawal text-2xl font-bold leading-tight text-[#2E3139]">{{ displayValue }}</span>
+            <span class="font-tajawal text-[13px] font-medium text-[#6B6B6B]">{{ displayLabel }}</span>
+        </div>
+    </div>
+</div>
+} @else {
+<div class="flex flex-row-reverse items-center justify-between gap-5 py-5">
+    <!-- Legend skeleton -->
+    <div class="flex flex-1 flex-col gap-4">
+        @for (item of [1, 2, 3]; track item) {
+        <div class="flex flex-row-reverse items-center gap-2.5">
+            <p-skeleton width="34px" height="20px"></p-skeleton>
+
+            <div class="flex-1">
+                <p-skeleton width="80%" height="20px"></p-skeleton>
+            </div>
+
+            <p-skeleton shape="circle" size="0.625rem"></p-skeleton>
+        </div>
+        }
+    </div>
+
+    <!-- Donut skeleton -->
+    <div class="relative shrink-0" [style.width.px]="size" [style.height.px]="size">
+        <!-- Outer circle -->
+        <p-skeleton shape="circle" [size]="size + 'px'"></p-skeleton>
+
+        <!-- Inner hole -->
+        <div class="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white"
+            [style.width.px]="size - strokeWidth * 2" [style.height.px]="size - strokeWidth * 2">
+            <div class="flex flex-col items-center text-center">
+                <p-skeleton width="55px" height="28px"></p-skeleton>
+                <!-- <p-skeleton width="70px" height="18px" class="mt-1"></p-skeleton> -->
+            </div>
+        </div>
+    </div>
+
+</div>
+}

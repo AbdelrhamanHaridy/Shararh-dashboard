@@ -1,164 +1,96 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import * as echarts from 'echarts/core';
-import { PieChart } from 'echarts/charts';
-import {
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-  TransformComponent,
-} from 'echarts/components';
-import { LabelLayout, UniversalTransition } from 'echarts/features';
-import { CanvasRenderer } from 'echarts/renderers';
-import type { PieSeriesOption } from 'echarts/charts';
-import type {
-  TitleComponentOption,
-  TooltipComponentOption,
-  LegendComponentOption,
-} from 'echarts/components';
-import type { ComposeOption } from 'echarts/core';
+import { Component, Input, OnChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SkeletonModule } from 'primeng/skeleton';
 
-// Create an Option type with only the required components and charts via ComposeOption
-type ECOption = ComposeOption<
-  PieSeriesOption | TitleComponentOption | TooltipComponentOption | LegendComponentOption
->;
+export interface DonutDataItem {
+  value: number;
+  name: string;
+  color?: string;
+}
 
-// Register the required components
-echarts.use([
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-  TransformComponent,
-  PieChart,
-  LabelLayout,
-  UniversalTransition,
-  CanvasRenderer,
-]);
+interface RenderedSegment extends DonutDataItem {
+  color: string;
+  percentage: number;
+  dashArray: string;
+  dashOffset: number;
+}
+
+// Default palette used when chartData items don't specify their own color
+const DEFAULT_PALETTE = [
+  '#22C55E',
+  '#EF4444',
+  '#F59E0B',
+  '#3B82F6',
+  '#8B5CF6',
+  '#475569',
+  '#EC4899',
+];
 
 @Component({
   selector: 'app-donut-chart',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, SkeletonModule],
   templateUrl: './donut-chart.component.html',
   styleUrl: './donut-chart.component.scss',
 })
-export class DonutChartComponent implements OnInit {
-  @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
-  @Input() chartData: any[] = [];
+export class DonutChartComponent implements OnChanges {
+  @Input() chartData: DonutDataItem[] = [];
   @Input() chartTitle: string = '';
   @Input() padAngle: number = 5;
+  @Input() isLoading = false;
 
-  private chartInstance: echarts.ECharts | null = null;
+  @Input() centerValue?: string;
+  @Input() centerLabel?: string;
+  @Input() size = 140;
+  @Input() strokeWidth = 14;
 
-  ngOnInit(): void {
-    this.initChart();
+  segments: RenderedSegment[] = [];
+
+  ngOnChanges(): void {
+    this.buildSegments();
   }
 
-  private initChart(): void {
-    if (this.chartContainer) {
-      this.chartInstance = echarts.init(this.chartContainer.nativeElement);
-      this.setChartOption();
-    }
+  get center(): number {
+    return this.size / 2;
   }
 
-  private setChartOption(): void {
-    const option: ECOption = {
-      title: {
-        text: this.chartTitle,
-        left: 'right',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold',
-        },
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b}: {c} ({d}%)',
-      },
-      legend: {
-        // padding: 20,
-        orient: 'vertical',
-        left: 'left',
-        top: 'center',
-      },
-      series: [
-        {
-          name: 'Data',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          padAngle: this.padAngle,
-          left: 'start',
-          // right: 'right',
-          itemStyle: {
-            borderRadius: 5,
-          },
-          data: this.chartData,
-          label: {
-            show: false,
-            position: 'center',
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 14,
-              fontWeight: 'bold',
-            },
-          },
-          labelLine: {
-            show: false,
-          },
-        },
-      ],
-    };
-
-    if (this.chartInstance) {
-      this.chartInstance.setOption(option);
-    }
+  get radius(): number {
+    return (this.size - this.strokeWidth) / 2;
   }
 
-  ngOnDestroy(): void {
-    if (this.chartInstance) {
-      this.chartInstance.dispose();
-    }
+  get circumference(): number {
+    return 2 * Math.PI * this.radius;
+  }
+
+  private buildSegments(): void {
+    const total = this.chartData.reduce((sum, d) => sum + (d.value || 0), 0);
+    const circ = this.circumference;
+    let cumulative = 0;
+
+    this.segments = this.chartData.map((d, i) => {
+      const percentage = total > 0 ? (d.value / total) * 100 : 0;
+      const rawLength = (percentage / 100) * circ;
+      const segmentLength = Math.max(rawLength - this.padAngle, 0);
+      const dashOffset = -cumulative;
+      cumulative += rawLength;
+
+      return {
+        ...d,
+        color: d.color || DEFAULT_PALETTE[i % DEFAULT_PALETTE.length],
+        percentage: Math.round(percentage),
+        dashArray: `${segmentLength} ${circ}`,
+        dashOffset,
+      };
+    });
+  }
+
+  get displayValue(): string {
+    if (this.centerValue) return this.centerValue;
+    return this.segments.length ? `${this.segments[0].percentage}%` : '0%';
+  }
+
+  get displayLabel(): string {
+    if (this.centerLabel) return this.centerLabel;
+    return this.chartData.length ? this.chartData[0].name : '';
   }
 }
-// {
-//   tooltip: {
-//     trigger: 'item'
-//   },
-//   legend: {
-//     top: '5%',
-//     left: 'center'
-//   },
-//   series: [
-//     {
-//       name: 'Access From',
-//       type: 'pie',
-//       radius: ['40%', '70%'],
-//       avoidLabelOverlap: false,
-//       padAngle: 5,
-//       itemStyle: {
-//         borderRadius: 10
-//       },
-//       label: {
-//         show: false,
-//         position: 'center'
-//       },
-//       emphasis: {
-//         label: {
-//           show: true,
-//           fontSize: 40,
-//           fontWeight: 'bold'
-//         }
-//       },
-//       labelLine: {
-//         show: false
-//       },
-//       data: [
-//         { value: 1048, name: 'Search Engine' },
-//         { value: 735, name: 'Direct' },
-//         { value: 580, name: 'Email' },
-//         { value: 484, name: 'Union Ads' },
-//         { value: 300, name: 'Video Ads' }
-//       ]
-//     }
-//   ]
-// }
