@@ -6,6 +6,8 @@ export interface UserListResponse {
   pagination: Pagination;
 }
 
+export type UserAppType = 'owner_app' | 'employee_app';
+
 export interface User {
   id: number;
   first_name: string;

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 // import { SubscriptionStoresResponse, Store } from '../models/subscription-stores.model';
 // import { StatisticsApiResponse } from '../models/subscription-stats.model';
 import { environment } from '../../../../../environments/environment';
-import { UserListResponse } from '../models/user-database.model';
+import { UserAppType, UserListResponse } from '../models/user-database.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,10 +20,18 @@ export class UserDatabaseService {
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`);
   }
   // user-database.service.ts
-  getUsers(page: number = 1, perPage: number = 10, search?: string): Observable<UserListResponse> {
+  getUsers(
+    page: number = 1,
+    perPage: number = 10,
+    search?: string,
+    type?: UserAppType,
+  ): Observable<UserListResponse> {
     let params = new HttpParams().set('page', page.toString()).set('per_page', perPage.toString());
     if (search) {
       params = params.set('search', search);
+    }
+    if (type) {
+      params = params.set('type', type);
     }
     return this.http.get<UserListResponse>(`${this.apiUrl}/admin/users`, { params });
   }

@@ -14,7 +14,7 @@ import { MenuItem } from 'primeng/api';
 import { BaseComponent } from '../../shared/services/base.component';
 import { takeUntil } from 'rxjs';
 import { UserDatabaseService } from './services/user-database.service';
-import { User } from './models/user-database.model';
+import { User, UserAppType } from './models/user-database.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -36,6 +36,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
 
   isLoading: boolean = true;
   searchTerm: string = ''; // NEW: current active filter, bound to the search box too
+  selectedType: UserAppType = 'owner_app';
   currentPage: number = 1;
   rowsPerPage: number = 10;
 
@@ -65,6 +66,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
     // from the header to the same page with a different email/name)
     this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.searchTerm = params.get('search') ?? '';
+      this.selectedType = this.getUserType(params.get('type'));
       this.currentPage = 1;
       this.onGetUsers(1, this.searchTerm);
     });
@@ -73,7 +75,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
   onGetUsers(page: number = 1, search: string = this.searchTerm) {
     this.isLoading = true;
     this.usersService
-      .getUsers(page, this.rowsPerPage, search)
+      .getUsers(page, this.rowsPerPage, search, this.selectedType)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
@@ -99,6 +101,16 @@ export class UserDatabase extends BaseComponent implements OnInit {
     this.onGetUsers(page, this.searchTerm);
   }
 
+  onTypeChange(type: UserAppType): void {
+    if (this.selectedType === type) {
+      return;
+    }
+
+    this.selectedType = type;
+    this.currentPage = 1;
+    this.updateQueryParams({ type });
+  }
+
   // NEW: manual search box typing on this page itself (separate from the header search)
   onSearchInput(value: string): void {
     this.searchTerm = value;
@@ -114,13 +126,21 @@ export class UserDatabase extends BaseComponent implements OnInit {
   }
 
   private updateSearchQueryParam(search: string): void {
+    this.updateQueryParams({ search: search || null });
+  }
+
+  private updateQueryParams(queryParams: { search?: string | null; type?: UserAppType }): void {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { search: search || null }, // null removes the param from the URL
+      queryParams,
       queryParamsHandling: 'merge',
     });
     // Note: this.onGetUsers is triggered by the queryParamMap subscription above,
     // so we don't call it again here — avoids a double request.
+  }
+
+  private getUserType(type: string | null): UserAppType {
+    return type === 'employee_app' ? 'employee_app' : 'owner_app';
   }
 
   onArchiveUser(user: User): void {

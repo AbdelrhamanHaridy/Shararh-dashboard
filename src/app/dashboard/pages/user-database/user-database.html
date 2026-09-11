@@ -32,12 +32,14 @@
 
         <!-- Buttons -->
         <div class="flex flex-row gap-5">
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors ">
+            <button type="button" (click)="onTypeChange('owner_app')"
+                [class.filter-button-active]="selectedType === 'owner_app'"
+                [attr.aria-pressed]="selectedType === 'owner_app'" class="user-app-filter-button">
                 <span>تطبيق الادمن</span>
             </button>
-            <button type="button"
-                class="inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors hover:bg-primary-op-30">
+            <button type="button" (click)="onTypeChange('employee_app')"
+                [class.filter-button-active]="selectedType === 'employee_app'"
+                [attr.aria-pressed]="selectedType === 'employee_app'" class="user-app-filter-button">
                 <span>تطبيق الموظفين</span>
             </button>
         </div>

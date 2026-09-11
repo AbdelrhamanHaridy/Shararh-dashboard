@@ -1,0 +1,9 @@
+@reference '../../../../styles.css';
+
+.user-app-filter-button {
+  @apply inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-30;
+}
+
+.filter-button-active {
+  @apply bg-primary-op-10 text-primary border-primary;
+}
