@@ -103,7 +103,7 @@
 
 <!-- Accept-customer confirmation, fully re-templated via PrimeNG's "headless" mode -->
 <p-confirmDialog #cd>
-    <ng-template pTemplate="headless" let-onAccept="onAccept" let-onReject="onReject">
+    <ng-template pTemplate="headless" let-message let-onAccept="onAccept" let-onReject="onReject">
         <div dir="rtl"
             class="relative bg-white rounded-2xl shadow-lg p-6 w-full max-w-md flex flex-col gap-6 font-tajawal">
 
@@ -111,21 +111,20 @@
                 class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer">
                 <i class="pi pi-times text-lg"></i>
             </button>
-
             <p class="text-center text-[#0F172A] text-base pt-2">
-                هل تؤكد استلام العميل
-                <span class="text-[#308FEE] font-bold">{{ customer().name }}</span>
-                ؟
+                {{ message.data.prefix }}
+                <span class="text-[#308FEE] font-bold">{{ message.data.name }}</span>
+                {{ message.data.suffix }}
             </p>
 
             <div class="flex flex-row gap-4">
                 <button type="button" (click)="onAccept()"
                     class="flex-1 py-3 rounded-xl bg-[#10A922] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
-                    تأكيد
+                    {{ message.acceptLabel || 'تأكيد' }}
                 </button>
                 <button type="button" (click)="onReject()"
                     class="flex-1 py-3 rounded-xl bg-[#94A3B8] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
-                    إلغاء
+                    {{ message.rejectLabel || 'إلغاء' }}
                 </button>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { ConfirmationService, MenuItem } from 'primeng/api';
+import { Confirmation, ConfirmationService, MenuItem } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenuModule } from 'primeng/menu';
 import { Menu } from 'primeng/menu';
@@ -18,7 +18,13 @@ export interface Customer {
   assignedEmployee: string;
   notes: string;
 }
-
+interface ConfirmationWithData extends Confirmation {
+  data?: {
+    prefix: string;
+    name: string;
+    suffix: string;
+  };
+}
 @Component({
   selector: 'app-customer-card',
   standalone: true,
@@ -82,12 +88,6 @@ export class CustomerCard {
     this.phoneCall.emit(this.customer().id);
   }
 
-  onAcceptCustomer() {
-    this.confirmationService.confirm({
-      accept: () => this.acceptCustomer.emit(this.customer().id),
-    });
-  }
-
   onMenuToggle(menu: Menu, event: MouseEvent) {
     menu.toggle(event);
   }
@@ -96,25 +96,44 @@ export class CustomerCard {
     this.editCustomer.emit(this.customer().id);
   }
 
+  onAcceptCustomer() {
+    this.confirmationService.confirm({
+      data: {
+        prefix: 'هل تؤكد استلام العميل',
+        name: this.customer().name,
+        suffix: '؟',
+      },
+      accept: () => this.acceptCustomer.emit(this.customer().id),
+    } as ConfirmationWithData);
+  }
+
   onDelete() {
     this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف العميل ${this.customer().name}؟`,
+      data: {
+        prefix: 'هل أنت متأكد من حذف العميل',
+        name: this.customer().name,
+        suffix: '؟',
+      },
       header: 'تأكيد الحذف',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'نعم',
       rejectLabel: 'لا',
       accept: () => this.deleteCustomer.emit(this.customer().id),
-    });
+    } as ConfirmationWithData);
   }
 
   onArchive() {
     this.confirmationService.confirm({
-      message: `هل أنت متأكد من أرشفة العميل ${this.customer().name}؟`,
+      data: {
+        prefix: 'هل تريد نقل العميل',
+        name: this.customer().name,
+        suffix: 'للأرشيف؟',
+      },
       header: 'تأكيد الأرشفة',
       icon: 'pi pi-archive',
       acceptLabel: 'نعم',
       rejectLabel: 'لا',
       accept: () => this.archiveCustomer.emit(this.customer().id),
-    });
+    } as ConfirmationWithData);
   }
 }
