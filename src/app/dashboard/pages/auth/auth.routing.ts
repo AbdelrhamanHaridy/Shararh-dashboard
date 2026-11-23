@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { employeeSessionGuard } from '../../../core/guards/employee-session.guard';
+import { loginGuard } from '../../../core/guards/login.guard';
 
 export const authRoutes: Routes = [
   {
@@ -10,24 +11,29 @@ export const authRoutes: Routes = [
         path: 'register',
         loadComponent: () =>
           import('./pages/auth-register/auth-register').then((m) => m.AuthRegister),
+        canActivate: [loginGuard],
       },
       {
         path: 'login',
         loadComponent: () => import('./pages/auth-login/auth-login').then((m) => m.AuthLogin),
+        canActivate: [loginGuard],
       },
       {
         path: 'forgot-password',
         loadComponent: () =>
           import('./pages/forgot-password/forgot-password').then((m) => m.ForgotPassword),
+        canActivate: [loginGuard],
       },
       {
         path: 'otp',
         loadComponent: () => import('./pages/otp/otp').then((m) => m.Otp),
+        canActivate: [loginGuard],
       },
       {
         path: 'reset-password',
         loadComponent: () =>
           import('./pages/reset-password/reset-password').then((m) => m.ResetPassword),
+        canActivate: [loginGuard],
       },
       {
         path: 'start-session',

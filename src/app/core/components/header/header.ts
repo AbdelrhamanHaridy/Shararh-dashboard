@@ -246,12 +246,15 @@ export class Header implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success && response.data?.session?.status === 'active') {
           this.currentSession.set(response);
+          console.log('Session Started!');
         } else {
           this.currentSession.set(null);
         }
       },
       error: (error) => {
+        console.log('Session Err!');
         if (error?.status === 404) {
+          console.log('Session Ended!');
           this.currentSession.set(null);
         } else {
           console.error('Failed to load session:', error);
@@ -261,3 +264,5 @@ export class Header implements OnInit, OnDestroy {
     });
   }
 }
+
+// {"success":false,"status":404,"message":"api.sessions.not_active","errors":null}

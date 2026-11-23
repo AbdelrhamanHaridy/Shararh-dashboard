@@ -8,13 +8,14 @@ import { loginGuard } from '../core/guards/login.guard';
 import { authGuard } from '../core/guards/auth.guard';
 import { adminGuard } from '../core/guards/admin.guard';
 import { employeeRoleGuard } from '../core/guards/employee-role.guard';
+import { employeeSessionGuard } from '../core/guards/employee-session.guard';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'auth',
     children: authRoutes,
-    canActivate: [loginGuard],
+    // canActivate: [loginGuard],
   },
   {
     path: 'home',
