@@ -84,6 +84,7 @@ export class RevenueHistory implements OnInit {
   paymentMethodId = signal<number | null>(null);
   planId = signal<number | null>(null);
   selectedStatus = signal<string | null>(null);
+  searchTerm = signal<string>('');
 
   // Filter options (signals)
   paymentMethods = signal<Array<{ label: string; value: number }>>([]);
@@ -151,6 +152,9 @@ export class RevenueHistory implements OnInit {
   applyFilters(): void {
     const filters: RevenueFilters = {};
 
+    if (this.searchTerm().trim()) {
+      filters.search = this.searchTerm().trim();
+    }
     if (this.dateFrom()) {
       filters.date_from = this.formatDate(this.dateFrom()!);
     }
@@ -179,6 +183,7 @@ export class RevenueHistory implements OnInit {
     this.paymentMethodId.set(null);
     this.planId.set(null);
     this.selectedStatus.set(null);
+    this.searchTerm.set('');
     this.showFilterDialog.set(false);
     this.currentPage = 1;
     this.loadDashboard();
@@ -205,6 +210,12 @@ export class RevenueHistory implements OnInit {
     this.selectedStatus.set(this.selectedStatus() === status ? null : status);
     // Defer to next tick to allow signal to update before applying filters
     setTimeout(() => this.applyFilters(), 0);
+  }
+
+  onSearchInput(value: string): void {
+    this.searchTerm.set(value);
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
   private formatDate(date: Date): string {
