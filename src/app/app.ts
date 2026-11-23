@@ -5,7 +5,8 @@ import { Header } from './core/components/header/header';
 import { filter } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { ContextMenuComponent } from "./dashboard/shared/components/context-menu/context-menu.component";
+import { ContextMenuComponent } from './dashboard/shared/components/context-menu/context-menu.component';
+import { AuthService } from './dashboard/pages/auth/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,13 @@ export class App {
   private router = inject(Router);
   protected isAuthRoute = signal(false);
   protected isMobileSidebarOpen = signal(false);
+  private readonly authService = inject(AuthService);
+  openMenu = signal(false);
+  user = computed(() => this.authService.getCurrentUser());
+  avatarSrc = computed(() => {
+    const u = this.user();
+    return u?.avatar_url || 'assets/testing/avatar.png';
+  });
 
   constructor(private messageService: MessageService) {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
@@ -34,5 +42,13 @@ export class App {
 
   protected closeMobileSidebar(): void {
     this.isMobileSidebarOpen.set(false);
+  }
+
+  toggleMenu(): void {
+    this.openMenu.set(!this.openMenu());
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

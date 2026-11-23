@@ -116,8 +116,13 @@
 
     <div class="relative">
         <button type="button" (click)="toggleMenu()"
-            class="rounded-full overflow-hidden w-11 h-11 border border-[#E2E8F0] bg-white cursor-pointer">
-            <img [src]="avatarSrc()" alt="avatar" class="w-full h-full object-cover" />
+            class="relative block w-11 h-11 rounded-full border border-[#E2E8F0] bg-white cursor-pointer"
+            [attr.aria-expanded]="openMenu()" aria-haspopup="menu">
+            <img [src]="avatarSrc()" alt="صورة الحساب" class="w-full h-full rounded-full object-cover" />
+            <span
+                class="absolute -bottom-0.5 -right-1 z-10 flex h-4 w-4 items-center justify-center rounded-full border border-[#E2E8F0] bg-white shadow-sm">
+                <img src="assets/icons/global/arrow-down-angle.svg" alt="" class="h-2.5 w-2.5" aria-hidden="true" />
+            </span>
         </button>
 
         @if (openMenu()) {
@@ -126,7 +131,6 @@
                 <div class="text-sm text-right text-[#0F172A] font-medium px-2 py-1">
                     {{ user()?.full_name || user()?.email || 'الحساب' }}
                 </div>
-                <hr class="my-2" />
                 <button type="button" (click)="logout()"
                     class="w-full text-right px-3 py-2 text-sm text-[#ED4C5C] cursor-pointer">تسجيل الخروج</button>
             </div>
