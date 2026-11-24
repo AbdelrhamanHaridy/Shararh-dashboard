@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Breadcrumb } from 'primeng/breadcrumb';
 import { ProgressBar } from 'primeng/progressbar';
 import { MenuItem } from 'primeng/api';
@@ -7,6 +7,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TieredMenuModule } from 'primeng/tieredmenu';
+import { SuggestedTask } from '../../models/suggested-tasks.model';
+import { SuggestedTasksService } from '../../services/suggested-tasks.service';
+import { BaseComponent } from '../../../../shared/services/base.component';
+import { takeUntil } from 'rxjs';
+import { ContextMenuItem } from '../../../../shared/services/context-menu.service';
+import { MenuTriggerDirective } from '../../../../shared/directives/menu-trigger.directive';
 
 @Component({
   selector: 'app-employee-suggested-tasks',
@@ -16,77 +22,99 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
     CommonModule,
     ConfirmDialogModule,
     TieredMenuModule,
-    DynamicDialogModule,
     SkeletonModule,
+    MenuTriggerDirective,
   ],
   templateUrl: './employee-suggested-tasks.html',
   styleUrl: './employee-suggested-tasks.scss',
 })
-export class EmployeeSuggestedTasks {
+export class EmployeeSuggestedTasks extends BaseComponent implements OnInit {
   title = 'المهام المقترحه';
   isLoading = false;
 
   completedTasks = 0;
   totalTasks = 7;
-
+  @Output() actionClick = new EventEmitter<{
+    action: string;
+    row: SuggestedTask;
+  }>();
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
 
-  breadcrumbItems: MenuItem[] = [
-    { label: 'المهام المقترحه' },
-  ];
+  breadcrumbItems: MenuItem[] = [{ label: 'المهام المقترحه' }];
+  constructor(private suggestedTasksService: SuggestedTasksService) {
+    super();
+  }
+  suggested_tasks: SuggestedTask[] = [];
+  ngOnInit() {
+    this.getSuggestedTasks();
+  }
+  getSuggestedTasks() {
+    this.suggestedTasksService
+      .getSuggestedTasks()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.suggested_tasks = res.data;
+          console.log(this.suggested_tasks);
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+  }
 
-  suggested_tasks = [
-    {
-      id: 1,
-      title: 'مراجعة طلبات العملاء',
-      created_at: '2026-11-24',
-      status: 'pending',
-      status_label: 'قيد الانتظار',
-    },
-    {
-      id: 2,
-      title: 'متابعة الشحنات المتأخرة',
-      created_at: '2026-11-23',
-      status: 'in_progress',
-      status_label: 'قيد التنفيذ',
-    },
-    // {
-    //   id: 3,
-    //   title: 'تحديث بيانات العملاء',
-    //   created_at: '2026-11-22',
-    //   status: 'completed',
-    //   status_label: 'مكتملة',
-    // },
-    // {
-    //   id: 4,
-    //   title: 'مراجعة المخزون',
-    //   created_at: '2026-11-21',
-    //   status: 'pending',
-    //   status_label: 'قيد الانتظار',
-    // },
-    // {
-    //   id: 5,
-    //   title: 'إعداد التقرير الأسبوعي',
-    //   created_at: '2026-11-20',
-    //   status: 'in_progress',
-    //   status_label: 'قيد التنفيذ',
-    // },
-    // {
-    //   id: 6,
-    //   title: 'مراجعة الفواتير',
-    //   created_at: '2026-11-19',
-    //   status: 'pending',
-    //   status_label: 'قيد الانتظار',
-    // },
-    // {
-    //   id: 7,
-    //   title: 'تنظيم ملفات الموظفين',
-    //   created_at: '2026-11-18',
-    //   status: 'pending',
-    //   status_label: 'قيد الانتظار',
-    // },
-  ];
-
+  getSuggestedTaskMenuItems(task: SuggestedTask): ContextMenuItem[] {
+    return [
+      // {
+      //   label: 'عرض تفاصيل المهمة',
+      //   command: () =>
+      //     this.actionClick.emit({
+      //       action: 'viewSuggestedTask',
+      //       row: task,
+      //     }),
+      // },
+      // {
+      //   label: 'تعديل المهمة',
+      //   command: () =>
+      //     this.actionClick.emit({
+      //       action: 'editSuggestedTask',
+      //       row: task,
+      //     }),
+      // },
+      // {
+      //   label: task.is_active ? 'تعطيل المهمة' : 'تفعيل المهمة',
+      //   command: () =>
+      //     this.actionClick.emit({
+      //       action: 'toggleSuggestedTask',
+      //       row: task,
+      //     }),
+      // },
+      // {
+      //   label: 'حذف المهمة',
+      //   command: () =>
+      //     this.actionClick.emit({
+      //       action: 'deleteSuggestedTask',
+      //       row: task,
+      //     }),
+      // },
+      {
+        label: 'مهمه مكتمله',
+        command: () =>
+          this.actionClick.emit({
+            action: 'deleteSuggestedTask',
+            row: task,
+          }),
+      },
+      {
+        label: 'ارشفة المهمه',
+        command: () =>
+          this.actionClick.emit({
+            action: 'deleteSuggestedTask',
+            row: task,
+          }),
+      },
+    ];
+  }
   getStatusMeta(status: string) {
     const statuses: Record<string, { color: string; bg: string }> = {
       pending: { color: '#D97706', bg: '#FEF3C7' },
