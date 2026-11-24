@@ -77,6 +77,10 @@ export class StartSession {
     this.router.navigate(['/forgot-code']);
   }
 
+  logout(): void {
+    this.authService.logout();
+  }
+
   private formatDate(date: Date): string {
     const formatter = new Intl.DateTimeFormat('ar-EG', {
       weekday: 'long',

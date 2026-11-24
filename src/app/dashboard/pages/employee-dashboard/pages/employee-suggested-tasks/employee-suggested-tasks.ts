@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Breadcrumb } from 'primeng/breadcrumb';
 import { ProgressBar } from 'primeng/progressbar';
 import { MenuItem } from 'primeng/api';
@@ -30,7 +30,7 @@ import { MenuTriggerDirective } from '../../../../shared/directives/menu-trigger
 })
 export class EmployeeSuggestedTasks extends BaseComponent implements OnInit {
   title = 'المهام المقترحه';
-  isLoading = false;
+  isLoading = true;
 
   completedTasks = 0;
   totalTasks = 7;
@@ -41,27 +41,38 @@ export class EmployeeSuggestedTasks extends BaseComponent implements OnInit {
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'المهام المقترحه' }];
-  constructor(private suggestedTasksService: SuggestedTasksService) {
+  constructor(
+    private suggestedTasksService: SuggestedTasksService,
+    private cdr: ChangeDetectorRef,
+  ) {
     super();
   }
   suggested_tasks: SuggestedTask[] = [];
   ngOnInit() {
     this.getSuggestedTasks();
   }
-  getSuggestedTasks() {
-    this.suggestedTasksService
-      .getSuggestedTasks()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.suggested_tasks = res.data;
-          console.log(this.suggested_tasks);
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
-  }
+getSuggestedTasks() {
+  this.isLoading = true;
+  this.cdr.detectChanges();
+
+  this.suggestedTasksService
+    .getSuggestedTasks()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res) => {
+        this.suggested_tasks = res.data;
+        this.isLoading = false;
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+
+        this.cdr.detectChanges();
+      },
+    });
+}
 
   getSuggestedTaskMenuItems(task: SuggestedTask): ContextMenuItem[] {
     return [
