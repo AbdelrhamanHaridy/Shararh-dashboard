@@ -36,7 +36,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
 
   isLoading: boolean = true;
   searchTerm: string = ''; // NEW: current active filter, bound to the search box too
-  selectedType: UserAppType = 'owner_app';
+  selectedType: UserAppType = 'admin_app';
   currentPage: number = 1;
   rowsPerPage: number = 10;
 
@@ -48,7 +48,25 @@ export class UserDatabase extends BaseComponent implements OnInit {
     { field: 'full_name', header: 'الاسم' },
     { field: 'email', header: 'البريد الإلكتروني' },
     { field: 'phone', header: 'رقم الهاتف' },
-    { field: 'status', header: 'الحالة', style: { fontWeight: 'bold' } },
+
+    {
+      field: 'devices_count',
+      header: 'عدد الأجهزة',
+      style: { fontWeight: 'bold', color: '#717171' },
+    },
+    {
+      field: 'app_versions_formatted',
+      header: 'إصدارات التطبيق',
+      style: { fontWeight: 'bold', color: '#717171' },
+      render: (row: User) => row.app_versions_formatted || '-',
+    },
+    {
+      field: 'activity_status_label',
+      header: 'النشاط',
+      style: { fontWeight: 'bold' },
+      render: (row: User) => row.activity_status_label || '-',
+    },
+    { field: 'status', header: 'حالة الحساب', style: { fontWeight: 'bold' } },
     {
       field: 'roles',
       header: 'الأدوار',
@@ -140,7 +158,7 @@ export class UserDatabase extends BaseComponent implements OnInit {
   }
 
   private getUserType(type: string | null): UserAppType {
-    return type === 'employee_app' ? 'employee_app' : 'owner_app';
+    return type === 'employee_app' ? 'employee_app' : 'admin_app';
   }
 
   onArchiveUser(user: User): void {

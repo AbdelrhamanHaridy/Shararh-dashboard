@@ -6,7 +6,7 @@ export interface UserListResponse {
   pagination: Pagination;
 }
 
-export type UserAppType = 'owner_app' | 'employee_app';
+export type UserAppType = 'admin_app' | 'employee_app';
 
 export interface User {
   id: number;
@@ -17,6 +17,15 @@ export interface User {
   phone: string;
   account_status: string;
   roles: string[];
+  devices_count: number;
+  app_versions: string[];
+  app_versions_formatted: string;
+
+  activity_status: string;
+  activity_status_label: string;
+  is_online: boolean;
+  last_activity: string;
+  last_seen_at: string | null;
 }
 
 export interface Pagination {
