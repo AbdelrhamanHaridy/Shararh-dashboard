@@ -1,9 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SubscriptionStoresResponse, Store } from '../models/subscription-stores.model';
+import {
+  StoreSubscriptionStatus,
+  SubscriptionStoresResponse,
+} from '../models/subscription-stores.model';
 import { StatisticsApiResponse } from '../models/subscription-stats.model';
 import { environment } from '../../../../../environments/environment';
+import { FollowUpEmployeesResponse } from '../../user-database/models/follow-up-employee.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,13 +27,34 @@ export class SubscriptionsService {
    * Get subscription stores (stores list)
    */
   // subscriptions.service.ts
-  getStores(page: number = 1, search?: string): Observable<SubscriptionStoresResponse> {
-    let params = new HttpParams().set('page', page.toString());
-    if (search) {
-      params = params.set('search', search);
+  getStores(
+    page: number = 1,
+    search?: string,
+    status: StoreSubscriptionStatus = 'all',
+    followUpEmployeeId?: number | null,
+  ): Observable<SubscriptionStoresResponse> {
+    let params = new HttpParams().set('page', page.toString()).set('per_page', '15');
+    const normalizedSearch = search?.trim();
+
+    if (normalizedSearch) {
+      params = params.set('search', normalizedSearch);
     }
+
+    if (status !== 'all') {
+      params = params.set('status', status);
+    }
+
+    if (followUpEmployeeId !== undefined && followUpEmployeeId !== null) {
+      params = params.set('follow_up_employee_id', followUpEmployeeId.toString());
+    }
+
     return this.http.get<SubscriptionStoresResponse>(`${this.apiUrl}/admin/subscription/stores`, {
       params,
     });
+  }
+  getFollowUpEmployees(): Observable<FollowUpEmployeesResponse> {
+    return this.http.get<FollowUpEmployeesResponse>(
+      `${this.apiUrl}/admin/subscription/follow-up-employees`,
+    );
   }
 }

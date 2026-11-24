@@ -13,6 +13,8 @@ export interface Subscription {
   days_left: number;
 }
 
+export type StoreSubscriptionStatus = 'all' | 'registered' | 'active' | 'suspended' | 'expired';
+
 export interface Store {
   id: number;
   name: string;

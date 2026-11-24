@@ -7,6 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SharedKpiCard } from '../../shared/components/shared-kpi-card/shared-kpi-card';
 import { MenuItem } from 'primeng/api';
@@ -20,18 +21,22 @@ import { TimelineOfEventsDialog } from './components/timeline-of-events-dialog/t
 import { SubscriptionPlanDialog } from './components/subscription-plan-dialog/subscription-plan-dialog';
 import { BaseComponent } from '../../shared/services/base.component';
 import { SubscriptionsService } from './services/subscriptions.service';
-import { takeUntil } from 'rxjs';
-import { Store } from './models/subscription-stores.model';
+import { catchError, debounceTime, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { Store, StoreSubscriptionStatus } from './models/subscription-stores.model';
 import { StoreStatistics } from './models/subscription-stats.model';
+import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
+import { FollowUpEmployee } from '../user-database/models/follow-up-employee.model';
 
 @Component({
   selector: 'app-subscription-management',
   imports: [
     CommonModule,
+    FormsModule,
     SharedKpiCard,
     PageHeaderComponent,
     SubscriptionCard,
     SubscriptionCardSkeleton,
+    SharedSelectComponent,
   ],
   providers: [DialogService],
   templateUrl: './subscription-management.html',
@@ -49,6 +54,17 @@ export class SubscriptionManagement extends BaseComponent implements OnInit {
   stores = signal<Store[]>([]);
   isLoading = signal(false);
   loadError = signal(false);
+  searchTerm = signal('');
+  statusFilter = signal<StoreSubscriptionStatus>('all');
+  followUpEmployeeId = signal<number | null>(null);
+  readonly statusFilters: { value: StoreSubscriptionStatus; label: string }[] = [
+    { value: 'all', label: 'الكل' },
+    { value: 'registered', label: 'مسجل' },
+    { value: 'active', label: 'نشط' },
+    { value: 'suspended', label: 'موقوف' },
+    { value: 'expired', label: 'منتهي' },
+  ];
+  private readonly filtersChanged = new Subject<void>();
 
   // Computed subscriptions formatted for display
   subscriptions = computed(() => {
@@ -82,15 +98,78 @@ export class SubscriptionManagement extends BaseComponent implements OnInit {
   constructor(public dialogService: DialogService) {
     super();
   }
+  followUpEmployees = signal<FollowUpEmployee[]>([]);
 
+  // "All" option first, then the employees from the API
+  followUpOptions = computed(() => [
+    { label: 'الكل', value: null as number | null },
+    ...this.followUpEmployees().map((e) => ({ label: e.name, value: e.id as number | null })),
+  ]);
   ngOnInit(): void {
-    this.loadData();
+    this.filtersChanged
+      .pipe(
+        debounceTime(300),
+        switchMap(() => {
+          this.isLoading.set(true);
+          this.loadError.set(false);
+          return this.subscriptionsService
+            .getStores(1, this.searchTerm(), this.statusFilter(), this.followUpEmployeeId())
+            .pipe(
+              catchError((error: unknown) => {
+                console.error('Error fetching stores:', error);
+                return of(null);
+              }),
+            );
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((response) => {
+        this.isLoading.set(false);
+        if (!response) {
+          this.stores.set([]);
+          this.loadError.set(true);
+          return;
+        }
+
+        this.stores.set(response.data);
+      });
+
+    this.loadStatistics();
+    this.loadFollowUpEmployees();
+    this.isLoading.set(true);
+    this.filtersChanged.next();
+  }
+  private loadFollowUpEmployees(): void {
+    this.subscriptionsService
+      .getFollowUpEmployees()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => this.followUpEmployees.set(res.data.employees),
+        error: (err) => console.error('Error fetching follow-up employees:', err),
+      });
   }
 
-  private loadData(): void {
-    this.isLoading.set(true);
+  onSearchChange(search: string): void {
+    this.searchTerm.set(search);
+    this.filtersChanged.next();
+  }
 
-    // Fetch statistics
+  onClearSearch(): void {
+    this.searchTerm.set('');
+    this.filtersChanged.next();
+  }
+
+  onStatusChange(status: StoreSubscriptionStatus): void {
+    this.statusFilter.set(status);
+    this.filtersChanged.next();
+  }
+
+  onFollowUpEmployeeChange(employeeId: number | null): void {
+    this.followUpEmployeeId.set(employeeId);
+    this.filtersChanged.next();
+  }
+
+  private loadStatistics(): void {
     this.subscriptionsService
       .getStatistics()
       .pipe(takeUntil(this.destroy$))
@@ -100,23 +179,6 @@ export class SubscriptionManagement extends BaseComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error fetching statistics:', err);
-        },
-      });
-
-    // Fetch stores
-    this.subscriptionsService
-      .getStores()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.stores.set(res.data);
-          this.isLoading.set(false);
-          this.loadError.set(false);
-        },
-        error: (err) => {
-          console.error('Error fetching stores:', err);
-          this.isLoading.set(false);
-          this.loadError.set(true);
         },
       });
   }

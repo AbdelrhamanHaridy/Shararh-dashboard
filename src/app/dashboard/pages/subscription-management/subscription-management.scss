@@ -1,0 +1,12 @@
+:host {
+  .p-select-label {
+    --p-select-padding-y: 1px !important;
+  }
+}
+::ng-deep .follow-up-employee-select .p-select-label {
+  --p-select-padding-y: 5px !important;
+  width: 142px;
+}
+::ng-deep .input-wrapper {
+  gap: 0 !important;
+}
