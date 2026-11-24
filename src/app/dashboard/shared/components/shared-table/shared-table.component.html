@@ -94,6 +94,14 @@
                     </button>
                 </div>
                 }
+                @case('users_actions') {
+                <div class="card flex justify-center">
+                    <button type="button" [appMenuTrigger]="getUsersMenuItems(row)"
+                        class="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" title="المزيد">
+                        <img src="assets/icons/global/menu_dots.svg" alt="المزيد" class="w-5 h-5" />
+                    </button>
+                </div>
+                }
                 @case('archive_actions') {
                 <div class="card flex justify-center">
                     <button type="button" [appMenuTrigger]="getArchiveMenuItems(row)"

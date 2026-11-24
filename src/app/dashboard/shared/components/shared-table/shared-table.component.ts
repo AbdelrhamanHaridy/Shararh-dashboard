@@ -1,12 +1,5 @@
 // shared-table.component.ts
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/paginator';
@@ -21,6 +14,7 @@ import { ProcessStatusBadgeDirective } from '../../directives/proccess-status-ba
 import { CouponStatusBadgeDirective } from '../../directives/coupon-status-badge.directive';
 import { MenuTriggerDirective } from '../../directives/menu-trigger.directive';
 import { ContextMenuItem } from '../../services/context-menu.service';
+import { User } from '../../../pages/user-database/models/user-database.model';
 
 @Component({
   selector: 'app-shared-table',
@@ -103,7 +97,35 @@ export class SharedTableComponent implements OnChanges {
       },
     ];
   }
-
+  getUsersMenuItems(row: User): ContextMenuItem[] {
+    return [
+      {
+        label: 'إرسال اشعار مباشر',
+        // color: '#2563EB', // Blue
+        command: () => this.actionClick.emit({ action: 'sendNotification', row }),
+      },
+      {
+        label: 'إعادة تعيين كلمة المرور',
+        // color: '#9333EA', // Purple
+        command: () => this.actionClick.emit({ action: 'resetPassword', row }),
+      },
+      {
+        label: 'إيقاف الحساب مؤقتاََ',
+        color: '#137FEC',
+        command: () => this.actionClick.emit({ action: 'toggleAccountStatus', row }),
+      },
+      {
+        label: 'تسجيل الخروج من الاجهزه',
+        color: '#D22F27', // Gray
+        command: () => this.actionClick.emit({ action: 'logoutDevices', row }),
+      },
+      {
+        label: 'أرشفة المستخدم',
+        color: '#D22F27', // Red
+        command: () => this.actionClick.emit({ action: 'archiveUser', row }),
+      },
+    ];
+  }
   getArchiveMenuItems(row: any): ContextMenuItem[] {
     return [{ label: 'أرشفة', command: () => this.actionClick.emit({ action: 'archive', row }) }];
   }
