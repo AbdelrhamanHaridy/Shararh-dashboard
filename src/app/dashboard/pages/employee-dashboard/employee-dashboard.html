@@ -18,7 +18,8 @@
             navigateLink="/subscriptions">
         </app-shared-kpi-card>
         <app-shared-kpi-card [title]="'المهام المقترحة'" [number]="summary()?.suggested_tasks || 0"
-            iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000">
+            iconPath="assets/icons/cards/layers.svg" iconBgColor="#EEEEEE" numberColor="#000"
+            navigateLink="/employee-dashboard/suggested-tasks">
         </app-shared-kpi-card>
         <app-shared-kpi-card [title]="'الاشتراكات الفعّالة'" [number]="summary()?.active_subscriptions || 0"
             iconPath="assets/icons/cards/circle_check.svg" iconBgColor="#D8FFDC" numberColor="#10A922">

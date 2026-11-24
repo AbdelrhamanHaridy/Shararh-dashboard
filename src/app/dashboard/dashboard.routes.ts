@@ -9,6 +9,7 @@ import { authGuard } from '../core/guards/auth.guard';
 import { adminGuard } from '../core/guards/admin.guard';
 import { employeeRoleGuard } from '../core/guards/employee-role.guard';
 import { employeeSessionGuard } from '../core/guards/employee-session.guard';
+import { employeeDashboardRoutes } from './pages/employee-dashboard/employee-dashboard.routing';
 
 export const dashboardRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -24,8 +25,7 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: 'employee-dashboard',
-    loadComponent: () =>
-      import('./pages/employee-dashboard/employee-dashboard').then((m) => m.EmployeeDashboard),
+    children: employeeDashboardRoutes,
     canActivate: [employeeRoleGuard],
   },
   {

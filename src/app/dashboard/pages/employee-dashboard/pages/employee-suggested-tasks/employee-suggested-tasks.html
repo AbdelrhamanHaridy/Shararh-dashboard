@@ -1,0 +1,110 @@
+<section class="px-6">
+    <div class="flex flex-col gap-4 rounded-2xl bg-white p-4 md:px-6">
+        <!-- Header Row -->
+        <div class="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
+
+            <!-- Title & Breadcrumb -->
+            <div class="flex flex-col">
+                <p-breadcrumb *ngIf="breadcrumbItems?.length" [model]="breadcrumbItems" [home]="home">
+                </p-breadcrumb>
+
+                <h1 class="m-0 text-right text-[28px] font-medium text-black px-3.5 py-0">
+                    {{ title }}
+                </h1>
+            </div>
+
+            <!-- Progress -->
+            <div class="flex flex-col gap-2 w-full max-w-[460px]">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-[#6B7280]">
+                        معدل الإنجاز
+                    </span>
+
+                    <span class="text-xl font-medium text-[#10A922]" dir="ltr">
+                        {{ completedTasks }}/{{ totalTasks }}
+                    </span>
+                </div>
+
+                <p-progressbar [value]="(completedTasks / totalTasks) * 100" [showValue]="false" class="h-1"
+                    styleClass="h-2">
+                </p-progressbar>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="p-6 flex flex-col gap-4">
+    @if (!isLoading) {
+    @for (task of suggested_tasks; track task.id) {
+    <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col justify-between items-start gap-6">
+
+        <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
+
+            <div
+                class="rounded-full p-2 bg-[#FEE2E2] w-12 h-12 sm:w-14 sm:h-14 flex justify-center items-center shrink-0">
+                <img class="w-6" src="assets/icons/global/timer.svg" alt="">
+            </div>
+
+            <div class="flex flex-col lg:flex-row justify-between gap-4 flex-1 w-full min-w-0">
+
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-[#2E3139] text-base sm:text-lg font-tajawal font-medium">
+                        <!-- {{ task.title }} -->
+                        استكمال بيانات الحساب
+                    </h2>
+
+                    <p class="text-sm font-medium underline cursor-pointer text-[#10A922]">
+                        تحديث بيانات العميل 
+                    </p>
+                </div>
+
+                <!-- <div class="flex flex-wrap gap-3 items-center">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-[#44483F] text-xs font-medium leading-4">الحالة</p>
+
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-medium font-tajawal shrink-0 flex items-center gap-2"
+                            [style.color]="getStatusMeta(task.status).color"
+                            [style.background-color]="getStatusMeta(task.status).bg">
+
+                            <span class="w-1.5 h-1.5 rounded-full shrink-0"
+                                [style.background-color]="getStatusMeta(task.status).color">
+                            </span>
+
+                            <span>{{ task.status_label }}</span>
+                        </span>
+                    </div>
+                </div> -->
+
+            </div>
+        </div>
+
+
+
+    </div>
+    }
+    } @else {
+    <div class="space-y-5">
+        @for (_ of [1,2,3]; track $index) {
+        <div class="p-5 bg-white rounded-2xl shadow-md flex flex-col gap-6">
+
+            <div class="flex flex-col sm:flex-row items-start gap-4 w-full">
+                <p-skeleton shape="circle" size="3.5rem"></p-skeleton>
+
+                <div class="flex flex-col gap-3 flex-1 w-full">
+                    <p-skeleton width="180px" height="20px"></p-skeleton>
+                    <p-skeleton width="120px" height="14px"></p-skeleton>
+                </div>
+            </div>
+
+            <div class="border border-[#E2E8F0] rounded-[10px] bg-[#FAFDFF] p-5 flex flex-col gap-3">
+                <p-skeleton width="100%" height="18px"></p-skeleton>
+                <p-skeleton width="85%" height="18px"></p-skeleton>
+            </div>
+
+        </div>
+        }
+    </div>
+    }
+</section>
