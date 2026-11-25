@@ -23,15 +23,10 @@ const STATUS_TAB_MAP: Record<string, 'potential' | 'underImplementation'> = {
   new: 'potential',
   interested: 'potential',
   contacted: 'potential',
+  registered: 'underImplementation',
   subscribed: 'underImplementation',
   in_implementation: 'underImplementation',
-};
-
-// ASSUMPTION: backend "tab" query value per UI tab — adjust if the API expects
-// different strings (sample payload only showed an empty "tab": "").
-const TAB_PARAM_MAP: Record<'potential' | 'underImplementation', string> = {
-  potential: 'potential',
-  underImplementation: 'under_implementation',
+  rejected: 'underImplementation',
 };
 
 // Badge colors per status. Extend as more statuses are confirmed.
@@ -79,16 +74,19 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   isLoadingLeads = false;
   loadError = '';
 
-  // Status filter
-  statuses = [
+  underImplementationStatus = '';
+  readonly underImplementationStatuses = [
     { key: '', label: 'الكل' },
-    { key: 'new', label: 'جديد' },
-    { key: 'contacted', label: 'تم التواصل' },
-    { key: 'interested', label: 'مهتم' },
+    { key: 'registered', label: 'مسجل' },
     { key: 'subscribed', label: 'مشترك' },
     { key: 'rejected', label: 'مرفوض' },
   ];
-  selectedStatus = '';
+
+  potentialDataFilter: 'all' | 'complete_data' = 'all';
+  readonly potentialDataFilters: { value: 'all' | 'complete_data'; label: string }[] = [
+    { value: 'all', label: 'الكل' },
+    { value: 'complete_data', label: 'بيانات مكتملة' },
+  ];
 
   // Search filter
   searchTerm = '';
@@ -152,11 +150,18 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
     const filters: Record<string, any> = {};
 
     if (status !== undefined) {
-      this.selectedStatus = status;
+      this.underImplementationStatus = status;
     }
 
-    // filters['tab'] = TAB_PARAM_MAP[this.activeTab];
-    if (this.selectedStatus) filters['status'] = this.selectedStatus;
+    if (this.activeTab === 'potential') {
+      filters['tab'] = 'potential';
+      if (this.potentialDataFilter !== 'all') {
+        filters['filter'] = this.potentialDataFilter;
+      }
+    } else if (this.underImplementationStatus) {
+      filters['status'] = this.underImplementationStatus;
+    }
+
     if (this.searchTerm) filters['search'] = this.searchTerm;
 
     this.potentialCustomerCenterService.getLeads(filters).subscribe({
@@ -199,8 +204,13 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
     });
   }
 
-  setStatusFilter(statusKey: string) {
+  setUnderImplementationStatus(statusKey: string): void {
     this.loadLeads(statusKey);
+  }
+
+  setPotentialDataFilter(filter: 'all' | 'complete_data'): void {
+    this.potentialDataFilter = filter;
+    this.loadLeads();
   }
 
   private resolveTab(status: string): 'potential' | 'underImplementation' {

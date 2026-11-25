@@ -51,15 +51,31 @@
                 style="color: #6B7280;" />
         </div>
 
-        <!-- Filter Buttons -->
-        <div class="flex flex-row gap-5">
-            @for (s of statuses; track s.key) {
-            <button type="button" (click)="setStatusFilter(s.key)"
-                [class]="selectedStatus === s.key ? 'inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors' : 'inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10'">
-                <span>{{ s.label }}</span>
+        @if (activeTab === 'potential') {
+        <div class="flex flex-row gap-5" role="group" aria-label="فلترة اكتمال بيانات العملاء المحتملين">
+            @for (filter of potentialDataFilters; track filter.value) {
+            <button type="button" (click)="setPotentialDataFilter(filter.value)"
+                [class]="potentialDataFilter === filter.value
+                    ? 'inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors'
+                    : 'inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10'"
+                [attr.aria-pressed]="potentialDataFilter === filter.value">
+                <span>{{ filter.label }}</span>
             </button>
             }
         </div>
+        } @else {
+        <div class="flex flex-row gap-5" role="group" aria-label="فلترة قائمة تحت التنفيذ">
+            @for (status of underImplementationStatuses; track status.key) {
+            <button type="button" (click)="setUnderImplementationStatus(status.key)"
+                [class]="underImplementationStatus === status.key
+                    ? 'inline-flex items-center gap-2 rounded-2xl bg-primary-op-10 cursor-pointer px-7 py-2 text-sm font-medium text-primary border border-primary transition-colors'
+                    : 'inline-flex items-center gap-2 rounded-2xl bg-white cursor-pointer px-7 py-2 text-sm font-medium text-text-primary border border-[#E2E8F0] transition-colors hover:bg-primary-op-10'"
+                [attr.aria-pressed]="underImplementationStatus === status.key">
+                <span>{{ status.label }}</span>
+            </button>
+            }
+        </div>
+        }
     </div>
 </section>
 
