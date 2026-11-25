@@ -1,28 +1,47 @@
 <div class="w-full bg-white rounded-2xl font-tajawal">
 
+    @if (isLoading()) {
+    <div class="flex items-center justify-center py-16 text-text-secondary text-base font-medium">
+        جاري التحميل...
+    </div>
+    } @else if (loadError() || !branch()) {
+    <div class="flex flex-col items-center justify-center gap-4 py-16">
+        <span class="text-[#D22F27] text-base font-medium">تعذر تحميل بيانات الفرع</span>
+        <button type="button" (click)="loadDetails()"
+            class="px-4 py-2 rounded-lg border border-[#E2E8F0] text-[#137FEC] text-sm font-medium cursor-pointer hover:bg-gray-50">
+            إعادة المحاولة
+        </button>
+    </div>
+    } @else {
+    @let b = branch()!;
+
     <!-- Avatar + name -->
     <div class="flex flex-col items-center gap-6 py-6">
         <div class="relative w-20 h-20">
-            <img [src]="branch.avatarUrl" alt="{{ branch.name }}"
+            <img [src]="b.avatarUrl" [alt]="b.name"
                 class="w-20 h-20 rounded-full object-cover border border-gray-100" />
-            <span *ngIf="branch.isOnline"
-                class="absolute bottom-0 right-0 w-5 h-5 bg-[#22C55E] rounded-full border-2 border-white"></span>
+            @if (b.isActive) {
+            <span class="absolute bottom-0 right-0 w-5 h-5 bg-[#22C55E] rounded-full border-2 border-white"></span>
+            }
         </div>
 
         <div class="flex flex-col items-center">
-            <h3 class="text-[#0F172A] text-xl font-bold">{{ branch.name }}</h3>
-            <p class="text-text-secondary text-base font-medium">{{ branch.subtitle }}</p>
+            <h3 class="text-[#0F172A] text-xl font-bold">{{ b.name }}</h3>
+            <p class="text-text-secondary text-base font-medium">{{ b.subtitle }}</p>
         </div>
 
         <!-- Quick actions -->
         <div class="flex flex-row justify-center gap-12.5">
-            <div *ngFor="let action of quickActions" class="flex flex-col items-center gap-1">
+            @for (action of quickActions; track action.key) {
+            <button type="button" (click)="onQuickAction(action.key)" [disabled]="!isActionAvailable(action.key)"
+                class="flex flex-col items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
                 <div class="w-15 h-15 rounded-2xl flex items-center justify-center"
                     [style.background-color]="action.bgColor">
                     <img [src]="action.iconSrc" [alt]="action.label" class="w-full p-2.5" />
                 </div>
                 <span class="text-text-secondary text-base font-medium">{{ action.label }}</span>
-            </div>
+            </button>
+            }
         </div>
     </div>
 
@@ -35,48 +54,48 @@
                 <span class="text-text-secondary text-sm font-medium">المستخدمين</span>
                 <img src="assets/icons/global/blue_details.svg" alt="details" class="cursor-pointer" width="10.5px">
             </div>
-            <span class="text-[#0F172A] text-2xl font-bold">{{ branch.usersCount }}</span>
-            <span class="text-primary text-xs font-normal">نشط الان: {{ branch.activeUsersNow }}</span>
+            <span class="text-[#0F172A] text-2xl font-bold">{{ b.usersCount }}</span>
+            <span class="text-primary text-xs font-normal">نشط الان: {{ b.activeUsersNow }}</span>
         </div>
 
         <div class="flex flex-col gap-1 border border-[#E2E8F0] rounded-xl p-4">
             <span class="text-text-secondary text-sm font-medium">تاريخ الانتهاء</span>
-            <span class="text-[#0F172A] text-2xl font-bold">{{ branch.expiryDate }}</span>
-            <span class="text-[#D22F27] text-xs font-medium">متبقي {{ branch.daysRemaining }} يوم</span>
+            <span class="text-[#0F172A] text-2xl font-bold">{{ b.expiryDate }}</span>
+            <span class="text-[#D22F27] text-xs font-medium">متبقي {{ b.daysRemaining }} يوم</span>
         </div>
-
-
     </div>
 
     <!-- Account information -->
-    <div class=" pb-2">
+    <div class="pb-2">
         <h4 class="text-text-secondary text-sm font-bold">معلومات الحساب</h4>
     </div>
 
     <div class="mb-6 border border-[#E2E8F0] rounded-xl divide-y divide-[#E2E8F0]">
         <div class="flex flex-row items-center justify-between p-4">
             <span class="text-text-secondary text-base font-normal">مالك الفرع</span>
-            <span class="text-[#0F172A] text-base font-bold">{{ branch.ownerName }}</span>
+            <span class="text-[#0F172A] text-base font-bold">{{ b.ownerName }}</span>
         </div>
 
         <button type="button" (click)="onOpenSubscriptionPlan()"
             class="w-full flex flex-row items-center justify-between p-4 cursor-pointer hover:bg-gray-50 text-right">
             <span class="text-text-secondary text-base font-normal">خطة الاشتراك</span>
             <span class="bg-[#F1B31C1A] text-[#FF6600] text-xs font-bold px-2 py-1 rounded-sm">
-                {{ branch.subscriptionPlan }}
+                {{ b.subscriptionPlan }}
             </span>
         </button>
 
         <div class="flex flex-row items-center justify-between p-4">
             <span class="text-text-secondary text-base font-normal">آخر تفعيل</span>
-            <span class="text-[#0F172A] text-sm font-normal">{{ branch.lastActivatedAt }}</span>
+            <span class="text-[#0F172A] text-sm font-normal">{{ b.lastActivatedAt }}</span>
         </div>
 
         <div class="flex flex-row items-center justify-between p-4">
             <span class="text-text-secondary text-base font-normal">حالة الفرع</span>
             <div class="flex flex-row items-center gap-2">
-                <p-toggleswitch dir="ltr" />
-                <span class="text-[#137FEC] text-sm font-medium">{{ branch.isActive ? 'تفعيل' : 'غير مفعل' }}</span>
+                <!-- Disabled until a store activate/deactivate endpoint exists -->
+                <p-toggleswitch dir="ltr" [ngModel]="b.isActive" [disabled]="true"
+                    (onChange)="onToggleStatus()" />
+                <span class="text-[#137FEC] text-sm font-medium">{{ b.isActive ? 'تفعيل' : 'غير مفعل' }}</span>
             </div>
         </div>
 
@@ -85,4 +104,5 @@
             الخط الزمني للأحداث
         </button>
     </div>
+    }
 </div>

@@ -23,10 +23,13 @@
         <!-- Search Bar -->
         <div class="flex items-center gap-2 px-5 py-4 rounded-[15px] bg-[#F8FAFC] text-[#6B7280]" style="height: 52px;">
             <img src="assets/icons/global/search.svg" alt="search" class="w-5 h-5" />
-            <input type="text" placeholder="بحث عن (اسم المحل، اسم المؤسسة، الهاتف)" [ngModel]="searchTerm()"
+            <input type="text"
+                placeholder="بحث اسم المحل، كود المحل/المؤسسة، الهاتف واسم المالك"
+                [ngModel]="searchTerm()"
                 (ngModelChange)="onSearchChange($event)"
                 class="w-full bg-transparent border-none outline-none font-tajawal font-normal text-base leading-none tracking-normal text-right"
-                style="color: #6B7280;" aria-label="البحث عن متجر" />
+                style="color: #6B7280;"
+                aria-label="بحث لحظي عن اسم المحل، كود المحل أو المؤسسة، رقم الهاتف، والاسم الأول والأخير للمالك" />
         </div>
 
 

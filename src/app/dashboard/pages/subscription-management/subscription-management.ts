@@ -256,21 +256,14 @@ export class SubscriptionManagement extends BaseComponent implements OnInit {
       }
     });
   }
-  showBranchDetailsDialog() {
+  showBranchDetailsDialog(storeId: number) {
     this.ref = this.dialogService.open(BranchDetailsDialog, {
       header: 'تفاصيل الفرع',
       width: '707px',
       modal: true,
       closable: true,
-      breakpoints: {
-        '960px': '75vw',
-        '640px': '90vw',
-      },
-      data: {
-        // Pass any data you want to the dialog
-        userId: 123,
-        context: 'subscription',
-      },
+      breakpoints: { '960px': '75vw', '640px': '90vw' },
+      data: { storeId },
     });
 
     // Subscribe to dialog close event
@@ -361,8 +354,8 @@ export class SubscriptionManagement extends BaseComponent implements OnInit {
   }
 
   onViewDetails(subscriptionId: number) {
-    console.log('View details for subscription:', subscriptionId);
-    this.showBranchDetailsDialog();
-    // this.showSubscriptionPlanDialog();
+    // subscriptions() uses id: store.id, so this is the store id
+    this.showBranchDetailsDialog(subscriptionId);
+    //   // this.showSubscriptionPlanDialog();
   }
 }

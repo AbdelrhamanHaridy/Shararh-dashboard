@@ -8,6 +8,7 @@ import {
 import { StatisticsApiResponse } from '../models/subscription-stats.model';
 import { environment } from '../../../../../environments/environment';
 import { FollowUpEmployeesResponse } from '../../user-database/models/follow-up-employee.model';
+import { StoreDetailsResponse } from '../../user-database/models/store-details.model';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,11 @@ export class SubscriptionsService {
     return this.http.get<SubscriptionStoresResponse>(`${this.apiUrl}/admin/subscription/stores`, {
       params,
     });
+  }
+  getStoreDetails(storeId: number): Observable<StoreDetailsResponse> {
+    return this.http.get<StoreDetailsResponse>(
+      `${this.apiUrl}/admin/subscription/stores/${storeId}`,
+    );
   }
   getFollowUpEmployees(): Observable<FollowUpEmployeesResponse> {
     return this.http.get<FollowUpEmployeesResponse>(
