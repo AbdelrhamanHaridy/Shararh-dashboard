@@ -329,13 +329,11 @@ export class SubscriptionManagement extends BaseComponent implements OnInit {
   }
 
   handleDialogResult(result: any) {
-    // Process the data returned from the dialog
     if (result && result.success) {
-      // Refresh data or update UI
-      console.log('Data saved successfully:', result.data);
+      this.filtersChanged.next();
+      this.loadStatistics();
     }
   }
-
   // Clean up on component destroy
   override ngOnDestroy() {
     if (this.ref) {
