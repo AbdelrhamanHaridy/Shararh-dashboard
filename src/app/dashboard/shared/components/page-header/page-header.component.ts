@@ -40,6 +40,18 @@ export class PageHeaderComponent {
   /** End date value */
   @Input() dateToValue: Date | null = null;
 
+  /** Whether to show the single month picker (e.g. progress board) */
+  @Input() showMonthFilter: boolean = false;
+
+  /** Selected month, any day inside the month works (the picker only uses month and year) */
+  @Input() monthValue: Date | null = null;
+
+  /** Latest selectable month, e.g. pass new Date() to block future months */
+  @Input() monthMaxDate: Date | null = null;
+
+  /** Optional text shown next to the picker, e.g. "شهر أبريل 2026" */
+  @Input() monthLabel: string = '';
+
   /** Emitted when the action button is clicked */
   @Output() actionButtonClick = new EventEmitter<MouseEvent>();
 
@@ -51,6 +63,9 @@ export class PageHeaderComponent {
 
   /** Emitted when the user clicks the small reset button to clear both dates */
   @Output() dateReset = new EventEmitter<void>();
+
+  /** Emitted when the month changes, or null when the picker is cleared */
+  @Output() monthChange = new EventEmitter<Date | null>();
 
   onActionClick(event: MouseEvent): void {
     this.actionButtonClick.emit(event);
@@ -72,5 +87,10 @@ export class PageHeaderComponent {
     this.dateFromChange.emit(null);
     this.dateToChange.emit(null);
     this.dateReset.emit();
+  }
+
+  onMonthChange(date: Date | null): void {
+    this.monthValue = date;
+    this.monthChange.emit(date);
   }
 }
