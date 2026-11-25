@@ -11,8 +11,11 @@
                     <img src="assets/icons/global/location_mark.svg" alt="location" />
                     <span>{{ customer().city }}، {{ customer().country }}</span>
                 </div>
-                <span class="text-[10px] font-normal text-text-secondary font-tajawal text-nowrap">تم قبوله {{
-                    customer().acceptedDate }}</span>
+                @if (mode() === 'underImplementation') {
+                <span class="text-[10px] font-normal text-text-secondary font-tajawal text-nowrap">
+                    تم قبوله {{ customer().acceptedDate }}
+                </span>
+                }
             </div>
         </div>
 
