@@ -1,6 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  ValidatorFn,
+} from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 import { SharedTextInputComponent } from '../../shared/components/shared-text-input/shared-text-input.component';
@@ -11,6 +24,7 @@ import {
   Communication,
   OptionItem,
   CreateCommunicationPayload,
+  CommunicationReasonContext,
 } from './models/communications.model';
 import { PotentialCustomerCenterService } from '../potential-customer-center/services/potential-customer-center.service';
 import { ToastService } from '../../shared/services/toast.service';
@@ -38,6 +52,19 @@ interface SuggestedTaskView {
   title: string;
 }
 
+const COMMUNICATION_TYPE_LABELS: Record<string, string> = {
+  outgoing: 'صادر',
+  incoming: 'وارد / مستلم',
+  صادر: 'صادر',
+  وارد: 'وارد / مستلم',
+  مستلم: 'وارد / مستلم',
+};
+
+const REQUIRED_LEAD_SELECTION: ValidatorFn = (control) =>
+  typeof control.value === 'number' && Number.isInteger(control.value) && control.value > 0
+    ? null
+    : { required: true };
+
 @Component({
   selector: 'app-contact-log',
   imports: [
@@ -52,17 +79,28 @@ interface SuggestedTaskView {
   styleUrl: './contact-log.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContactLog implements OnInit {
+export class ContactLog implements OnInit, OnDestroy {
   contactForm!: FormGroup;
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
 
   breadcrumbItems: MenuItem[] = [{ label: 'سجل الاتصال', routerLink: '/contact-log' }];
 
-  // Populated from GET /admin/lead-communications/options
+  // Types and channels come from /options; reasons are fetched for the selected lead and type.
   contactTypeOptions: OptionItem[] = [];
   contactViaOptions: OptionItem[] = [];
   contactReasonOptions: OptionItem[] = [];
-  leadsOptions: { label: string; value: number }[] = [];
+  isLoadingContactReasons = false;
+  contactReasonPlaceholder = 'اختر العميل أو نوعه ونوع التواصل أولاً';
+  contactReasonError = '';
+  leadsOptions: { label: string; value: number | 'none' }[] = [
+    { label: 'بدون تحديد عميل', value: 'none' },
+  ];
+  readonly customerTypeOptions: OptionItem[] = [
+    { key: 'potential', value: 'potential', label: 'محتمل' },
+    { key: 'registered', value: 'registered', label: 'مسجل' },
+  ];
+  hasSelectedLead = false;
+  private reasonRequest?: Subscription;
 
   // Populated from GET /admin/lead-communications/suggested-tasks
   taskStats = {
@@ -85,11 +123,13 @@ export class ContactLog implements OnInit {
 
   ngOnInit() {
     this.contactForm = this.fb.group({
-      leadId: ['', Validators.required],
+      leadId: ['none', REQUIRED_LEAD_SELECTION],
+      customerType: ['', Validators.required],
       contactType: ['', Validators.required],
       contactVia: ['', Validators.required],
-      contactReason: ['', Validators.required],
+      contactReason: [{ value: '', disabled: true }, Validators.required],
       notes: [''],
+      nextFollowUpAt: [''],
     });
 
     this.loadLeads();
@@ -98,25 +138,72 @@ export class ContactLog implements OnInit {
     this.loadCommunications();
   }
 
+  ngOnDestroy(): void {
+    this.reasonRequest?.unsubscribe();
+  }
+
+  onReasonContextChanged(): void {
+    this.loadCommunicationReasons();
+  }
+
+  onLeadSelectionChanged(): void {
+    const selectedLeadId = this.contactForm.controls['leadId'].value;
+    this.hasSelectedLead =
+      typeof selectedLeadId === 'number' && Number.isInteger(selectedLeadId) && selectedLeadId > 0;
+
+    const customerTypeControl = this.contactForm.controls['customerType'];
+    if (this.hasSelectedLead) {
+      customerTypeControl.reset('', { emitEvent: false });
+      customerTypeControl.disable({ emitEvent: false });
+    } else {
+      customerTypeControl.enable({ emitEvent: false });
+    }
+
+    this.loadCommunicationReasons();
+    this.cdr.markForCheck();
+  }
+
   onSubmit() {
-    if (this.contactForm.invalid) {
+    if (
+      this.contactForm.invalid ||
+      this.isLoadingContactReasons ||
+      this.contactReasonOptions.length === 0 ||
+      !this.hasSelectedLead
+    ) {
       this.contactForm.markAllAsTouched();
       return;
     }
 
     const formValue = this.contactForm.value;
+    const leadId = this.contactForm.controls['leadId'].value;
+    if (typeof leadId !== 'number') {
+      return;
+    }
 
     const payload: CreateCommunicationPayload = {
       communication_type: formValue.contactType,
       communication_channel: formValue.contactVia,
       communication_reason: formValue.contactReason,
       notes: formValue.notes || undefined,
-      lead_id: Number(formValue.leadId),
+      lead_id: leadId,
     };
+    const nextFollowUpAt = formValue.nextFollowUpAt;
+    if (typeof nextFollowUpAt === 'string' && nextFollowUpAt.length > 0) {
+      payload.next_follow_up_at = `${nextFollowUpAt.replace('T', ' ')}:00`;
+    }
 
     this.contactLogService.addCommunication(payload).subscribe({
       next: () => {
-        this.contactForm.reset();
+        this.contactForm.reset({
+          leadId: 'none',
+          customerType: '',
+          contactType: '',
+          contactVia: '',
+          contactReason: '',
+          notes: '',
+          nextFollowUpAt: '',
+        });
+        this.onLeadSelectionChanged();
         this.toastService.success('تمت الإضافة', 'تم تسجيل الاتصال بنجاح');
         // Refresh the timeline and suggested tasks after a successful submission
         this.loadCommunications();
@@ -133,9 +220,19 @@ export class ContactLog implements OnInit {
     this.contactLogService.getOptions().subscribe({
       next: (res) => {
         if (res?.data) {
-          this.contactTypeOptions = res.data.communication_types ?? [];
+          this.contactTypeOptions = (res.data.communication_types ?? []).map((option) => {
+            const valueKey = option.value.trim().toLowerCase();
+            const optionKey = option.key.trim().toLowerCase();
+
+            return {
+              ...option,
+              label:
+                COMMUNICATION_TYPE_LABELS[valueKey] ??
+                COMMUNICATION_TYPE_LABELS[optionKey] ??
+                option.label,
+            };
+          });
           this.contactViaOptions = res.data.communication_channels ?? [];
-          this.contactReasonOptions = res.data.communication_reasons ?? [];
           this.cdr.markForCheck();
         }
       },
@@ -144,6 +241,61 @@ export class ContactLog implements OnInit {
         this.toastService.error('فشل تحميل خيارات الاتصال', this.getErrorMessage(err));
       },
     });
+  }
+
+  private loadCommunicationReasons(): void {
+    this.reasonRequest?.unsubscribe();
+    this.contactReasonOptions = [];
+    this.contactReasonError = '';
+    this.contactReasonPlaceholder = 'اختر العميل أو نوعه ونوع التواصل أولاً';
+    this.contactForm.controls['contactReason'].disable({ emitEvent: false });
+    this.contactForm.controls['contactReason'].reset('', { emitEvent: false });
+
+    const communicationType = this.contactForm.controls['contactType'].value;
+    const selectedLeadId = this.contactForm.controls['leadId'].value;
+    const leadId = typeof selectedLeadId === 'number' ? selectedLeadId : null;
+    const selectedCustomerType = this.contactForm.controls['customerType'].value;
+    let context: CommunicationReasonContext | null = null;
+    if (leadId !== null && leadId > 0) {
+      context = { kind: 'lead', leadId };
+    } else if (selectedCustomerType === 'potential' || selectedCustomerType === 'registered') {
+      context = { kind: 'customerType', customerType: selectedCustomerType };
+    }
+
+    if (
+      typeof communicationType !== 'string' ||
+      communicationType.length === 0 ||
+      context === null
+    ) {
+      this.isLoadingContactReasons = false;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.isLoadingContactReasons = true;
+    this.contactReasonPlaceholder = 'جاري تحميل الأسباب...';
+    this.cdr.markForCheck();
+    this.reasonRequest = this.contactLogService
+      .getCommunicationReasons(communicationType, context)
+      .subscribe({
+        next: (response) => {
+          this.contactReasonOptions = response.data.reasons;
+          this.isLoadingContactReasons = false;
+          this.contactReasonPlaceholder = 'اختر سبب التواصل';
+          if (this.contactReasonOptions.length > 0) {
+            this.contactForm.controls['contactReason'].enable({ emitEvent: false });
+          }
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Failed loading communication reasons:', error);
+          this.contactReasonError = 'تعذر تحميل أسباب التواصل';
+          this.isLoadingContactReasons = false;
+          this.contactReasonPlaceholder = 'تعذر تحميل الأسباب';
+          this.toastService.error('فشل تحميل أسباب التواصل', this.getErrorMessage(error));
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   private loadSuggestedTasks() {
@@ -187,10 +339,13 @@ export class ContactLog implements OnInit {
     this.potentialCustomerService.getLeads().subscribe({
       next: (res) => {
         if (res?.data && Array.isArray(res.data)) {
-          this.leadsOptions = res.data.map((lead: any) => ({
-            label: lead.name || lead.activity_name || '—',
-            value: lead.id,
-          }));
+          this.leadsOptions = [
+            { label: 'بدون تحديد عميل', value: 'none' },
+            ...res.data.map((lead: any) => ({
+              label: lead.name || lead.activity_name || '—',
+              value: lead.id,
+            })),
+          ];
           console.log(this.leadsOptions);
 
           this.cdr.markForCheck();

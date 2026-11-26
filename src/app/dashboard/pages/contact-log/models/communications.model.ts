@@ -71,6 +71,19 @@ export interface CommunicationOptionsResponse {
   data: CommunicationOptionsData;
 }
 
+export interface CommunicationReasonsResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: {
+    reasons: OptionItem[];
+  };
+}
+
+export type CommunicationReasonContext =
+  | { kind: 'lead'; leadId: number }
+  | { kind: 'customerType'; customerType: 'potential' | 'registered' };
+
 export interface SuggestedTaskItem {
   id: number;
   title: string;
