@@ -1,0 +1,120 @@
+<div class="relative w-full mx-auto font-tajawal" dir="rtl">
+
+    @if (loadError()) {
+    <div class="flex flex-col items-center gap-3 py-8">
+        <p class="text-sm text-red-600" role="alert">تعذر تحميل تفاصيل التطبيق</p>
+        <button type="button" (click)="loadDetails()"
+            class="text-sm text-primary font-medium hover:underline cursor-pointer">
+            إعادة المحاولة
+        </button>
+    </div>
+    } @else if (!details()) {
+    <p class="py-8 text-center text-sm text-text-secondary" role="status">جاري تحميل التفاصيل...</p>
+    } @else {
+    @let d = details()!;
+
+    <!-- Header -->
+    <div class="flex flex-row items-center justify-between gap-4 mb-6">
+        <div class="flex flex-col gap-1.5">
+            <h2 class="text-[#0F172A] text-sm font-bold">{{ d.application_label }}</h2>
+            <p class="text-text-secondary text-sm font-normal">
+                آخر إصدار : <span dir="ltr">{{ d.latest_version || '-' }}</span>
+            </p>
+        </div>
+
+        <span
+            class="shrink-0 text-xs text-black font-medium bg-[#F1F5F9] border border-gray-200 rounded-full px-3 py-1.5 h-fit">
+            {{ d.store_name }}
+        </span>
+    </div>
+
+    <!-- Branch filter (only when the store has more than one branch) -->
+    @if (allBranches().length > 1) {
+    <div class="flex flex-row flex-wrap gap-2 mb-6" role="group" aria-label="تصفية حسب الفرع">
+        <button type="button" (click)="selectBranch(null)"
+            [class]="selectedBranchId() === null
+                ? 'px-4 py-1.5 rounded-full text-xs font-medium bg-primary text-white cursor-pointer'
+                : 'px-4 py-1.5 rounded-full text-xs font-medium bg-[#F1F5F9] text-[#475569] hover:bg-[#E2E8F0] cursor-pointer'">
+            كل الفروع
+        </button>
+        @for (branch of allBranches(); track branch.branch_id) {
+        <button type="button" (click)="selectBranch(branch.branch_id)"
+            [class]="selectedBranchId() === branch.branch_id
+                ? 'px-4 py-1.5 rounded-full text-xs font-medium bg-primary text-white cursor-pointer'
+                : 'px-4 py-1.5 rounded-full text-xs font-medium bg-[#F1F5F9] text-[#475569] hover:bg-[#E2E8F0] cursor-pointer'">
+            {{ branch.branch_name }} ({{ branch.devices_count }})
+        </button>
+        }
+    </div>
+    }
+
+    <!-- Totals -->
+    <div class="grid grid-cols-2 gap-3 mb-6" [class.opacity-60]="isLoading()">
+        <div class="flex flex-col items-center gap-1 bg-[#F8FAFC] rounded-xl p-4">
+            <span class="text-text-secondary text-xs font-normal">إجمالي الأجهزة</span>
+            <span class="text-[#0F172A] text-2xl font-bold">{{ d.total_devices }}</span>
+        </div>
+        <div class="flex flex-col items-center gap-1 bg-[#F8FAFC] rounded-xl p-4">
+            <span class="text-text-secondary text-xs font-normal">الأجهزة النشطة</span>
+            <span class="text-[#16A34A] text-2xl font-bold">{{ d.active_devices }}</span>
+        </div>
+    </div>
+
+    <!-- One card per installed version -->
+    <div class="flex flex-col gap-3" [class.opacity-60]="isLoading()">
+        @for (version of d.versions; track version.app_version_id) {
+        <div class="flex flex-col gap-1 bg-[#F8FAFC] border border-[#D9D9D9] rounded-3xl p-5">
+            <div class="flex flex-row justify-between items-center mb-6">
+                <div class="flex flex-row items-center gap-3">
+                    <div class="bg-[#F0FDF4] p-2 rounded-xl w-10">
+                        <img src="assets/icons/global/check.svg" alt="">
+                    </div>
+                    <span class="text-[#0F172A] text-base font-bold">{{ version.version_label }}</span>
+                </div>
+
+                @if (version.requires_update) {
+                <span class="shrink-0 text-xs text-[#EA580C] font-bold bg-[#FFEDD5] rounded-full px-3 py-1 h-fit">
+                    مطلوب التحديث
+                </span>
+                }
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="flex flex-col items-center bg-white border border-[#D9D9D9] rounded-xl p-4">
+                    <span class="text-text-secondary text-sm font-medium">إجمالي الأجهزة</span>
+                    <span class="text-[#0F172A] text-lg font-bold">{{ version.devices_count }}</span>
+                </div>
+                <div class="flex flex-col items-center bg-white border border-[#D9D9D9] rounded-xl p-4">
+                    <span class="text-text-secondary text-sm font-medium">الأجهزة النشطة</span>
+                    <span class="text-[#16A34A] text-lg font-bold">{{ version.active_devices }}</span>
+                </div>
+            </div>
+
+            @if (version.can_notify || version.can_force_update) {
+            <div class="flex flex-row gap-3 mt-9">
+                @if (version.can_notify) {
+                <button type="button" (click)="onNotifyUpdate(version)" [disabled]="isSending(version)"
+                    class="w-full py-2 rounded-[15px] bg-primary hover:bg-[#15803D] text-white text-sm font-bold flex flex-row items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <img src="assets/icons/global/white_bell.svg" alt="" class="w-6" />
+                    <span>{{ sending()?.versionId === version.app_version_id && sending()?.type === 'notification'
+                        ? 'جاري الإرسال...' : 'تنبيه بالتحديث' }}</span>
+                </button>
+                }
+
+                @if (version.can_force_update) {
+                <button type="button" (click)="onForceUpdate(version)" [disabled]="isSending(version)"
+                    class="w-full py-2 rounded-[15px] bg-white border border-[#D22F27] text-[#D22F27] hover:bg-red-50 text-sm font-bold flex flex-row items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <img src="assets/icons/global/red_thunder.svg" alt="" />
+                    <span>{{ sending()?.versionId === version.app_version_id && sending()?.type === 'force'
+                        ? 'جاري الإرسال...' : 'تحديث اجباري' }}</span>
+                </button>
+                }
+            </div>
+            }
+        </div>
+        } @empty {
+        <p class="py-6 text-center text-sm text-text-secondary">لا توجد أجهزة مثبتة لهذا التطبيق.</p>
+        }
+    </div>
+    }
+</div>

@@ -1,9 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import {
+  AppApplication,
+  AppDetailResponse,
   GroupedVersionsResponse,
   InstalledVersion,
   Pagination,
@@ -13,6 +15,7 @@ import {
   StoreListFilters,
   StoreListMeta,
   StoreListResponse,
+  UpdateCampaignPayload,
 } from '../models/version-stores.model';
 
 export type MerchantAppType = 'admin' | 'employee';
@@ -59,7 +62,8 @@ const UP_TO_DATE_BADGE: AppBadge = {
   badgeBgColor: '#ECFDF5',
 };
 
-
+// The API returns "latest" and "outdated". Anything else falls back to a neutral badge
+// (previously an unknown status was shown as "up to date", which is misleading).
 const STATUS_BADGES: Record<string, AppBadge> = {
   latest: UP_TO_DATE_BADGE,
   'up-to-date': UP_TO_DATE_BADGE,
@@ -79,7 +83,6 @@ const UNKNOWN_BADGE: AppBadge = {
 export class VersionControlAndUpdatesService {
   private readonly httpClient = inject(HttpClient);
   private readonly apiUrl = environment.baseAPIURL;
-  private groupedVersionsRequest?: Observable<GroupedVersionsResponse>;
 
   getStores(filters: StoreListFilters): Observable<StoreListResult> {
     let params = new HttpParams()
@@ -106,15 +109,31 @@ export class VersionControlAndUpdatesService {
   }
 
   getGroupedVersions(): Observable<GroupedVersionsResponse> {
-    if (!this.groupedVersionsRequest) {
-      this.groupedVersionsRequest = this.httpClient
-        .get<GroupedVersionsResponse>(`${this.apiUrl}/admin/app-versions/versions-grouped`, {
-          headers: new HttpHeaders({ 'Accept-Language': 'ar' }),
-        })
-        .pipe(shareReplay({ bufferSize: 1, refCount: true }));
-    }
+    return this.httpClient.get<GroupedVersionsResponse>(
+      `${this.apiUrl}/admin/app-versions/versions-grouped`,
+      { headers: new HttpHeaders({ 'Accept-Language': 'ar' }) },
+    );
+  }
 
-    return this.groupedVersionsRequest;
+  // Details popup for one store (optionally one branch) and one app
+  getStoreAppDetail(
+    storeId: number,
+    application: AppApplication,
+    branchId?: number | null,
+  ): Observable<AppDetailResponse> {
+    let params = new HttpParams().set('application', application);
+    if (branchId) {
+      params = params.set('branch_id', branchId.toString());
+    }
+    return this.httpClient.get<AppDetailResponse>(
+      `${this.apiUrl}/admin/app-versions/stores/${storeId}/detail`,
+      { params },
+    );
+  }
+
+  // "تنبيه بالتحديث" (type: notification) and "تحديث اجباري" (type: force)
+  createUpdateCampaign(payload: UpdateCampaignPayload): Observable<unknown> {
+    return this.httpClient.post(`${this.apiUrl}/admin/app-update-campaigns`, payload);
   }
 
   private appendVersions(

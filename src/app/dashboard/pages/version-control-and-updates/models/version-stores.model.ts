@@ -89,3 +89,64 @@ export interface StoreListFilters extends Partial<StoreVersionFilters> {
   per_page: number;
   search?: string;
 }
+
+// ---------- App details popup + update campaigns ----------
+
+export type AppApplication = 'admin' | 'employee';
+export type UpdateCampaignType = 'notification' | 'force';
+
+export interface AppDetailVersion {
+  app_version_id: number;
+  version: string;
+  version_formatted: string;
+  version_label: string; // e.g. "V2.1.0 (قديم)"
+  status: string;
+  status_label: string;
+  devices_count: number;
+  active_devices: number;
+  is_latest: boolean;
+  is_force_update: boolean;
+  requires_update: boolean; // orange "مطلوب التحديث" badge
+  can_notify: boolean; // green "تنبيه بالتحديث" button
+  can_force_update: boolean; // red "تحديث اجباري" button
+}
+
+export interface AppDetailBranch {
+  branch_id: number;
+  branch_name: string;
+  devices_count: number;
+  active_devices: number;
+  versions: { version: string; devices_count: number }[];
+}
+
+export interface AppDetailData {
+  store_id: number;
+  store_name: string;
+  application: AppApplication;
+  application_label: string;
+  popup_title: string;
+  latest_version: string | null;
+  total_devices: number;
+  active_devices: number;
+  versions: AppDetailVersion[];
+  branches: AppDetailBranch[];
+}
+
+export interface AppDetailResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: AppDetailData;
+}
+
+export interface UpdateCampaignPayload {
+  application: AppApplication;
+  version_id: number; // app_version_id of the version card
+  type: UpdateCampaignType;
+  title: string;
+  message: string;
+}
+export interface UpdateMessage {
+  title: string;
+  message: string;
+}

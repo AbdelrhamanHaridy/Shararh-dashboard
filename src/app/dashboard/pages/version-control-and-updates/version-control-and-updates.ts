@@ -2,7 +2,6 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  HostListener,
   computed,
   inject,
   signal,
@@ -12,8 +11,6 @@ import { PaginatorModule } from 'primeng/paginator';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { MenuItem } from 'primeng/api';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
-import { EmployeeApplicationDetailsDialog } from './components/employee-application-details-dialog/employee-application-details-dialog';
-import { AdminApplicationDetailsDialog } from './components/admin-application-details-dialog/admin-application-details-dialog';
 import { VersionCardSkeleton } from './components/version-card-skeleton/version-card-skeleton';
 import { BaseComponent } from '../../shared/services/base.component';
 import {
@@ -27,9 +24,8 @@ import {
   StoreVersionFilters,
 } from './models/version-stores.model';
 import { FilterByVersionDialog } from './components/filter-by-version-dialog/filter-by-version-dialog';
+import { ApplicationDetailsDialog } from './components/application-details-dialog/application-details-dialog';
 
-const DEFAULT_POLL_MS = 30_000; // used when the API sends no refresh_interval_ms
-const MIN_POLL_MS = 10_000; // never poll faster than this, whatever the API says
 const EMPTY_FILTERS: StoreVersionFilters = {
   admin_versions: [],
   employee_versions: [],
@@ -65,32 +61,15 @@ export class VersionControlAndUpdates extends BaseComponent implements OnInit {
     return f.admin_versions.length + f.employee_versions.length + f.versions.length;
   });
 
-  // Ticks every 30s so "منذ X دقائق" stays correct between refreshes
-  private readonly now = signal(Date.now());
-
   lastUpdatedLabel = computed(() => {
     const meta = this.meta();
     if (!meta) return 'لم يتم التحديث بعد';
-
-    const updatedAt = new Date(meta.last_updated_at).getTime();
-    if (Number.isNaN(updatedAt)) {
-      return meta.last_updated_human || meta.last_updated_formatted;
-    }
-
-    const minutes = Math.floor((this.now() - updatedAt) / 60_000);
-    if (minutes < 1) return 'منذ لحظات';
-    if (minutes < 60) {
-      return new Intl.RelativeTimeFormat('ar', { numeric: 'always' }).format(-minutes, 'minute');
-    }
-    return meta.last_updated_formatted;
+    return meta.last_updated_human || meta.last_updated_formatted;
   });
 
   private readonly searchInput$ = new Subject<string>();
   private storesRequest?: Subscription;
   private searchTerm = '';
-  private pollIntervalMs = DEFAULT_POLL_MS;
-  private pollTimer?: ReturnType<typeof setTimeout>;
-  private clockTimer?: ReturnType<typeof setInterval>;
 
   home: MenuItem = { label: 'لوحة التحكم', routerLink: '/' };
   breadcrumbItems: MenuItem[] = [
@@ -98,15 +77,6 @@ export class VersionControlAndUpdates extends BaseComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.versionService
-      .getGroupedVersions()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        error: (error: unknown) => {
-          console.error('Failed to preload grouped application versions', error);
-        },
-      });
-
     this.searchInput$
       .pipe(
         debounceTime(400),
@@ -120,27 +90,16 @@ export class VersionControlAndUpdates extends BaseComponent implements OnInit {
         this.loadStores();
       });
 
-    this.clockTimer = setInterval(() => this.now.set(Date.now()), 30_000);
     this.loadStores();
   }
 
   override ngOnDestroy(): void {
-    clearTimeout(this.pollTimer);
-    clearInterval(this.clockTimer);
     this.storesRequest?.unsubscribe();
     super.ngOnDestroy();
   }
 
-  // Coming back to the tab: refresh right away instead of showing minutes-old data
-  @HostListener('document:visibilitychange')
-  onVisibilityChange(): void {
-    if (!document.hidden && !this.isLoading()) {
-      this.loadStores({ silent: true });
-    }
-  }
-
   /**
-   * @param silent true = keep the current list on screen (auto refresh, refresh button).
+   * @param silent true = keep the current list on screen during manual refresh.
    *               false = show skeletons (first load, search, filters, paging).
    */
   private loadStores(options: { silent?: boolean } = {}): void {
@@ -173,11 +132,9 @@ export class VersionControlAndUpdates extends BaseComponent implements OnInit {
           this.totalStores.set(result.pagination.total);
           this.currentPage.set(result.pagination.current_page);
           this.meta.set(result.meta);
-          this.now.set(Date.now());
           this.loadError.set('');
           this.isLoading.set(false);
           this.isRefreshing.set(false);
-          this.schedulePoll(result.meta?.refresh_interval_ms);
         },
         error: (error: unknown) => {
           console.error('Failed to load version-control stores', error);
@@ -187,25 +144,8 @@ export class VersionControlAndUpdates extends BaseComponent implements OnInit {
           }
           this.isLoading.set(false);
           this.isRefreshing.set(false);
-          this.schedulePoll();
         },
       });
-  }
-
-  // Live refresh using the interval the API asks for (meta.refresh_interval_ms)
-  private schedulePoll(intervalMs?: number): void {
-    if (intervalMs && intervalMs > 0) {
-      this.pollIntervalMs = Math.max(intervalMs, MIN_POLL_MS);
-    }
-
-    clearTimeout(this.pollTimer);
-    this.pollTimer = setTimeout(() => {
-      if (document.hidden) {
-        this.schedulePoll(); // tab in background: skip this round
-        return;
-      }
-      this.loadStores({ silent: true });
-    }, this.pollIntervalMs);
   }
 
   onSearchChange(event: Event): void {
@@ -262,30 +202,22 @@ export class VersionControlAndUpdates extends BaseComponent implements OnInit {
     this.loadStores();
   }
 
-  // Opens the dialog that matches the app type (before, every app opened the employee header)
+  // One shared dialog for both apps: the API returns the same shape and only `application` differs
   onOpenApplicationDetails(merchant: Merchant, app: MerchantApp): void {
-    const isAdmin = app.type === 'admin';
-
-    this.ref = this.dialogService.open(
-      isAdmin ? AdminApplicationDetailsDialog : EmployeeApplicationDetailsDialog,
-      {
-        header: isAdmin ? 'تفاصيل تطبيق المسؤول' : 'تفاصيل تطبيق الموظفين',
-        width: '520px',
-        modal: true,
-        closable: true,
-        breakpoints: {
-          '960px': '75vw',
-          '640px': '90vw',
-        },
-        data: {
-          merchantId: merchant.id,
-          appId: app.id,
-          // The list response already carries these, so the dialogs can show them without a new request
-          merchantName: merchant.name,
-          app,
-          branches: merchant.branches,
-        },
+    this.ref = this.dialogService.open(ApplicationDetailsDialog, {
+      header: app.type === 'admin' ? 'تفاصيل تطبيق الأدمن' : 'تفاصيل تطبيق الموظفين',
+      width: '520px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
       },
-    );
+      data: {
+        storeId: merchant.id,
+        application: app.type,
+        merchantName: merchant.name,
+      },
+    });
   }
 }
