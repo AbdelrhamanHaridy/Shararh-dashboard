@@ -58,17 +58,11 @@ export class SharedSelectComponent implements ControlValueAccessor {
   }
 
   get isInvalid(): boolean {
-    return !!(
-      this.control &&
-      this.control.invalid &&
-      (this.control.dirty || this.control.touched)
-    );
+    return !!(this.control && this.control.invalid && (this.control.dirty || this.control.touched));
   }
 
   get currentPlaceholder(): string {
-    return this.disabled && this.disabledPlaceholder
-      ? this.disabledPlaceholder
-      : this.placeholder;
+    return this.disabled && this.disabledPlaceholder ? this.disabledPlaceholder : this.placeholder;
   }
 
   /** Options mapped into the {label, value} shape p-select expects */

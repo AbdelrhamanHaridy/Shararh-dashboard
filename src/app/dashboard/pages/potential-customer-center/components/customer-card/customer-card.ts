@@ -3,6 +3,7 @@ import { Confirmation, ConfirmationService, MenuItem } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenuModule } from 'primeng/menu';
 import { Menu } from 'primeng/menu';
+import { LeadActions } from '../../models/potential-customer-center.model';
 
 export interface Customer {
   id: number;
@@ -17,6 +18,7 @@ export interface Customer {
   phone: string;
   assignedEmployee: string;
   notes: string;
+  actions: LeadActions;
 }
 interface ConfirmationWithData extends Confirmation {
   data?: {
@@ -48,11 +50,14 @@ export class CustomerCard {
   acceptCustomer = output<number>();
   deleteCustomer = output<number>();
   archiveCustomer = output<number>();
+  assignEmployee = output<number>();
   editCustomer = output<number>();
-  menuItems: MenuItem[] = [];
 
-  constructor(private confirmationService: ConfirmationService) {
-    this.menuItems = [
+  constructor(private confirmationService: ConfirmationService) {}
+
+  get menuItems(): MenuItem[] {
+    const actions = this.customer().actions;
+    const items: MenuItem[] = [
       {
         label: 'تغيير الحالة',
         command: () => this.onChangeStatus(),
@@ -65,11 +70,23 @@ export class CustomerCard {
         label: 'حذف',
         command: () => this.onDelete(),
       },
-      {
+    ];
+
+    if (actions.can_assign) {
+      items.push({
+        label: 'تعيين المسؤول',
+        command: () => this.onAssignEmployee(),
+      });
+    }
+
+    if (actions.can_archive) {
+      items.push({
         label: 'أرشفة',
         command: () => this.onArchive(),
-      },
-    ];
+      });
+    }
+
+    return items;
   }
 
   onCopyPhone() {
@@ -135,5 +152,8 @@ export class CustomerCard {
       rejectLabel: 'لا',
       accept: () => this.archiveCustomer.emit(this.customer().id),
     } as ConfirmationWithData);
+  }
+  onAssignEmployee() {
+    this.assignEmployee.emit(this.customer().id);
   }
 }

@@ -17,7 +17,7 @@
     <app-shared-kpi-card [title]="'مرفوض'" [number]="stats.rejected_leads" iconPath="assets/icons/cards/timer_off.svg"
         iconBgColor="#FDD9BD" numberColor="#000">
     </app-shared-kpi-card>
-
+    
 
 </section>
 
@@ -79,6 +79,25 @@
     </div>
 </section>
 
+<div class="flex flex-row justify-between items-center gap-3 px-6">
+    <h2 class="text-xl font-medium text-[#1E293B]">قائمة العملاء</h2>
+    <div class="flex flex-row items-center gap-3">
+        @if (isLoadingEmployeeOptions) {
+        <p class="text-sm text-text-secondary font-tajawal" role="status">جاري تحميل الموظفين...</p>
+        } @else if (employeeFilterError) {
+        <p class="text-sm text-red-600 font-tajawal" role="alert">{{ employeeFilterError }}</p>
+        } @else {
+        <label for="lead-employee-filter" class="text-sm font-medium text-[#64748B]">
+            الموظف المسؤول
+        </label>
+        <app-shared-select class="follow-up-employee-select" placeholder="الموظف المسؤول: الكل"
+            inputId="lead-employee-filter" [options]="employeeFilterOptions" bindLabel="label" bindValue="value"
+            [ngModel]="employeeFilterValue" [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onEmployeeFilterChange($event)"></app-shared-select>
+        }
+    </div>
+</div>
+
 @if (isLoadingLeads) {
 <section class="p-6">
     <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
@@ -103,7 +122,7 @@
             (changeStatus)="onChangeStatus($event)" (whatsappContact)="onWhatsappContact($event)"
             (phoneCall)="onPhoneCall($event)" (acceptCustomer)="onAcceptCustomer($event)"
             (editCustomer)="showEditPotentialCustomerDialog($event)" (deleteCustomer)="onDeleteCustomer($event)"
-            (archiveCustomer)="onArchiveCustomer($event)" />
+            (archiveCustomer)="onArchiveCustomer($event)" (assignEmployee)="onAssignEmployee($event)" />
         }
     </div>
 </section>

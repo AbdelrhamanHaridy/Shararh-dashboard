@@ -5,6 +5,28 @@ export interface LeadEmployee {
   name: string;
 }
 
+export interface LeadActions {
+  can_assign: boolean;
+  can_archive: boolean;
+  allowed_actions: string[];
+}
+
+export interface LeadAssignableEmployee {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface LeadEmployeesResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: {
+    employees: LeadAssignableEmployee[];
+    can_filter_all: boolean;
+  };
+}
+
 export interface Lead {
   id: number;
   name: string;
@@ -30,6 +52,7 @@ export interface Lead {
   next_follow_up_at: string | null;
   assigned_employee: LeadEmployee | null;
   creator: LeadEmployee | null;
+  actions: LeadActions;
   // latest_communication, latest_note, latest_status_history, all_notes,
   // status_history exist on the payload too but aren't used by the cards yet
 }

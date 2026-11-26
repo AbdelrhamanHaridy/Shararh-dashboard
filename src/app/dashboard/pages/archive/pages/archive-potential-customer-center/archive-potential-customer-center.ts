@@ -2,24 +2,12 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { CustomerCard } from '../../../potential-customer-center/components/customer-card/customer-card';
+import {
+  CustomerCard,
+  type Customer,
+} from '../../../potential-customer-center/components/customer-card/customer-card';
 import { PotentialCustomerCenterService } from '../../../potential-customer-center/services/potential-customer-center.service';
 import { Lead } from '../../../potential-customer-center/models/potential-customer-center.model';
-
-interface Customer {
-  id: number;
-  name: string;
-  avatarUrl: string;
-  status: string;
-  statusColor: string;
-  statusBgColor: string;
-  city: string;
-  country: string;
-  acceptedDate: string;
-  phone: string;
-  assignedEmployee: string;
-  notes: string;
-}
 
 const STATUS_STYLE_MAP: Record<string, { color: string; bgColor: string }> = {
   new: { color: '#137FEC', bgColor: '#E3F2FD' },
@@ -155,6 +143,7 @@ export class ArchivePotentialCustomerCenter implements OnInit, OnDestroy {
       phone: lead.phone,
       assignedEmployee: lead.assigned_employee?.name ?? 'غير معين',
       notes: lead.notes,
+      actions: lead.actions,
     };
   }
 

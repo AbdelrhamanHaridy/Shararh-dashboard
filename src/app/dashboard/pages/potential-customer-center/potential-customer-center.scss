@@ -1,7 +1,19 @@
 ::ng-deep .p-component.p-menu.p-menu-overlay {
-    position: relative !important;
+  position: relative !important;
 }
 ::ng-deep .p-menu-list {
-    gap: 10px !important;
-    --p-menu-item-padding: 10px !important;
+  gap: 10px !important;
+  --p-menu-item-padding: 10px !important;
+}
+:host {
+  .p-select-label {
+    --p-select-padding-y: 1px !important;
+  }
+}
+::ng-deep .follow-up-employee-select .p-select-label {
+  --p-select-padding-y: 5px !important;
+  width: 142px;
+}
+::ng-deep .input-wrapper {
+  gap: 0 !important;
 }

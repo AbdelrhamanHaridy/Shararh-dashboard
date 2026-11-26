@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { Menu } from 'primeng/menu';
@@ -15,19 +16,13 @@ import { Lead, LeadStatistics } from './models/potential-customer-center.model';
 import { PotentialCustomerCenterService } from './services/potential-customer-center.service';
 import { EditPotentialCustomerDialog } from './components/edit-potential-customer-dialog/edit-potential-customer-dialog';
 import { ToastService } from '../../shared/services/toast.service';
+import { AssignEmployeeDialog } from './components/assign-employee-dialog/assign-employee-dialog';
+import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 
-// Which lead statuses belong to which tab.
-// Update this once the real "under implementation" status keys are confirmed —
-// the sample payload only contained new/interested/contacted.
-const STATUS_TAB_MAP: Record<string, 'potential' | 'underImplementation'> = {
-  new: 'potential',
-  interested: 'potential',
-  contacted: 'potential',
-  registered: 'underImplementation',
-  subscribed: 'underImplementation',
-  in_implementation: 'underImplementation',
-  rejected: 'underImplementation',
-};
+interface EmployeeFilterOption {
+  label: string;
+  value: number | 'all';
+}
 
 // Badge colors per status. Extend as more statuses are confirmed.
 const STATUS_STYLE_MAP: Record<string, { color: string; bgColor: string }> = {
@@ -43,7 +38,15 @@ const DEFAULT_AVATAR = 'assets/testing/avatar.png';
 
 @Component({
   selector: 'app-potential-customer-center',
-  imports: [SharedKpiCard, PageHeaderComponent, CustomerCard, MenuModule, CustomerCardSkeleton],
+  imports: [
+    FormsModule,
+    SharedKpiCard,
+    PageHeaderComponent,
+    CustomerCard,
+    MenuModule,
+    CustomerCardSkeleton,
+    SharedSelectComponent,
+  ],
   providers: [DialogService],
   templateUrl: './potential-customer-center.html',
   styleUrl: './potential-customer-center.scss',
@@ -68,6 +71,12 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       disabled: true,
     },
   ];
+
+  employeeFilterOptions: EmployeeFilterOption[] = [];
+  employeeFilterValue: number | 'all' = 'all';
+  canFilterAllEmployees = false;
+  isLoadingEmployeeOptions = true;
+  employeeFilterError = '';
 
   ref: DynamicDialogRef | null = null;
   private rawLeads: Lead[] = [];
@@ -121,6 +130,7 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadLeads();
     this.loadStats();
+    this.loadEmployeeFilterOptions();
 
     this.searchSub = this.searchInput$
       .pipe(debounceTime(400), distinctUntilChanged())
@@ -128,6 +138,45 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
         this.searchTerm = term;
         this.loadLeads();
       });
+  }
+
+  private loadEmployeeFilterOptions(): void {
+    this.potentialCustomerCenterService.getLeadEmployees().subscribe({
+      next: (response) => {
+        this.canFilterAllEmployees = response.data.can_filter_all;
+        const employees = response.data.employees.map((employee) => ({
+          label: employee.name,
+          value: employee.id,
+        }));
+
+        if (this.canFilterAllEmployees) {
+          this.employeeFilterOptions = [{ label: 'كل الموظفين', value: 'all' }, ...employees];
+        } else {
+          this.employeeFilterOptions = employees;
+          const currentEmployee = employees[0];
+          if (currentEmployee) {
+            this.employeeFilterValue = currentEmployee.value;
+          } else {
+            this.employeeFilterError = 'تعذر تحديد الموظف المرتبط بهذا الحساب';
+          }
+        }
+
+        this.isLoadingEmployeeOptions = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Failed loading employee filter options:', error);
+        this.isLoadingEmployeeOptions = false;
+        this.employeeFilterError = 'تعذر تحميل قائمة الموظفين';
+        this.toastService.error('فشل تحميل الموظفين', this.getErrorMessage(error));
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  onEmployeeFilterChange(employeeId: number | 'all'): void {
+    this.employeeFilterValue = employeeId;
+    this.loadLeads();
   }
 
   ngOnDestroy() {
@@ -158,8 +207,13 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       if (this.potentialDataFilter !== 'all') {
         filters['filter'] = this.potentialDataFilter;
       }
-    } else if (this.underImplementationStatus) {
-      filters['status'] = this.underImplementationStatus;
+    } else {
+      filters['tab'] = 'in_progress';
+      filters['filter'] = this.underImplementationStatus || 'all';
+    }
+
+    if (typeof this.employeeFilterValue === 'number') {
+      filters['employee_id'] = this.employeeFilterValue;
     }
 
     if (this.searchTerm) filters['search'] = this.searchTerm;
@@ -169,12 +223,9 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
         if (res && Array.isArray(res.data)) {
           this.rawLeads = res.data;
           const mapped = res.data.map((lead) => this.mapLeadToCustomer(lead));
-          this.potentialCustomers = mapped.filter(
-            (_, i) => this.resolveTab(res.data[i].status) === 'potential',
-          );
-          this.underImplementationCustomers = mapped.filter(
-            (_, i) => this.resolveTab(res.data[i].status) === 'underImplementation',
-          );
+          this.potentialCustomers = this.activeTab === 'potential' ? mapped : [];
+          this.underImplementationCustomers =
+            this.activeTab === 'underImplementation' ? mapped : [];
         }
         this.isLoadingLeads = false;
         this.cdr.markForCheck();
@@ -213,10 +264,6 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
     this.loadLeads();
   }
 
-  private resolveTab(status: string): 'potential' | 'underImplementation' {
-    return STATUS_TAB_MAP[status] ?? 'potential';
-  }
-
   private mapLeadToCustomer(lead: Lead): Customer {
     const style = STATUS_STYLE_MAP[lead.status] ?? DEFAULT_STATUS_STYLE;
     const dateSource = lead.claimed_at ?? lead.created_at;
@@ -234,6 +281,8 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       phone: lead.phone,
       assignedEmployee: lead.assigned_employee?.name ?? 'غير معين',
       notes: lead.notes,
+      // Drives which items appear in the card's three-dots menu (assign, archive)
+      actions: lead.actions,
     };
   }
 
@@ -317,6 +366,29 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
         console.error('Failed to archive lead:', err);
         this.toastService.error('فشل أرشفة العميل', this.getErrorMessage(err));
       },
+    });
+  }
+
+  // Opens the employee picker. The dialog calls POST /admin/leads/{id}/assign itself
+  // and shows its own success / error toast, so here we only refresh on success.
+  onAssignEmployee(customerId: number) {
+    this.ref = this.dialogService.open(AssignEmployeeDialog, {
+      header: 'تعيين مسؤول',
+      width: '420px',
+      modal: true,
+      closable: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      data: { leadId: customerId },
+    });
+
+    this.ref!.onClose.subscribe((result) => {
+      if (result?.success) {
+        this.loadLeads();
+        this.loadStats();
+      }
     });
   }
 
@@ -409,6 +481,7 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       }
     });
   }
+
   showEditPotentialCustomerDialog(customerId: number) {
     const lead = this.rawLeads.find((l) => l.id === customerId);
     if (!lead) {
@@ -434,6 +507,7 @@ export class PotentialCustomerCenter implements OnInit, OnDestroy {
       }
     });
   }
+
   showAddCustomerGroupDialog() {
     this.ref = this.dialogService.open(AddCustomerGroupDialog, {
       header: 'إضافة مجموعة عملاء',

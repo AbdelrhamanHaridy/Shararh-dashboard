@@ -1,0 +1,29 @@
+<form [formGroup]="assignmentForm" (ngSubmit)="assignEmployee()" class="flex flex-col gap-6" dir="rtl">
+    @if (isLoadingEmployees()) {
+    <p class="text-sm text-text-secondary font-tajawal" role="status">جاري تحميل الموظفين...</p>
+    } @else if (employeeLoadError()) {
+    <p class="text-sm text-red-600 font-tajawal" role="alert">{{ employeeLoadError() }}</p>
+    } @else if (employees().length === 0) {
+    <p class="text-sm text-text-secondary font-tajawal">لا يوجد موظفون متاحون للتعيين</p>
+    } @else {
+    <app-shared-select formControlName="employeeId" label="الموظف المسؤول" placeholder="اختر الموظف"
+        inputId="assigned-employee" [options]="employees()" bindLabel="label" bindValue="value"
+        primeNgIcon="pi pi-users" [isRequired]="true"></app-shared-select>
+    }
+
+    <div class="flex gap-3">
+        <button type="submit"
+            [disabled]="assignmentForm.invalid || isSubmitting() || isLoadingEmployees() || employees().length === 0"
+            class="flex-1 rounded-xl bg-primary px-4 py-3 text-white font-tajawal transition-opacity disabled:cursor-not-allowed disabled:opacity-50">
+            @if (isSubmitting()) {
+            جاري التعيين...
+            } @else {
+            تعيين
+            }
+        </button>
+        <button type="button" (click)="ref.close()"
+            class="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-text-primary font-tajawal hover:bg-gray-200">
+            إلغاء
+        </button>
+    </div>
+</form>

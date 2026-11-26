@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { LeadsResponse, LeadStatsResponse } from '../models/potential-customer-center.model';
+import {
+  LeadEmployeesResponse,
+  LeadsResponse,
+  LeadStatsResponse,
+} from '../models/potential-customer-center.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +17,10 @@ export class PotentialCustomerCenterService {
   constructor(private http: HttpClient) {}
   getStats(): Observable<LeadStatsResponse> {
     return this.http.get<LeadStatsResponse>(`${this.apiUrl}/stats`);
+  }
+
+  getLeadEmployees(): Observable<LeadEmployeesResponse> {
+    return this.http.get<LeadEmployeesResponse>(`${this.apiUrl}/employees`);
   }
 
   getLeads(filters?: Record<string, any>): Observable<LeadsResponse> {
