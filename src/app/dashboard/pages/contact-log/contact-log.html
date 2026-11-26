@@ -16,8 +16,7 @@
 
             </div>
             <div class="grid grid-cols-2 gap-6">
-                <app-shared-select formControlName="leadId" label="اسم العميل"
-                    placeholder="اختر العميل"
+                <app-shared-select formControlName="leadId" label="اسم العميل" placeholder="اختر العميل"
                     inputId="leadId" [options]="leadsOptions" bindLabel="label" bindValue="value"
                     primeNgIcon="pi pi-user" [isRequired]="true" class="col-span-2"
                     (selectChange)="onLeadSelectionChanged()"></app-shared-select>
@@ -39,9 +38,8 @@
                     primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-select>
 
                 <app-shared-select formControlName="contactReason" label="سبب التواصل" class="col-span-2"
-                    [placeholder]="contactReasonPlaceholder"
-                    inputId="contactReason" [options]="contactReasonOptions" bindLabel="label" bindValue="value"
-                    primeNgIcon="pi pi-question-circle"
+                    [placeholder]="contactReasonPlaceholder" inputId="contactReason" [options]="contactReasonOptions"
+                    bindLabel="label" bindValue="value" primeNgIcon="pi pi-question-circle"
                     [isRequired]="true"></app-shared-select>
                 @if (contactReasonError) {
                 <p class="col-span-2 text-sm text-red-600 font-tajawal" role="alert">{{ contactReasonError }}</p>
@@ -128,61 +126,129 @@
 </section>
 
 <!-- Timeline Section: السجل الزمني -->
-<section class="px-6 py-8 max-w-[610px]" dir="rtl">
-    <h2 class="text-[#191C18] text-2xl font-medium mb-8 font-tajawal">السجل الزمني</h2>
-
-    <!-- Day separators and entries -->
-    @for (dayGroup of contactLogDays; track dayGroup.day) {
-    <div class="mb-12">
-        <!-- Day separator -->
-        <div class="flex items-center mb-8">
-            <div class="flex-1 h-px bg-[#E2E8F0]"></div>
-            <span class="text-[#10A922] bg-[#FDFDF6] px-4 text-sm font-medium font-tajawal whitespace-nowrap">{{
-                dayGroup.day }}</span>
-            <div class="flex-1 h-px bg-[#E2E8F0]"></div>
+<section class="px-6 py-8" dir="rtl">
+    <div class="max-w-[1000px]">
+        <div class="flex items-center justify-between gap-4 mb-6">
+            <h2 class="text-[#191C18] text-2xl font-medium font-tajawal">السجل الزمني</h2>
+            <button type="button" (click)="toggleCommunicationFilters()"
+                [attr.aria-expanded]="showCommunicationFilters" aria-controls="communication-filters"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#C2C8BD] text-sm font-medium text-[#42493F] font-tajawal hover:bg-gray-50 transition-colors cursor-pointer">
+                <i class="pi pi-filter" aria-hidden="true"></i>
+                {{ showCommunicationFilters ? 'إخفاء الفلاتر' : 'إظهار الفلاتر' }}
+            </button>
         </div>
 
-        <!-- Entries for this day -->
-        <div class="flex flex-col gap-4">
-            @for (entry of dayGroup.entries; track entry.id) {
-            <div class="flex items-center gap-4 pl-6 rounded-2xl bg-white border border-[#E2E8F0] hover:shadow-md transition-shadow"
-                [style.border-right]="'4px solid ' + entry.borderColor">
+        <div id="communication-filters" [hidden]="!showCommunicationFilters"
+            [formGroup]="communicationFilterForm"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8 p-5 rounded-2xl bg-white border border-[#C2C8BD]">
+            <app-shared-select formControlName="communicationType" label="نوع التواصل"
+                inputId="communication-type-filter" [options]="communicationTypeFilterOptions" bindLabel="label"
+                bindValue="value" primeNgIcon="pi pi-envelope"></app-shared-select>
 
-                <!-- Main content -->
-                <div class="flex-1 flex items-center gap-6 py-6 pr-6">
-                    <button type="button"
-                        class="w-10 h-10 rounded-xl flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
-                        [style.background-color]="entry.iconBgColor">
-                        <img [src]="entry.icon" [alt]="entry.contactType" class="w-6 h-6" />
-                    </button>
+            <app-shared-select formControlName="communicationChannel" label="قناة التواصل"
+                inputId="communication-channel-filter" [options]="communicationChannelFilterOptions" bindLabel="label"
+                bindValue="value" primeNgIcon="pi pi-phone"></app-shared-select>
+
+            <div class="flex flex-col gap-2">
+                <label for="communication-date-range" class="input-label">
+                    الفترة الزمنية
+                </label>
+                <p-datepicker formControlName="dateRange" inputId="communication-date-range" selectionMode="range"
+                    dateFormat="yy-mm-dd" [readonlyInput]="true" [showIcon]="true" [showButtonBar]="true"
+                    placeholder="اختر الفترة" appendTo="body" class="w-full"></p-datepicker>
+            </div>
+
+
+            @if (canFilterByEmployee) {
+            <app-shared-select formControlName="employeeId" label="الموظف" inputId="communication-employee-filter"
+                [options]="employeeFilterOptions" bindLabel="label" bindValue="value"
+                primeNgIcon="pi pi-user"></app-shared-select>
+            } @else if (isLoadingEmployeeFilterOptions) {
+            <p class="self-end text-sm text-text-secondary font-tajawal" role="status">جاري تحميل الموظفين...</p>
+            }
+
+            <button type="button" (click)="clearCommunicationFilters()"
+                class="self-end px-4 py-3 rounded-xl border border-[#C2C8BD] text-sm font-medium text-[#42493F] font-tajawal hover:bg-gray-50 transition-colors cursor-pointer">
+                مسح الفلاتر
+            </button>
+        </div>
+
+        @if (employeeFilterError) {
+        <p class="mb-4 text-sm text-red-600 font-tajawal" role="alert">{{ employeeFilterError }}</p>
+        }
+
+        @if (communicationsError) {
+        <p class="mb-4 text-sm text-red-600 font-tajawal" role="alert">{{ communicationsError }}</p>
+        }
+        @if (isLoadingCommunications) {
+        <p class="mb-4 text-sm text-text-secondary font-tajawal" role="status">جاري تحميل سجل الاتصال...</p>
+        } @else if (contactLogDays.length === 0) {
+        <p class="py-8 text-center text-sm text-text-secondary font-tajawal">لا توجد سجلات اتصال مطابقة للفلاتر.</p>
+        }
+
+        <!-- Day separators and entries -->
+        @for (dayGroup of contactLogDays; track dayGroup.day) {
+        <div class="mb-12">
+            <!-- Day separator -->
+            <div class="flex items-center mb-8">
+                <div class="flex-1 h-px bg-[#E2E8F0]"></div>
+                <span class="text-[#10A922] bg-[#FDFDF6] px-4 text-sm font-medium font-tajawal whitespace-nowrap">{{
+                    dayGroup.day }}</span>
+                <div class="flex-1 h-px bg-[#E2E8F0]"></div>
+            </div>
+
+            <!-- Entries for this day -->
+            <div class="flex flex-col gap-4">
+                @for (entry of dayGroup.entries; track entry.id) {
+                <div class="flex items-center gap-4 pl-6 rounded-2xl bg-white border border-[#E2E8F0] hover:shadow-md transition-shadow"
+                    [style.border-right]="'4px solid ' + entry.borderColor">
+
+                    <!-- Main content -->
+                    <div class="flex-1 flex items-center gap-6 py-6 pr-6">
+                        <button type="button"
+                            class="w-10 h-10 rounded-xl flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
+                            [style.background-color]="entry.iconBgColor">
+                            <img [src]="entry.icon" [alt]="entry.contactType" class="w-6 h-6" />
+                        </button>
 
 
 
-                    <!-- Center: Contact info -->
-                    <div class="flex-1 flex flex-col">
-                        <h3 class="text-[#191C18] text-lg font-medium font-tajawal leading-7">{{ entry.name }}</h3>
-                        <div class="flex items-center gap-1 flex-wrap">
-                            <span class="text-[#196D00] text-sm font-medium font-tajawal">{{ entry.direction }}</span>
-                            <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
-                            <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.contactType }}</span>
-                            <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
-                            <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.reason }}</span>
+                        <!-- Center: Contact info -->
+                        <div class="flex-1 flex flex-col">
+                            <h3 class="text-[#191C18] text-lg font-medium font-tajawal leading-7">{{ entry.name }}</h3>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <span class="text-[#196D00] text-sm font-medium font-tajawal">{{ entry.direction
+                                    }}</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.contactType
+                                    }}</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">•</span>
+                                <span class="text-[#42493F] text-sm font-medium font-tajawal">{{ entry.reason }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right icon button -->
+                    <div class="shrink-0 mr-4">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[#191C18] text-base leading-6 font-medium font-tajawal">{{ entry.time
+                                }}</span>
+                            <span class="text-[#42493F] text-xs font-medium font-tajawal pr-2">{{ entry.timeAgo
+                                }}</span>
                         </div>
                     </div>
-
                 </div>
-
-                <!-- Right icon button -->
-                <div class="shrink-0 mr-4">
-                    <div class="flex flex-col items-start">
-                        <span class="text-[#191C18] text-base leading-6 font-medium font-tajawal">{{ entry.time
-                            }}</span>
-                        <span class="text-[#42493F] text-xs font-medium font-tajawal pr-2">{{ entry.timeAgo }}</span>
-                    </div>
-                </div>
+                }
             </div>
-            }
         </div>
+        }
+
+        <p-paginator [first]="(currentCommunicationsPage - 1) * 15" [rows]="15"
+            [totalRecords]="totalCommunications" (onPageChange)="onCommunicationsPageChange($event)">
+        </p-paginator>
+        <p class="mt-2 text-sm text-secondary-text font-tajawal text-center">
+            إجمالي السجلات: {{ totalCommunications }}
+        </p>
     </div>
-    }
 </section>

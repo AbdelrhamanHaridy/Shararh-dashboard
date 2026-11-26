@@ -6,6 +6,16 @@ export interface CommunicationsResponse {
   pagination: Pagination
 }
 
+export interface CommunicationFilters {
+  page: number;
+  per_page: number;
+  communication_type?: string;
+  communication_channel?: string;
+  employee_id?: number;
+  date_from?: string;
+  date_to?: string;
+}
+
 export interface Communication {
   id: number
   lead_id: number

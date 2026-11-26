@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import {
   CommunicationsResponse,
+  CommunicationFilters,
   CommunicationOptionsResponse,
   CommunicationReasonContext,
   CommunicationReasonsResponse,
@@ -20,15 +21,13 @@ export class ContactLogService {
 
   constructor(private http: HttpClient) {}
 
-  getCommunications(filters?: Record<string, any>): Observable<CommunicationsResponse> {
+  getCommunications(filters: CommunicationFilters): Observable<CommunicationsResponse> {
     let params = new HttpParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          params = params.set(key, value.toString());
-        }
-      });
-    }
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
     return this.http.get<CommunicationsResponse>(this.apiUrl, {
       params,
       headers: this.arabicHeaders,

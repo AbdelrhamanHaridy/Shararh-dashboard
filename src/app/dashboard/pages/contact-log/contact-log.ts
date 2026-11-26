@@ -15,6 +15,8 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { DatePickerModule } from 'primeng/datepicker';
+import { PaginatorModule } from 'primeng/paginator';
 import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 import { SharedTextInputComponent } from '../../shared/components/shared-text-input/shared-text-input.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -22,6 +24,7 @@ import { MenuItem } from 'primeng/api';
 import { ContactLogService } from './services/contact-log.service';
 import {
   Communication,
+  CommunicationFilters,
   OptionItem,
   CreateCommunicationPayload,
   CommunicationReasonContext,
@@ -52,6 +55,11 @@ interface SuggestedTaskView {
   title: string;
 }
 
+interface EmployeeFilterOption {
+  label: string;
+  value: number | 'all';
+}
+
 const COMMUNICATION_TYPE_LABELS: Record<string, string> = {
   outgoing: 'صادر',
   incoming: 'وارد / مستلم',
@@ -72,6 +80,8 @@ const REQUIRED_LEAD_SELECTION: ValidatorFn = (control) =>
     SharedSelectComponent,
     ReactiveFormsModule,
     ToggleSwitchModule,
+    DatePickerModule,
+    PaginatorModule,
     CommonModule,
     PageHeaderComponent,
   ],
@@ -88,6 +98,12 @@ export class ContactLog implements OnInit, OnDestroy {
   // Types and channels come from /options; reasons are fetched for the selected lead and type.
   contactTypeOptions: OptionItem[] = [];
   contactViaOptions: OptionItem[] = [];
+  communicationTypeFilterOptions: OptionItem[] = [];
+  communicationChannelFilterOptions: OptionItem[] = [];
+  employeeFilterOptions: EmployeeFilterOption[] = [];
+  canFilterByEmployee = false;
+  isLoadingEmployeeFilterOptions = true;
+  employeeFilterError = '';
   contactReasonOptions: OptionItem[] = [];
   isLoadingContactReasons = false;
   contactReasonPlaceholder = 'اختر العميل أو نوعه ونوع التواصل أولاً';
@@ -101,6 +117,8 @@ export class ContactLog implements OnInit, OnDestroy {
   ];
   hasSelectedLead = false;
   private reasonRequest?: Subscription;
+  private communicationsRequest?: Subscription;
+  private filterChangeSubscription?: Subscription;
 
   // Populated from GET /admin/lead-communications/suggested-tasks
   taskStats = {
@@ -112,6 +130,13 @@ export class ContactLog implements OnInit, OnDestroy {
   suggestedTasks: SuggestedTaskView[] = [];
 
   contactLogDays: ContactLogDay[] = [];
+  communicationFilterForm!: FormGroup;
+  currentCommunicationsPage = 1;
+  lastCommunicationsPage = 1;
+  totalCommunications = 0;
+  isLoadingCommunications = false;
+  communicationsError = '';
+  showCommunicationFilters = true;
 
   constructor(
     private fb: FormBuilder,
@@ -131,15 +156,28 @@ export class ContactLog implements OnInit, OnDestroy {
       notes: [''],
       nextFollowUpAt: [''],
     });
+    this.communicationFilterForm = this.fb.group({
+      communicationType: ['all'],
+      communicationChannel: ['all'],
+      employeeId: ['all'],
+      dateRange: [null as Date[] | null],
+    });
+    this.filterChangeSubscription = this.communicationFilterForm.valueChanges.subscribe(() => {
+      this.currentCommunicationsPage = 1;
+      this.loadCommunications();
+    });
 
     this.loadLeads();
     this.loadOptions();
+    this.loadEmployeeFilterOptions();
     this.loadSuggestedTasks();
     this.loadCommunications();
   }
 
   ngOnDestroy(): void {
     this.reasonRequest?.unsubscribe();
+    this.communicationsRequest?.unsubscribe();
+    this.filterChangeSubscription?.unsubscribe();
   }
 
   onReasonContextChanged(): void {
@@ -206,6 +244,7 @@ export class ContactLog implements OnInit, OnDestroy {
         this.onLeadSelectionChanged();
         this.toastService.success('تمت الإضافة', 'تم تسجيل الاتصال بنجاح');
         // Refresh the timeline and suggested tasks after a successful submission
+        this.currentCommunicationsPage = 1;
         this.loadCommunications();
         this.loadSuggestedTasks();
       },
@@ -233,6 +272,14 @@ export class ContactLog implements OnInit, OnDestroy {
             };
           });
           this.contactViaOptions = res.data.communication_channels ?? [];
+          this.communicationTypeFilterOptions = [
+            { key: 'all', value: 'all', label: 'كل الأنواع' },
+            ...this.contactTypeOptions,
+          ];
+          this.communicationChannelFilterOptions = [
+            { key: 'all', value: 'all', label: 'كل القنوات' },
+            ...this.contactViaOptions,
+          ];
           this.cdr.markForCheck();
         }
       },
@@ -321,18 +368,115 @@ export class ContactLog implements OnInit, OnDestroy {
   }
 
   private loadCommunications() {
-    this.contactLogService.getCommunications().subscribe({
+    const filterValues = this.communicationFilterForm.getRawValue();
+    const filters: CommunicationFilters = {
+      page: this.currentCommunicationsPage,
+      per_page: 15,
+    };
+
+    if (filterValues.communicationType !== 'all') {
+      filters.communication_type = filterValues.communicationType;
+    }
+    if (filterValues.communicationChannel !== 'all') {
+      filters.communication_channel = filterValues.communicationChannel;
+    }
+    if (this.canFilterByEmployee && typeof filterValues.employeeId === 'number') {
+      filters.employee_id = filterValues.employeeId;
+    }
+    const dateRange = filterValues.dateRange;
+    if (Array.isArray(dateRange)) {
+      const dateFrom = dateRange[0];
+      const dateTo = dateRange[1];
+      if (dateFrom instanceof Date && Number.isFinite(dateFrom.getTime())) {
+        filters.date_from = this.formatDateFilter(dateFrom);
+      }
+      if (dateTo instanceof Date && Number.isFinite(dateTo.getTime())) {
+        filters.date_to = this.formatDateFilter(dateTo);
+      }
+    }
+
+    this.communicationsRequest?.unsubscribe();
+    this.isLoadingCommunications = true;
+    this.communicationsError = '';
+    this.communicationsRequest = this.contactLogService.getCommunications(filters).subscribe({
       next: (res) => {
         if (res && Array.isArray(res.data)) {
           this.contactLogDays = this.groupCommunicationsByDay(res.data);
-          this.cdr.markForCheck();
         }
+        this.currentCommunicationsPage = res.pagination.current_page;
+        this.lastCommunicationsPage = res.pagination.last_page;
+        this.totalCommunications = res.pagination.total;
+        this.isLoadingCommunications = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed loading communications', err);
+        this.communicationsError = this.getErrorMessage(err);
+        this.isLoadingCommunications = false;
         this.toastService.error('فشل تحميل سجل الاتصالات', this.getErrorMessage(err));
+        this.cdr.markForCheck();
       },
     });
+  }
+
+  private loadEmployeeFilterOptions(): void {
+    this.potentialCustomerService.getLeadEmployees().subscribe({
+      next: (response) => {
+        this.canFilterByEmployee = response.data.can_filter_all;
+        if (this.canFilterByEmployee) {
+          this.employeeFilterOptions = [
+            { label: 'كل الموظفين', value: 'all' },
+            ...response.data.employees.map((employee) => ({
+              label: employee.name,
+              value: employee.id,
+            })),
+          ];
+        }
+        this.isLoadingEmployeeFilterOptions = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Failed loading employee filter options', error);
+        this.employeeFilterError = 'تعذر تحميل قائمة الموظفين';
+        this.isLoadingEmployeeFilterOptions = false;
+        this.toastService.error('فشل تحميل الموظفين', this.getErrorMessage(error));
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  goToCommunicationsPage(page: number): void {
+    if (page < 1 || page > this.lastCommunicationsPage || page === this.currentCommunicationsPage) {
+      return;
+    }
+    this.currentCommunicationsPage = page;
+    this.loadCommunications();
+  }
+
+  onCommunicationsPageChange(event: { page?: number | null }): void {
+    if (typeof event.page === 'number') {
+      this.goToCommunicationsPage(event.page + 1);
+    }
+  }
+
+  toggleCommunicationFilters(): void {
+    this.showCommunicationFilters = !this.showCommunicationFilters;
+  }
+
+  clearCommunicationFilters(): void {
+    this.communicationFilterForm.reset({
+      communicationType: 'all',
+      communicationChannel: 'all',
+      employeeId: 'all',
+      dateRange: null,
+    });
+  }
+
+  private formatDateFilter(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private loadLeads() {
