@@ -1,53 +1,64 @@
-<div class="relative w-fullmx-auto  font-tajawal">
+<div class="relative w-full mx-auto font-tajawal">
 
     <!-- Header -->
     <div class="relative flex items-center justify-center mb-6">
-
-
-        <button type="button" (click)="onClose()"
+        <button type="button" (click)="onClose()" aria-label="إغلاق"
             class="absolute right-0 text-gray-400 hover:text-gray-600 cursor-pointer">
-            <img src="assets/icons/global/close.svg" alt="close" class="" />
+            <img src="assets/icons/global/close.svg" alt="" />
         </button>
         <h2 class="text-center text-[#0F172A] text-base font-bold">تصفيه حسب الإصدار</h2>
-        <button type="button" (click)="onClearAll()"
-            class="absolute left-0 text-[#137FEC] text-sm font-medium cursor-pointer hover:underline">
+        <button type="button" (click)="onClearAll()" [disabled]="isLoading || !!loadError"
+            class="absolute left-0 text-[#137FEC] text-sm font-medium cursor-pointer hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline">
             مسح الكل
         </button>
-
     </div>
 
     <!-- Version groups -->
+    @if (isLoading) {
+    <p class="py-8 text-center text-sm text-text-secondary" role="status">جاري تحميل الإصدارات...</p>
+    } @else if (loadError) {
+    <div class="flex flex-col items-center gap-3 py-8">
+        <p class="text-sm text-red-600" role="alert">{{ loadError }}</p>
+        <button type="button" (click)="retryLoadingVersions()"
+            class="text-sm text-primary font-medium hover:underline cursor-pointer">
+            إعادة المحاولة
+        </button>
+    </div>
+    } @else {
     <div class="flex flex-col gap-6 max-h-[60vh] overflow-y-auto">
-        <div *ngFor="let group of groups" class="flex flex-col gap-3">
+        @for (group of groups; track group.id) {
+        @if (group.options.length > 0) {
+        <div class="flex flex-col gap-3">
             <h3 class="text-[#94A3B8] text-xs font-bold">{{ group.title }}</h3>
 
-            <label *ngFor="let option of group.options" (click)="selectVersion(group, option.id)"
+            @for (option of group.options; track option.version) {
+            <label
                 class="flex flex-row items-center justify-between p-4 rounded-2xl cursor-pointer transition-colors border-2"
-                [ngClass]="group.selectedId === option.id
+                [class]="isVersionSelected(group, option.version)
                     ? 'bg-[#10A9220D] border-[#0D7F1A4D]'
                     : 'bg-[#F8FAFC] border-transparent'">
 
                 <div class="flex flex-row items-center gap-3">
-                    <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
-                        [ngClass]="group.selectedId === option.id ? 'border-[#16A34A]' : 'border-gray-300'">
-                        <span *ngIf="group.selectedId === option.id" class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
-                    </span>
-                    <span class="text-[#292A2E] text-sm font-bold">{{ option.version }}</span>
+                    <input type="checkbox" [checked]="isVersionSelected(group, option.version)"
+                        (change)="toggleVersionSelection(group, option.version)" class="w-4 h-4 accent-[#16A34A]" />
+                    <span class="text-[#292A2E] text-sm font-bold" dir="ltr">{{ option.version }}</span>
                 </div>
-
                 <span class="text-xs font-medium text-[#10A922] bg-[#EBF3EC] rounded-full px-2.5 py-1">
-                    {{ option.usersLabel }}
+                    {{ option.users_label }}
                 </span>
-
             </label>
+            }
         </div>
+        }
+        }
     </div>
+    }
 
     <hr class="border-gray-100 my-6" />
 
     <!-- Apply -->
-    <button type="button" (click)="onApplyFilter()"
-        class="w-full py-3 rounded-xl bg-primary hover:bg-[#15803D] text-white text-sm font-medium transition-colors cursor-pointer">
-        تطبيق الفلتر
+    <button type="button" (click)="onApplyFilter()" [disabled]="isLoading || !!loadError"
+        class="w-full py-3 rounded-xl bg-primary hover:bg-[#15803D] text-white text-sm font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+        تطبيق الفلتر @if (selectedCount > 0) { ({{ selectedCount }}) }
     </button>
 </div>

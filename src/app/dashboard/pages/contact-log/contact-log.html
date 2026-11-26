@@ -18,15 +18,16 @@
             <div class="grid grid-cols-2 gap-6">
                 <app-shared-select formControlName="leadId" label="اسم العميل" placeholder="اختر العميل"
                     inputId="leadId" [options]="leadsOptions" bindLabel="label" bindValue="value"
-                    primeNgIcon="pi pi-user" [isRequired]="true" class="col-span-2"
+                    primeNgIcon="pi pi-user" [isRequired]="true"
                     (selectChange)="onLeadSelectionChanged()"></app-shared-select>
-
-                @if (!hasSelectedLead) {
-                <app-shared-select formControlName="customerType" label="نوع العميل" placeholder="اختر نوع العميل"
-                    inputId="customerType" [options]="customerTypeOptions" bindLabel="label" bindValue="value"
-                    primeNgIcon="pi pi-users" [isRequired]="true" class="col-span-2"
-                    (selectChange)="onReasonContextChanged()"></app-shared-select>
-                }
+                <div>
+                    @if (!hasSelectedLead) {
+                    <app-shared-select formControlName="customerType" label="نوع العميل" placeholder="اختر نوع العميل"
+                        inputId="customerType" [options]="customerTypeOptions" bindLabel="label" bindValue="value"
+                        primeNgIcon="pi pi-users" [isRequired]="true"
+                        (selectChange)="onReasonContextChanged()"></app-shared-select>
+                    }
+                </div>
 
                 <app-shared-select formControlName="contactType" label="نوع التواصل" placeholder="اختر نوع التواصل"
                     inputId="contactType" [options]="contactTypeOptions" bindLabel="label" bindValue="value"
@@ -37,10 +38,17 @@
                     inputId="contactVia" [options]="contactViaOptions" bindLabel="label" bindValue="value"
                     primeNgIcon="pi pi-phone" [isRequired]="true"></app-shared-select>
 
-                <app-shared-select formControlName="contactReason" label="سبب التواصل" class="col-span-2"
+                <app-shared-select formControlName="contactReason" label="سبب التواصل" class=""
                     [placeholder]="contactReasonPlaceholder" inputId="contactReason" [options]="contactReasonOptions"
                     bindLabel="label" bindValue="value" primeNgIcon="pi pi-question-circle"
                     [isRequired]="true"></app-shared-select>
+                <div class="flex flex-col gap-2">
+                    <label for="nextFollowUpAt" class="text-sm font-medium text-text-primary font-tajawal">
+                        موعد المتابعة التالي (اختياري)
+                    </label>
+                    <input id="nextFollowUpAt" type="datetime-local" formControlName="nextFollowUpAt"
+                        class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm" />
+                </div>
                 @if (contactReasonError) {
                 <p class="col-span-2 text-sm text-red-600 font-tajawal" role="alert">{{ contactReasonError }}</p>
                 }
@@ -52,13 +60,7 @@
                         rows="3"></textarea>
                 </div>
 
-                <div class="flex flex-col gap-2 col-span-2">
-                    <label for="nextFollowUpAt" class="text-sm font-medium text-text-primary font-tajawal">
-                        موعد المتابعة التالي (اختياري)
-                    </label>
-                    <input id="nextFollowUpAt" type="datetime-local" formControlName="nextFollowUpAt"
-                        class="p-3 rounded-xl border border-[#E2E8F0] focus:outline-none focus:ring-2 focus:ring-primary font-tajawal text-sm" />
-                </div>
+
             </div>
         </section>
 
@@ -130,16 +132,15 @@
     <div class="max-w-[1000px]">
         <div class="flex items-center justify-between gap-4 mb-6">
             <h2 class="text-[#191C18] text-2xl font-medium font-tajawal">السجل الزمني</h2>
-            <button type="button" (click)="toggleCommunicationFilters()"
-                [attr.aria-expanded]="showCommunicationFilters" aria-controls="communication-filters"
+            <button type="button" (click)="toggleCommunicationFilters()" [attr.aria-expanded]="showCommunicationFilters"
+                aria-controls="communication-filters"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#C2C8BD] text-sm font-medium text-[#42493F] font-tajawal hover:bg-gray-50 transition-colors cursor-pointer">
                 <i class="pi pi-filter" aria-hidden="true"></i>
                 {{ showCommunicationFilters ? 'إخفاء الفلاتر' : 'إظهار الفلاتر' }}
             </button>
         </div>
 
-        <div id="communication-filters" [hidden]="!showCommunicationFilters"
-            [formGroup]="communicationFilterForm"
+        <div id="communication-filters" [hidden]="!showCommunicationFilters" [formGroup]="communicationFilterForm"
             class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8 p-5 rounded-2xl bg-white border border-[#C2C8BD]">
             <app-shared-select formControlName="communicationType" label="نوع التواصل"
                 inputId="communication-type-filter" [options]="communicationTypeFilterOptions" bindLabel="label"
@@ -244,8 +245,8 @@
         </div>
         }
 
-        <p-paginator [first]="(currentCommunicationsPage - 1) * 15" [rows]="15"
-            [totalRecords]="totalCommunications" (onPageChange)="onCommunicationsPageChange($event)">
+        <p-paginator [first]="(currentCommunicationsPage - 1) * 15" [rows]="15" [totalRecords]="totalCommunications"
+            (onPageChange)="onCommunicationsPageChange($event)">
         </p-paginator>
         <p class="mt-2 text-sm text-secondary-text font-tajawal text-center">
             إجمالي السجلات: {{ totalCommunications }}

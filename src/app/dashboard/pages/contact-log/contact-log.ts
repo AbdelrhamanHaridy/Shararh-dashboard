@@ -136,7 +136,7 @@ export class ContactLog implements OnInit, OnDestroy {
   totalCommunications = 0;
   isLoadingCommunications = false;
   communicationsError = '';
-  showCommunicationFilters = true;
+  showCommunicationFilters = false;
 
   constructor(
     private fb: FormBuilder,

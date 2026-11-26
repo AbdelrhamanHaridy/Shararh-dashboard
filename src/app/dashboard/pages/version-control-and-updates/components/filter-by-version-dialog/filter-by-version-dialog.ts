@@ -1,59 +1,114 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Subscription } from 'rxjs';
+import { GroupedAppVersion, StoreVersionFilters } from '../../models/version-stores.model';
+import { VersionControlAndUpdatesService } from '../../services/version-control-and-updates.service';
 
-interface VersionOption {
-  id: string;
-  version: string;
-  usersLabel: string;
-}
+// The popup only filters by admin app and employee app versions (as in the docs).
+// The generic `versions[]` param is still supported by the service but is not offered here.
+type VersionFilterKey = 'admin_versions' | 'employee_versions';
 
 interface VersionGroup {
-  id: string;
+  id: VersionFilterKey;
   title: string;
-  selectedId: string;
-  options: VersionOption[];
+  selectedVersions: string[];
+  options: GroupedAppVersion[];
 }
 
 @Component({
   selector: 'app-filter-by-version-dialog',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './filter-by-version-dialog.html',
   styleUrl: './filter-by-version-dialog.scss',
 })
-export class FilterByVersionDialog {
-  constructor(private readonly ref: DynamicDialogRef) {}
+export class FilterByVersionDialog implements OnInit, OnDestroy {
+  groups: VersionGroup[] = [];
+  isLoading = true;
+  loadError = '';
 
-  groups: VersionGroup[] = [
-    {
-      id: 'admin',
-      title: 'إصدارات تطبيق الأدمن',
-      selectedId: 'admin-v1.0.7',
-      options: [
-        { id: 'admin-v1.0.7', version: 'v1.0.7', usersLabel: '١٢ مستخدم' },
-        { id: 'admin-v1.0.6', version: 'v1.0.6', usersLabel: '٨ مستخدم' },
-        { id: 'admin-v1.0.5', version: 'v1.0.5', usersLabel: '٤ مستخدم' },
-      ],
-    },
-    {
-      id: 'employee',
-      title: 'إصدارات تطبيق الموظفين',
-      selectedId: 'employee-v2.1.1',
-      options: [
-        { id: 'employee-v2.1.2', version: 'v2.1.2', usersLabel: '٤٥ مستخدم' },
-        { id: 'employee-v2.1.1', version: 'v2.1.1', usersLabel: '٢٢ مستخدم' },
-        { id: 'employee-v2.1.0', version: 'v2.1.0', usersLabel: '١٧ مستخدم' },
-      ],
-    },
-  ];
+  private readonly selectedFilters: StoreVersionFilters;
+  private versionsRequest?: Subscription;
 
-  selectVersion(group: VersionGroup, optionId: string): void {
-    group.selectedId = optionId;
+  constructor(
+    private readonly ref: DynamicDialogRef,
+    config: DynamicDialogConfig,
+    private readonly versionService: VersionControlAndUpdatesService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
+    this.selectedFilters = (config.data?.filters as StoreVersionFilters | undefined) ?? {
+      admin_versions: [],
+      employee_versions: [],
+      versions: [],
+    };
   }
 
+  get selectedCount(): number {
+    return this.groups.reduce((total, group) => total + group.selectedVersions.length, 0);
+  }
+
+  ngOnInit(): void {
+    this.loadVersions();
+  }
+
+  ngOnDestroy(): void {
+    this.versionsRequest?.unsubscribe();
+  }
+
+  private loadVersions(): void {
+    this.versionsRequest?.unsubscribe();
+    this.isLoading = true;
+    this.loadError = '';
+
+    this.versionsRequest = this.versionService.getGroupedVersions().subscribe({
+      next: (response) => {
+        this.groups = [
+          {
+            id: 'admin_versions',
+            title: 'إصدارات تطبيق الأدمن',
+            selectedVersions: [...(this.selectedFilters.admin_versions ?? [])],
+            options: response.data.admin_app_versions ?? [],
+          },
+          {
+            id: 'employee_versions',
+            title: 'إصدارات تطبيق الموظفين',
+            selectedVersions: [...(this.selectedFilters.employee_versions ?? [])],
+            options: response.data.employee_app_versions ?? [],
+          },
+        ];
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        console.error('Failed to load grouped application versions', error);
+        this.loadError = 'تعذر تحميل قائمة الإصدارات';
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  retryLoadingVersions(): void {
+    this.loadVersions();
+  }
+
+  isVersionSelected(group: VersionGroup, version: string): boolean {
+    return group.selectedVersions.includes(version);
+  }
+
+  toggleVersionSelection(group: VersionGroup, version: string): void {
+    group.selectedVersions = this.isVersionSelected(group, version)
+      ? group.selectedVersions.filter((selectedVersion) => selectedVersion !== version)
+      : [...group.selectedVersions, version];
+  }
+
+  // "مسح الكل": closes with empty filters, the page reloads the list without version filters
   onClearAll(): void {
-    this.groups.forEach((group) => (group.selectedId = ''));
+    this.ref.close({
+      admin_versions: [],
+      employee_versions: [],
+      versions: [],
+    } satisfies StoreVersionFilters);
   }
 
   onClose(): void {
@@ -61,11 +116,18 @@ export class FilterByVersionDialog {
   }
 
   onApplyFilter(): void {
-    const selections = this.groups.map((group) => ({
-      groupId: group.id,
-      selectedId: group.selectedId,
-    }));
-    console.log('Applying filter', selections);
-    // TODO: emit selections / call API with the chosen versions
+    if (this.isLoading || this.loadError) {
+      return;
+    }
+
+    const filters: StoreVersionFilters = {
+      admin_versions: [],
+      employee_versions: [],
+      versions: [],
+    };
+    for (const group of this.groups) {
+      filters[group.id] = [...group.selectedVersions];
+    }
+    this.ref.close(filters);
   }
 }
